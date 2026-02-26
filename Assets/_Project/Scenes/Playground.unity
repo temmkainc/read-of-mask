@@ -334,8 +334,8 @@ GameObject:
   - component: {fileID: 387639113}
   - component: {fileID: 387639112}
   - component: {fileID: 387639110}
-  - component: {fileID: 387639118}
   - component: {fileID: 387639117}
+  - component: {fileID: 387639118}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -507,9 +507,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 387639109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a47d6fbae33bc454cb0c245a025dd140, type: 3}
+  m_Script: {fileID: 11500000, guid: a949634247392fe48a3cc2a11abbb6de, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+  m_EditorClassIdentifier: Assembly-CSharp::InputsManager
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1616,8 +1616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000017643, y: -100.0006}
-  m_SizeDelta: {x: 1920, y: 882.4}
+  m_AnchoredPosition: {x: 0.000017643, y: -0.60027}
+  m_SizeDelta: {x: 1920, y: 1081.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1792534468
 Animator:
