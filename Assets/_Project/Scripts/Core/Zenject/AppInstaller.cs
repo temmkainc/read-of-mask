@@ -3,8 +3,12 @@ using Zenject;
 
 public class AppInstaller : MonoInstaller
 {
+    [SerializeField] private MaskModule.ConfigData _maskModuleConfigData;
+    [SerializeField] private CoreModule.ConfigData _coreModuleConfigData;
+
     public override void InstallBindings()
     {
-        Container.Bind<InputManager>().FromNewComponentOnNewGameObject().AsSingle();
+        CoreModule.Install(Container, _coreModuleConfigData);
+        MaskModule.Install(Container, _maskModuleConfigData);
     }
 }

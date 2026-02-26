@@ -7,12 +7,12 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private float _sensitivity = 2f;
     [SerializeField] private float _maxLookAngle = 80f;
 
-    private PlayerInputHandler _input;
+    private InputsManager _input;
     private float _xRotation;
 
     private void Awake()
     {
-        _input = GetComponent<PlayerInputHandler>();
+        _input = GetComponent<InputsManager>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

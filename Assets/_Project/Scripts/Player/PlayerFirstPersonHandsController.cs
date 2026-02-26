@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class FirstPersonHandsController : MonoBehaviour
 {
-    [SerializeField] private PlayerInputHandler _inputHandler;
+    [SerializeField] private InputsManager _inputHandler;
+
+    [Inject] IMaskStateManager _maskStateManager;
 
     private Animator _animator;
 
@@ -16,6 +20,10 @@ public class FirstPersonHandsController : MonoBehaviour
     private readonly int DoPointingFingerHash = Animator.StringToHash("DoPointingFinger");
     private readonly int IsHoldingPointingFingerHash = Animator.StringToHash("IsHoldingPointingFinger");
 
+    private readonly int PutOnMaskHash = Animator.StringToHash("DoPutOnMask");
+    private readonly int PutOffMaskHash = Animator.StringToHash("DoPutOffMask");
+
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -23,18 +31,39 @@ public class FirstPersonHandsController : MonoBehaviour
 
     private void Start()
     {
-        _inputHandler.ShowMiddleFingerAction.performed += OnMiddleFingerPressed;
-        _inputHandler.ShowMiddleFingerAction.canceled += OnMiddleFingerReleased;
-        _inputHandler.ShowPointingFingerAction.performed += OnPointingFingerPressed;
-        _inputHandler.ShowPointingFingerAction.canceled += OnPointingFingerReleased;
+        _inputHandler.ShowMiddleFingerAction.performed += On_MiddleFingerPressed;
+        _inputHandler.ShowMiddleFingerAction.canceled += On_MiddleFingerReleased;
+        _inputHandler.ShowPointingFingerAction.performed += On_PointingFingerPressed;
+        _inputHandler.ShowPointingFingerAction.canceled += On_PointingFingerReleased;
+
+        _maskStateManager.OnStateChanged += On_MaskStateChanged;
+    }
+    public void On_MaskAnimationFinished()
+    {
+        _maskStateManager.ConfirmStateTransition();
+    }
+
+    private void On_MaskStateChanged(MaskStateType state)
+    {
+        switch (state)
+        {
+            case MaskStateType.NotWearing:
+                _animator.SetTrigger(PutOffMaskHash);
+                break;
+            case MaskStateType.Wearing:
+                _animator.SetTrigger(PutOnMaskHash);
+                break;
+        }
     }
 
     private void OnDestroy()
     {
-        _inputHandler.ShowMiddleFingerAction.performed -= OnMiddleFingerPressed;
-        _inputHandler.ShowMiddleFingerAction.canceled -= OnMiddleFingerReleased;
-        _inputHandler.ShowPointingFingerAction.performed -= OnPointingFingerPressed;
-        _inputHandler.ShowPointingFingerAction.canceled -= OnPointingFingerReleased;
+        _inputHandler.ShowMiddleFingerAction.performed -= On_MiddleFingerPressed;
+        _inputHandler.ShowMiddleFingerAction.canceled -= On_MiddleFingerReleased;
+        _inputHandler.ShowPointingFingerAction.performed -= On_PointingFingerPressed;
+        _inputHandler.ShowPointingFingerAction.canceled -= On_PointingFingerReleased;
+
+        _maskStateManager.OnStateChanged -= On_MaskStateChanged;
     }
 
     private void Update()
@@ -42,7 +71,7 @@ public class FirstPersonHandsController : MonoBehaviour
         _animator.SetFloat(SpeedHash, _inputHandler.MoveInput.magnitude);
     }
 
-    private void OnMiddleFingerPressed(InputAction.CallbackContext ctx)
+    private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)
     {
         if (!_holdingMiddleFingerLastFrame)
         {
@@ -53,13 +82,13 @@ public class FirstPersonHandsController : MonoBehaviour
         _holdingMiddleFingerLastFrame = true;
     }
 
-    private void OnMiddleFingerReleased(InputAction.CallbackContext ctx)
+    private void On_MiddleFingerReleased(InputAction.CallbackContext ctx)
     {
         _animator.SetBool(IsHoldingMiddleFingerHash, false);
         _holdingMiddleFingerLastFrame = false;
     }
 
-    private void OnPointingFingerPressed(InputAction.CallbackContext ctx)
+    private void On_PointingFingerPressed(InputAction.CallbackContext ctx)
     {
         if (!_holdingPointingFingerLastFrame)
         {
@@ -70,7 +99,7 @@ public class FirstPersonHandsController : MonoBehaviour
         _holdingPointingFingerLastFrame = true;
     }
 
-    private void OnPointingFingerReleased(InputAction.CallbackContext ctx)
+    private void On_PointingFingerReleased(InputAction.CallbackContext ctx)
     {
         _animator.SetBool(IsHoldingPointingFingerHash, false);
         _holdingPointingFingerLastFrame = false;

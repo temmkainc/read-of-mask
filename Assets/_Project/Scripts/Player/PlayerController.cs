@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform _orientation;
 
-    private PlayerInputHandler _input;
+    private InputsManager _input;
     private CharacterController _cc;
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _cc = GetComponent<CharacterController>();
-        _input = GetComponent<PlayerInputHandler>();
+        _input = GetComponent<InputsManager>();
     }
 
     private void Update() => HandleMovement();

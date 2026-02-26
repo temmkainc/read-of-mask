@@ -72,7 +72,7 @@ using UnityEngine.InputSystem.Utilities;
 /// }
 /// </code>
 /// </example>
-public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
+public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
 {
     /// <summary>
     /// Provides access to the underlying asset instance.
@@ -82,7 +82,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// <summary>
     /// Constructs a new instance.
     /// </summary>
-    public @InputSystem_Actions()
+    public @PlayerInputActions()
     {
         asset = InputActionAsset.FromJson(@"{
     ""version"": 1,
@@ -150,6 +150,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""ShowPointingFinger"",
                     ""type"": ""Button"",
                     ""id"": ""c55b5dc1-2974-4b1b-a6b2-95a504adbd29"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleMask"",
+                    ""type"": ""Button"",
+                    ""id"": ""75595730-530f-468e-8938-504de2b7d230"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -409,6 +418,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""ShowPointingFinger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dddab8c4-3c83-475e-ab7d-53280ddc0b84"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleMask"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -485,11 +505,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_ShowMiddleFinger = m_Player.FindAction("ShowMiddleFinger", throwIfNotFound: true);
         m_Player_ShowPointingFinger = m_Player.FindAction("ShowPointingFinger", throwIfNotFound: true);
+        m_Player_ToggleMask = m_Player.FindAction("ToggleMask", throwIfNotFound: true);
     }
 
-    ~@InputSystem_Actions()
+    ~@PlayerInputActions()
     {
-        UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
     }
 
     /// <summary>
@@ -572,17 +593,18 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_ShowMiddleFinger;
     private readonly InputAction m_Player_ShowPointingFinger;
+    private readonly InputAction m_Player_ToggleMask;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
     public struct PlayerActions
     {
-        private @InputSystem_Actions m_Wrapper;
+        private @PlayerInputActions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public PlayerActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
         /// Provides access to the underlying input action "Player/Move".
         /// </summary>
@@ -611,6 +633,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ShowPointingFinger".
         /// </summary>
         public InputAction @ShowPointingFinger => m_Wrapper.m_Player_ShowPointingFinger;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleMask".
+        /// </summary>
+        public InputAction @ToggleMask => m_Wrapper.m_Player_ToggleMask;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -658,6 +684,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ShowPointingFinger.started += instance.OnShowPointingFinger;
             @ShowPointingFinger.performed += instance.OnShowPointingFinger;
             @ShowPointingFinger.canceled += instance.OnShowPointingFinger;
+            @ToggleMask.started += instance.OnToggleMask;
+            @ToggleMask.performed += instance.OnToggleMask;
+            @ToggleMask.canceled += instance.OnToggleMask;
         }
 
         /// <summary>
@@ -690,6 +719,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ShowPointingFinger.started -= instance.OnShowPointingFinger;
             @ShowPointingFinger.performed -= instance.OnShowPointingFinger;
             @ShowPointingFinger.canceled -= instance.OnShowPointingFinger;
+            @ToggleMask.started -= instance.OnToggleMask;
+            @ToggleMask.performed -= instance.OnToggleMask;
+            @ToggleMask.canceled -= instance.OnToggleMask;
         }
 
         /// <summary>
@@ -844,5 +876,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShowPointingFinger(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleMask" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleMask(InputAction.CallbackContext context);
     }
 }
