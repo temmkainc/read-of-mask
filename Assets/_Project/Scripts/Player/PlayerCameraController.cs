@@ -13,8 +13,6 @@ public class PlayerCameraController : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<InputsManager>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update()

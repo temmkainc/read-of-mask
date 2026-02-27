@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "OpenDiary",
+                    "type": "Button",
+                    "id": "f90bdd17-5e32-435d-a660-10980d7d7a2e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -341,6 +350,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleMask",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5ebc3d7-f70a-4d28-bae6-d41ed3e29727",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenDiary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Diary",
+            "id": "cb8b5f05-4a14-4d60-9ace-3a42f1fac4ba",
+            "actions": [
+                {
+                    "name": "Close",
+                    "type": "Button",
+                    "id": "19ac0d43-9ae0-4015-a283-455ea8e83b24",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "cfb29417-9bbe-4b62-81f6-5702a6aeb76b",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Close",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -163,6 +163,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenDiary"",
+                    ""type"": ""Button"",
+                    ""id"": ""f90bdd17-5e32-435d-a660-10980d7d7a2e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -429,6 +438,45 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ToggleMask"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f5ebc3d7-f70a-4d28-bae6-d41ed3e29727"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenDiary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Diary"",
+            ""id"": ""cb8b5f05-4a14-4d60-9ace-3a42f1fac4ba"",
+            ""actions"": [
+                {
+                    ""name"": ""Close"",
+                    ""type"": ""Button"",
+                    ""id"": ""19ac0d43-9ae0-4015-a283-455ea8e83b24"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""cfb29417-9bbe-4b62-81f6-5702a6aeb76b"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -506,11 +554,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_ShowMiddleFinger = m_Player.FindAction("ShowMiddleFinger", throwIfNotFound: true);
         m_Player_ShowPointingFinger = m_Player.FindAction("ShowPointingFinger", throwIfNotFound: true);
         m_Player_ToggleMask = m_Player.FindAction("ToggleMask", throwIfNotFound: true);
+        m_Player_OpenDiary = m_Player.FindAction("OpenDiary", throwIfNotFound: true);
+        // Diary
+        m_Diary = asset.FindActionMap("Diary", throwIfNotFound: true);
+        m_Diary_Close = m_Diary.FindAction("Close", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Diary.enabled, "This will cause a leak and performance issues, PlayerInputActions.Diary.Disable() has not been called.");
     }
 
     /// <summary>
@@ -594,6 +647,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ShowMiddleFinger;
     private readonly InputAction m_Player_ShowPointingFinger;
     private readonly InputAction m_Player_ToggleMask;
+    private readonly InputAction m_Player_OpenDiary;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -637,6 +691,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ToggleMask".
         /// </summary>
         public InputAction @ToggleMask => m_Wrapper.m_Player_ToggleMask;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/OpenDiary".
+        /// </summary>
+        public InputAction @OpenDiary => m_Wrapper.m_Player_OpenDiary;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -687,6 +745,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleMask.started += instance.OnToggleMask;
             @ToggleMask.performed += instance.OnToggleMask;
             @ToggleMask.canceled += instance.OnToggleMask;
+            @OpenDiary.started += instance.OnOpenDiary;
+            @OpenDiary.performed += instance.OnOpenDiary;
+            @OpenDiary.canceled += instance.OnOpenDiary;
         }
 
         /// <summary>
@@ -722,6 +783,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToggleMask.started -= instance.OnToggleMask;
             @ToggleMask.performed -= instance.OnToggleMask;
             @ToggleMask.canceled -= instance.OnToggleMask;
+            @OpenDiary.started -= instance.OnOpenDiary;
+            @OpenDiary.performed -= instance.OnOpenDiary;
+            @OpenDiary.canceled -= instance.OnOpenDiary;
         }
 
         /// <summary>
@@ -755,6 +819,102 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="PlayerActions" /> instance referencing this action map.
     /// </summary>
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Diary
+    private readonly InputActionMap m_Diary;
+    private List<IDiaryActions> m_DiaryActionsCallbackInterfaces = new List<IDiaryActions>();
+    private readonly InputAction m_Diary_Close;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Diary".
+    /// </summary>
+    public struct DiaryActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public DiaryActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Diary/Close".
+        /// </summary>
+        public InputAction @Close => m_Wrapper.m_Diary_Close;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Diary; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="DiaryActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(DiaryActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="DiaryActions" />
+        public void AddCallbacks(IDiaryActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DiaryActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DiaryActionsCallbackInterfaces.Add(instance);
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="DiaryActions" />
+        private void UnregisterCallbacks(IDiaryActions instance)
+        {
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="DiaryActions.UnregisterCallbacks(IDiaryActions)" />.
+        /// </summary>
+        /// <seealso cref="DiaryActions.UnregisterCallbacks(IDiaryActions)" />
+        public void RemoveCallbacks(IDiaryActions instance)
+        {
+            if (m_Wrapper.m_DiaryActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="DiaryActions.AddCallbacks(IDiaryActions)" />
+        /// <seealso cref="DiaryActions.RemoveCallbacks(IDiaryActions)" />
+        /// <seealso cref="DiaryActions.UnregisterCallbacks(IDiaryActions)" />
+        public void SetCallbacks(IDiaryActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DiaryActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DiaryActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="DiaryActions" /> instance referencing this action map.
+    /// </summary>
+    public DiaryActions @Diary => new DiaryActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -883,5 +1043,27 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleMask(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OpenDiary" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenDiary(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Diary" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="DiaryActions.AddCallbacks(IDiaryActions)" />
+    /// <seealso cref="DiaryActions.RemoveCallbacks(IDiaryActions)" />
+    public interface IDiaryActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Close" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClose(InputAction.CallbackContext context);
     }
 }

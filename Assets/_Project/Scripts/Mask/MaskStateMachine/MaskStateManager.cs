@@ -36,6 +36,7 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
         _inputsManager = inputsManager;
         _inputsManager.ToggleMaskAction.performed += On_MaskToggleRequested;
     }
+
     public void Dispose()
     {
         _inputsManager.ToggleMaskAction.performed -= On_MaskToggleRequested;
@@ -43,6 +44,7 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
 
     private void On_MaskToggleRequested(InputAction.CallbackContext context)
     {
+        Debug.Log("Mask Toggle Requested");
         if (_isTransitioning)
             return;
 

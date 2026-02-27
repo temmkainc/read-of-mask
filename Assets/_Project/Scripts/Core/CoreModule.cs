@@ -13,5 +13,9 @@ public static class CoreModule
     public static void Install(DiContainer container, ConfigData config)
     {
         container.Bind<InputsManager>().FromNewComponentOnNewGameObject().AsSingle();
+        container.Bind<CinemachineManager>().AsSingle();
+
+        container.BindInterfacesTo<CommandBus>().AsSingle();
+        container.BindInterfacesTo<CommandFactory>().AsSingle();
     }
 }
