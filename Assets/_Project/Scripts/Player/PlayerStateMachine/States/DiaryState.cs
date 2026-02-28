@@ -5,7 +5,7 @@ using Zenject;
 
 public sealed class DiaryState : PlayerState
 {
-    [Inject] private InputsManager _inputsManager;
+    [Inject] private InputManager _inputsManager;
 
     public int On_CloseDiaryRequested { get; private set; }
 
@@ -21,7 +21,6 @@ public sealed class DiaryState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered Diary State");
         _inputsManager.CloseDiaryAction.started += On_CloseDiaryRequestedHandler;
     }
 

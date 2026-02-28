@@ -12,8 +12,10 @@ public class InputsData : PersistentRuntimeData<InputsData>
             if (_currentActionMap == value) return;
 
             _currentActionMap?.Disable();
+            Debug.Log($"Trying to disable {_currentActionMap}, disabled = {!_currentActionMap.enabled}");
             _currentActionMap = value;
             _currentActionMap?.Enable();
+            Debug.Log($"Trying to enable {_currentActionMap}, disabled = {_currentActionMap.enabled}");
         }
     }
 

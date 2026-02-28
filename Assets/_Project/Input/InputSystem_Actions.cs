@@ -72,7 +72,7 @@ using UnityEngine.InputSystem.Utilities;
 /// }
 /// </code>
 /// </example>
-public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
+public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
 {
     /// <summary>
     /// Provides access to the underlying asset instance.
@@ -82,7 +82,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// <summary>
     /// Constructs a new instance.
     /// </summary>
-    public @PlayerInputActions()
+    public @InputSystem_Actions()
     {
         asset = InputActionAsset.FromJson(@"{
     ""version"": 1,
@@ -560,10 +560,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Diary_Close = m_Diary.FindAction("Close", throwIfNotFound: true);
     }
 
-    ~@PlayerInputActions()
+    ~@InputSystem_Actions()
     {
-        UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_Diary.enabled, "This will cause a leak and performance issues, PlayerInputActions.Diary.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Diary.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Diary.Disable() has not been called.");
     }
 
     /// <summary>
@@ -653,12 +653,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public struct PlayerActions
     {
-        private @PlayerInputActions m_Wrapper;
+        private @InputSystem_Actions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public PlayerActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
         /// Provides access to the underlying input action "Player/Move".
         /// </summary>
@@ -829,12 +829,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public struct DiaryActions
     {
-        private @PlayerInputActions m_Wrapper;
+        private @InputSystem_Actions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public DiaryActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public DiaryActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
         /// Provides access to the underlying input action "Diary/Close".
         /// </summary>

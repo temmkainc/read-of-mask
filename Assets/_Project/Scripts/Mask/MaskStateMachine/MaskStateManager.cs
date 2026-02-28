@@ -16,14 +16,14 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
     private readonly StateMachine<MaskState> _maskStateMachine = new();
     private readonly Dictionary<MaskStateType, MaskState> _states = new();
 
-    private readonly InputsManager _inputsManager;
+    private readonly InputManager _inputsManager;
 
     public MaskStateType CurrentStateType { get; private set; } = MaskStateType.NotWearing;
 
     private bool _isTransitioning;
     private MaskStateType? _pendingState;
 
-    public MaskStateManager(InputsManager inputsManager, DiContainer diContainer)
+    public MaskStateManager(InputManager inputsManager, DiContainer diContainer)
     {
         _states[MaskStateType.NotWearing] = new NotWearingMaskState();
         _states[MaskStateType.Wearing] = new WearingMaskState();

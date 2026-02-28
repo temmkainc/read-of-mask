@@ -14,7 +14,6 @@ public sealed class GeneralState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered General State");
     }
 
     public override void Exit()

@@ -14,12 +14,12 @@ public enum StateType
 
 public sealed class PlayerStateManager : IPlayerStateManager
 {
-    public StateType CurrentStateType { get; private set; }
+    public StateType CurrentStateType { get; private set; } = StateType.General;
 
     private readonly StateMachine<PlayerState> _playerStateMachine = new();
     private static readonly Dictionary<StateType, PlayerState> _map = new();
 
-    public PlayerStateManager(PlayerModule.ConfigData configData, InputsManager inputsManager,  DiContainer diContainer)
+    public PlayerStateManager(PlayerModule.ConfigData configData, InputManager inputsManager,  DiContainer diContainer)
     {
         _map[StateType.General] = new GeneralState(configData.GeneralState);
         _map[StateType.Diary] = new DiaryState(configData.DiaryState);
@@ -28,13 +28,10 @@ public sealed class PlayerStateManager : IPlayerStateManager
         {
             diContainer.Inject(state);
         }
-
-        ChangeState(StateType.General);
     }
 
     public void ChangeState(StateType state)
     {
-        Debug.Log($"Changing state to {state}");
         _playerStateMachine.ChangeState(_map[state]);
         CurrentStateType = state;
     }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform _orientation;
 
-    private InputsManager _input;
+    [Inject] private InputManager _input;
     private CharacterController _cc;
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -20,7 +21,6 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _cc = GetComponent<CharacterController>();
-        _input = GetComponent<InputsManager>();
     }
 
     private void Update() => HandleMovement();

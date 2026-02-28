@@ -5,7 +5,7 @@ using Zenject;
 
 public class PlayerInputToStateHandler : MonoBehaviour
 {
-    [Inject] private InputsManager _inputsManager;
+    [Inject] private InputManager _inputsManager;
     [Inject] private ICommandBus _commandBus;
 
     private void OnEnable()
@@ -20,7 +20,6 @@ public class PlayerInputToStateHandler : MonoBehaviour
 
     private void On_OpenDiaryRequested(InputAction.CallbackContext context)
     {
-        Debug.Log("Diary Open Requested");
         _commandBus.Register(() => new PlayerStateChangeCommand(StateType.Diary)).Execute();
     }
 }

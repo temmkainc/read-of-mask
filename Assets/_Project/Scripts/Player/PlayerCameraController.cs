@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 public class PlayerCameraController : MonoBehaviour
 {
@@ -7,13 +8,9 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private float _sensitivity = 2f;
     [SerializeField] private float _maxLookAngle = 80f;
 
-    private InputsManager _input;
+    [Inject] private InputManager _input;
     private float _xRotation;
 
-    private void Awake()
-    {
-        _input = GetComponent<InputsManager>();
-    }
 
     private void Update()
     {

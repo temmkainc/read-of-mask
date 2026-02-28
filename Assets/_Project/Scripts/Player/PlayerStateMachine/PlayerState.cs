@@ -4,7 +4,7 @@ using Zenject;
 public abstract class PlayerState : IState
 {
     private CinemachineManager _cinemachineManager;
-    private InputsManager _inputsManager;
+    private InputManager _inputsManager;
     protected ICommandBus CommandBus { get; private set; }
 
     public PlayerStateData Data { get; private set; }
@@ -14,7 +14,7 @@ public abstract class PlayerState : IState
     }
 
     [Inject]
-    public void Construct(CinemachineManager cinemachineManager, InputsManager inputManager, ICommandBus commandBus)
+    public void Construct(CinemachineManager cinemachineManager, InputManager inputManager, ICommandBus commandBus)
     {
         _cinemachineManager = cinemachineManager;
         _inputsManager = inputManager;

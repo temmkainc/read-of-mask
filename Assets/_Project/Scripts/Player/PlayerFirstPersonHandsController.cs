@@ -5,7 +5,7 @@ using Zenject;
 
 public class FirstPersonHandsController : MonoBehaviour
 {
-    [SerializeField] private InputsManager _inputHandler;
+    [Inject] private InputManager _inputManager;
 
     [Inject] IMaskStateManager _maskStateManager;
 
@@ -31,13 +31,24 @@ public class FirstPersonHandsController : MonoBehaviour
 
     private void Start()
     {
-        _inputHandler.ShowMiddleFingerAction.performed += On_MiddleFingerPressed;
-        _inputHandler.ShowMiddleFingerAction.canceled += On_MiddleFingerReleased;
-        _inputHandler.ShowPointingFingerAction.performed += On_PointingFingerPressed;
-        _inputHandler.ShowPointingFingerAction.canceled += On_PointingFingerReleased;
+        _inputManager.ShowMiddleFingerAction.performed += On_MiddleFingerPressed;
+        _inputManager.ShowMiddleFingerAction.canceled += On_MiddleFingerReleased;
+        _inputManager.ShowPointingFingerAction.performed += On_PointingFingerPressed;
+        _inputManager.ShowPointingFingerAction.canceled += On_PointingFingerReleased;
 
         _maskStateManager.OnStateChanged += On_MaskStateChanged;
     }
+
+    private void OnDestroy()
+    {
+        _inputManager.ShowMiddleFingerAction.performed -= On_MiddleFingerPressed;
+        _inputManager.ShowMiddleFingerAction.canceled -= On_MiddleFingerReleased;
+        _inputManager.ShowPointingFingerAction.performed -= On_PointingFingerPressed;
+        _inputManager.ShowPointingFingerAction.canceled -= On_PointingFingerReleased;
+
+        _maskStateManager.OnStateChanged -= On_MaskStateChanged;
+    }
+
     public void On_MaskAnimationFinished()
     {
         _maskStateManager.ConfirmStateTransition();
@@ -56,19 +67,9 @@ public class FirstPersonHandsController : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        _inputHandler.ShowMiddleFingerAction.performed -= On_MiddleFingerPressed;
-        _inputHandler.ShowMiddleFingerAction.canceled -= On_MiddleFingerReleased;
-        _inputHandler.ShowPointingFingerAction.performed -= On_PointingFingerPressed;
-        _inputHandler.ShowPointingFingerAction.canceled -= On_PointingFingerReleased;
-
-        _maskStateManager.OnStateChanged -= On_MaskStateChanged;
-    }
-
     private void Update()
     {
-        _animator.SetFloat(SpeedHash, _inputHandler.MoveInput.magnitude);
+        _animator.SetFloat(SpeedHash, _inputManager.MoveInput.magnitude);
     }
 
     private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)
