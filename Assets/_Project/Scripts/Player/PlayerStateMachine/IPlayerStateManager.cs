@@ -2,7 +2,8 @@ using UnityEngine;
 
 public interface IPlayerStateManager
 {
-    public StateType CurrentStateType { get; }
+    public event System.Action<PlayerStateType> OnStateChanged;
+    public PlayerStateType CurrentStateType { get; }
 
-    void ChangeState(StateType state);
+    void ChangeState(PlayerStateType state);
 }

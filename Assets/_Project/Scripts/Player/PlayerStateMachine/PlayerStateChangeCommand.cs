@@ -4,13 +4,13 @@ using Zenject;
 
 public sealed class PlayerStateChangeCommand : ISyncCommand, IUndoCommand
 {
-    private readonly StateType _stateType;
+    private readonly PlayerStateType _stateType;
 
-    private StateType _previousStateType;
+    private PlayerStateType _previousStateType;
     [Inject] private IPlayerStateManager _playerStateManager;
 
     public PlayerStateChangeCommand(
-        StateType type)
+        PlayerStateType type)
     {
         _stateType = type;
     }

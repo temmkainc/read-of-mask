@@ -1,6 +1,7 @@
 using ReadOfMask.Core.StateMachine;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -23,7 +24,9 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
     private bool _isTransitioning;
     private MaskStateType? _pendingState;
 
-    public MaskStateManager(InputManager inputsManager, DiContainer diContainer)
+    [Inject] private IPlayerStateManager _playerStateManager;
+
+    public MaskStateManager(InputManager inputsManager, IPlayerStateManager playerStateManager, DiContainer diContainer)
     {
         _states[MaskStateType.NotWearing] = new NotWearingMaskState();
         _states[MaskStateType.Wearing] = new WearingMaskState();
@@ -35,11 +38,23 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
 
         _inputsManager = inputsManager;
         _inputsManager.ToggleMaskAction.performed += On_MaskToggleRequested;
+
+        _playerStateManager = playerStateManager;
+        _playerStateManager.OnStateChanged += On_PlayerStateChanged;
+    }
+
+    private void On_PlayerStateChanged(PlayerStateType type)
+    {
+        if (CurrentStateType != MaskStateType.Wearing || type != PlayerStateType.Diary)
+            return;
+
+        On_MaskToggleRequested(new InputAction.CallbackContext());
     }
 
     public void Dispose()
     {
         _inputsManager.ToggleMaskAction.performed -= On_MaskToggleRequested;
+        _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
     }
 
     private void On_MaskToggleRequested(InputAction.CallbackContext context)

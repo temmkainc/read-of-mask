@@ -20,6 +20,6 @@ public class PlayerInputToStateHandler : MonoBehaviour
 
     private void On_OpenDiaryRequested(InputAction.CallbackContext context)
     {
-        _commandBus.Register(() => new PlayerStateChangeCommand(StateType.Diary)).Execute();
+        _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Diary)).Execute();
     }
 }
