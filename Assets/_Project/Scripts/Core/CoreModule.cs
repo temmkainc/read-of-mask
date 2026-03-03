@@ -14,6 +14,7 @@ public static class CoreModule
     {
         container.Bind<InputManager>().FromNewComponentOnNewGameObject().AsSingle();
         container.Bind<CinemachineManager>().AsSingle();
+        container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();
 
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();

@@ -9,15 +9,18 @@ public class InputManager : MonoBehaviour
     public bool JumpPressed { get; private set; }
     public bool SprintHeld { get; private set; }
 
+    public InputAction InteractAction => _actions.Player.Interact;
     public InputAction ShowMiddleFingerAction => _actions.Player.ShowMiddleFinger;
     public InputAction ShowPointingFingerAction => _actions.Player.ShowPointingFinger;
     public InputAction ToggleMaskAction => _actions.Player.ToggleMask;
     public InputAction OpenDiaryAction => _actions.Player.OpenDiary;
     public InputAction CloseDiaryAction => _actions.Diary.Close;
+    public InputAction StopInteractionAction => _actions.Interaction.StopInteraction;
+    public InputAction InteractionDirectionAction => _actions.Interaction.InteractionDirection;
 
     public ActionMapType CurrentMap { get; private set; } = ActionMapType.Player;
 
-    public enum ActionMapType { Player = 0, Diary = 1 }
+    public enum ActionMapType { Player = 0, Diary = 1, Interaction = 2,}
 
     private InputSystem_Actions _actions;
 
@@ -25,6 +28,7 @@ public class InputManager : MonoBehaviour
     {
         _actions = new InputSystem_Actions();
         _actions.Enable();
+        _actions.Player.Enable();
         _actions.Diary.Disable();
         SetCursorLockState(CursorLockMode.Locked);
     }
@@ -51,6 +55,7 @@ public class InputManager : MonoBehaviour
         {
             ActionMapType.Player => _actions.Player.Get(),
             ActionMapType.Diary => _actions.Diary.Get(),
+            ActionMapType.Interaction => _actions.Interaction.Get(),
             _ => throw new ArgumentOutOfRangeException(nameof(mapType), mapType, null)
         };
     }

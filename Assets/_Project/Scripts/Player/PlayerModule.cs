@@ -9,6 +9,7 @@ public static class PlayerModule
     {
         [field: SerializeField] public PlayerStateData GeneralState { get; private set;  }
         [field: SerializeField] public PlayerStateData DiaryState { get; private set; }
+        [field: SerializeField] public PlayerStateData InteractionState { get; private set; }
     }
 
     public static void Install(DiContainer container, ConfigData config)

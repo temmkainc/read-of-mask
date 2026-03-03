@@ -11,6 +11,7 @@ public enum PlayerStateType
 {
     General,
     Diary,
+    Interaction
 }
 
 public sealed class PlayerStateManager : IPlayerStateManager
@@ -19,12 +20,13 @@ public sealed class PlayerStateManager : IPlayerStateManager
     public PlayerStateType CurrentStateType { get; private set; } = PlayerStateType.General;
 
     private readonly StateMachine<PlayerState> _playerStateMachine = new();
-    private static readonly Dictionary<PlayerStateType, PlayerState> _map = new();
+    private readonly Dictionary<PlayerStateType, PlayerState> _map = new();
 
     public PlayerStateManager(PlayerModule.ConfigData configData, InputManager inputsManager,  DiContainer diContainer)
     {
         _map[PlayerStateType.General] = new GeneralState(configData.GeneralState);
         _map[PlayerStateType.Diary] = new DiaryState(configData.DiaryState);
+        _map[PlayerStateType.Interaction] = new InteractionState(configData.InteractionState);
 
         foreach (var state in _map.Values)
         {
@@ -34,15 +36,9 @@ public sealed class PlayerStateManager : IPlayerStateManager
 
     public void ChangeState(PlayerStateType state)
     {
+        Debug.Log($"PlayerStateManager: ChangeState to {state}");
         _playerStateMachine.ChangeState(_map[state]);
         CurrentStateType = state;
         OnStateChanged?.Invoke(CurrentStateType);
-    }
-    
-    public static PlayerStateData GetStateData(PlayerStateType stateType)
-    {
-        return _map.TryGetValue(stateType, out var state)
-            ? state.Data
-            : throw new KeyNotFoundException($"State data for {stateType} not found.");
     }
 }

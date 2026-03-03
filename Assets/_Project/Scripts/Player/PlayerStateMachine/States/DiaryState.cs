@@ -8,8 +8,6 @@ public sealed class DiaryState : PlayerState
     [Inject] private InputManager _inputsManager;
     [Inject] private Diary _diary;
     
-    public int On_CloseDiaryRequested { get; private set; }
-
     public DiaryState(PlayerStateData data) : base(data)
     {
 
