@@ -277,6 +277,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3360919167960580632}
+  - component: {fileID: 6753744199583963916}
   m_Layer: 6
   m_Name: CameraSnapPoint
   m_TagString: Untagged
@@ -299,6 +300,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8609900994355986992}
   m_LocalEulerAnglesHint: {x: -3.082, y: 0, z: 0}
+--- !u!114 &6753744199583963916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774856218731211980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80ba5446a37594bada12e8d8ae628c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionLookPoint
+  _sensitivity: 1
+  _maxVerticalAngle: 30
+  _maxHorizontalAngle: 30
 --- !u!1 &918370849461580414
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,7 +1015,7 @@ MonoBehaviour:
   _turnedOnScreenCanvasGroup: {fileID: 1304473587055144380}
   _turnOnDuration: 0.1
   _turnOffDuration: 0.1
-  <CameraSnapPoint>k__BackingField: {fileID: 3360919167960580632}
+  <CameraSnapPoint>k__BackingField: {fileID: 6753744199583963916}
 --- !u!1 &3613555565318258621
 GameObject:
   m_ObjectHideFlags: 0

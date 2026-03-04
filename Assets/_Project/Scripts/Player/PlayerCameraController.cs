@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public class PlayerCameraController : MonoBehaviour
@@ -11,10 +13,10 @@ public class PlayerCameraController : MonoBehaviour
     [Inject] private InputManager _input;
     private float _xRotation;
 
-
     private void Update()
     {
-        Vector2 look = _input.LookInput * _sensitivity;
+        Vector2 lookInput = _input.PlayerLookAction?.ReadValue<Vector2>() ?? Vector2.zero;
+        Vector2 look = lookInput * _sensitivity;
 
         _playerRoot.Rotate(Vector3.up * look.x);
 

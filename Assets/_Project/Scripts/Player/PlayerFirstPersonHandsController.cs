@@ -9,9 +9,11 @@ public class FirstPersonHandsController : MonoBehaviour
 
     [Inject] IMaskStateManager _maskStateManager;
     [Inject] IPlayerStateManager _playerStateManager;
+    [Inject] PlayerController _playerController;
 
     private Animator _animator;
     private PlayerStateType _previousPlayerStateType;
+
 
     private bool _holdingMiddleFingerLastFrame = false;
     private bool _holdingPointingFingerLastFrame = false;
@@ -65,24 +67,24 @@ public class FirstPersonHandsController : MonoBehaviour
 
     private void On_PlayerStateChanged(PlayerStateType type)
     {
-        if (type == PlayerStateType.Interaction)
-            On_EnterInteractionState();
-        else if (_previousPlayerStateType == PlayerStateType.Interaction)
-            On_ExitInteractionState();
+        if (type == PlayerStateType.Gaming)
+            On_EnterGamingState();
+        else if (_previousPlayerStateType == PlayerStateType.Gaming)
+            On_ExitGamingState();
 
         _previousPlayerStateType = type;
     }
 
-    private void On_EnterInteractionState()
+    private void On_EnterGamingState()
     {
         _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, 0);
         _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0);
         _animator.SetLayerWeight(GAMING_LAYER_INDEX, _maskStateManager.CurrentStateType == MaskStateType.NotWearing ? 1 : 0);
         _animator.SetTrigger(DoStartGamingHash);
-        _inputManager.InteractionDirectionAction.performed += On_GamingDirectionPerformed;
+        _inputManager.GamingDirectionAction.performed += On_GamingDirectionPerformed;
     }
 
-    private void On_ExitInteractionState()
+    private void On_ExitGamingState()
     {
         _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, 1);
         _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1);
@@ -93,7 +95,7 @@ public class FirstPersonHandsController : MonoBehaviour
         _animator.ResetTrigger(DoGamingBottomButtonHash);
         _animator.ResetTrigger(DoGamingLeftButtonHash);
         _animator.ResetTrigger(DoGamingRightButtonHash);
-        _inputManager.InteractionDirectionAction.performed -= On_GamingDirectionPerformed;
+        _inputManager.GamingDirectionAction.performed -= On_GamingDirectionPerformed;
     }
 
     private void On_GamingDirectionPerformed(InputAction.CallbackContext ctx)
@@ -109,6 +111,15 @@ public class FirstPersonHandsController : MonoBehaviour
     public void On_MaskAnimationFinished()
     {
         _maskStateManager.ConfirmStateTransition();
+        if (_maskStateManager.CurrentStateType == MaskStateType.NotWearing)
+        {
+            if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
+            {
+                _animator.SetLayerWeight(GAMING_LAYER_INDEX, 1f);
+                _animator.Play("Empty State", GAMING_LAYER_INDEX, 0f);
+                _animator.SetTrigger(DoStartGamingHash);
+            }
+        }
     }
 
     private void On_MaskStateChanged(MaskStateType state)
@@ -117,18 +128,20 @@ public class FirstPersonHandsController : MonoBehaviour
         {
             case MaskStateType.NotWearing:
                 _animator.SetTrigger(PutOffMaskHash);
-                _animator.SetLayerWeight(GAMING_LAYER_INDEX, 1);
                 break;
             case MaskStateType.Wearing:
+                if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
+                {
+                    _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0f);
+                }
                 _animator.SetTrigger(PutOnMaskHash);
-                _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0);
                 break;
         }
     }
 
     private void Update()
     {
-        _animator.SetFloat(SpeedHash, _inputManager.MoveInput.magnitude);
+        _animator.SetFloat(SpeedHash, _playerController.MoveInput.magnitude);
     }
 
     private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)

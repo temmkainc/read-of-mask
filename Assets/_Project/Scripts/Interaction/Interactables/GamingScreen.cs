@@ -16,21 +16,27 @@ public class GamingScreen : MonoBehaviour, IInteractable
 
     private PlayerStateType _previousPlayerStateType;
 
-    [field: SerializeField] public Transform CameraSnapPoint { get; private set; }
+    [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
 
     public void Interact(Player player)
     {
-        _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint;
+        _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
         _playerStateManager.OnStateChanged += On_PlayerStateChanged;
-        _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Interaction)).Execute();
+        CameraSnapPoint.SetActive(false);
+        _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Gaming)).Execute();
     }
 
     private void On_PlayerStateChanged(PlayerStateType type)
     {
-        if (type == PlayerStateType.Interaction)
+        if (type == PlayerStateType.Gaming)
+        {
+            CameraSnapPoint.SetActive(true);
             On_EnterInteractionState().Forget();
-        else if (_previousPlayerStateType == PlayerStateType.Interaction)
+        }
+        else if (_previousPlayerStateType == PlayerStateType.Gaming)
+        {
             On_ExitInteractionState().Forget();
+        }
 
         _previousPlayerStateType = type;
     }

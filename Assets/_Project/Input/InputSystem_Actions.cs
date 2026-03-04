@@ -498,6 +498,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""48901d0e-26ad-4ac7-ad08-2ef8f23db9ea"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -610,6 +619,39 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""InteractionDirection"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43c1f57a-37e9-40f6-b507-8561214f8600"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76d9fd9f-55cc-4263-936d-25c87735eaf0"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse;Touch"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f547b7ce-9151-407b-90c0-1e2b862b95d0"",
+                    ""path"": ""<Joystick>/{Hatswitch}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Joystick"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -697,6 +739,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Interaction = asset.FindActionMap("Interaction", throwIfNotFound: true);
         m_Interaction_StopInteraction = m_Interaction.FindAction("StopInteraction", throwIfNotFound: true);
         m_Interaction_InteractionDirection = m_Interaction.FindAction("InteractionDirection", throwIfNotFound: true);
+        m_Interaction_Look = m_Interaction.FindAction("Look", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1147,6 +1190,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<IInteractionActions> m_InteractionActionsCallbackInterfaces = new List<IInteractionActions>();
     private readonly InputAction m_Interaction_StopInteraction;
     private readonly InputAction m_Interaction_InteractionDirection;
+    private readonly InputAction m_Interaction_Look;
     /// <summary>
     /// Provides access to input actions defined in input action map "Interaction".
     /// </summary>
@@ -1161,11 +1205,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <summary>
         /// Provides access to the underlying input action "Interaction/StopInteraction".
         /// </summary>
-        public InputAction @StopInteraction => m_Wrapper.m_Interaction_StopInteraction;
+        public InputAction Stop => m_Wrapper.m_Interaction_StopInteraction;
         /// <summary>
         /// Provides access to the underlying input action "Interaction/InteractionDirection".
         /// </summary>
-        public InputAction @InteractionDirection => m_Wrapper.m_Interaction_InteractionDirection;
+        public InputAction Input => m_Wrapper.m_Interaction_InteractionDirection;
+        /// <summary>
+        /// Provides access to the underlying input action "Interaction/Look".
+        /// </summary>
+        public InputAction @Look => m_Wrapper.m_Interaction_Look;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1192,12 +1240,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_InteractionActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_InteractionActionsCallbackInterfaces.Add(instance);
-            @StopInteraction.started += instance.OnStopInteraction;
-            @StopInteraction.performed += instance.OnStopInteraction;
-            @StopInteraction.canceled += instance.OnStopInteraction;
-            @InteractionDirection.started += instance.OnInteractionDirection;
-            @InteractionDirection.performed += instance.OnInteractionDirection;
-            @InteractionDirection.canceled += instance.OnInteractionDirection;
+            Stop.started += instance.OnStopInteraction;
+            Stop.performed += instance.OnStopInteraction;
+            Stop.canceled += instance.OnStopInteraction;
+            Input.started += instance.OnInteractionDirection;
+            Input.performed += instance.OnInteractionDirection;
+            Input.canceled += instance.OnInteractionDirection;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
         }
 
         /// <summary>
@@ -1209,12 +1260,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="InteractionActions" />
         private void UnregisterCallbacks(IInteractionActions instance)
         {
-            @StopInteraction.started -= instance.OnStopInteraction;
-            @StopInteraction.performed -= instance.OnStopInteraction;
-            @StopInteraction.canceled -= instance.OnStopInteraction;
-            @InteractionDirection.started -= instance.OnInteractionDirection;
-            @InteractionDirection.performed -= instance.OnInteractionDirection;
-            @InteractionDirection.canceled -= instance.OnInteractionDirection;
+            Stop.started -= instance.OnStopInteraction;
+            Stop.performed -= instance.OnStopInteraction;
+            Stop.canceled -= instance.OnStopInteraction;
+            Input.started -= instance.OnInteractionDirection;
+            Input.performed -= instance.OnInteractionDirection;
+            Input.canceled -= instance.OnInteractionDirection;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
         }
 
         /// <summary>
@@ -1247,7 +1301,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// <summary>
     /// Provides a new <see cref="InteractionActions" /> instance referencing this action map.
     /// </summary>
-    public InteractionActions @Interaction => new InteractionActions(this);
+    public InteractionActions Gaming => new InteractionActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1428,5 +1482,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteractionDirection(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Look" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLook(InputAction.CallbackContext context);
     }
 }

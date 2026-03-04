@@ -16,5 +16,7 @@ public static class PlayerModule
     {
         container.Bind<IPlayerStateManager>().To<PlayerStateManager>().AsSingle()
             .WithArguments(config).NonLazy();
+
+        container.Bind<PlayerController>().FromComponentInHierarchy().AsSingle();
     }
 }

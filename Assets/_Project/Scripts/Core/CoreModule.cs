@@ -12,7 +12,7 @@ public static class CoreModule
 
     public static void Install(DiContainer container, ConfigData config)
     {
-        container.Bind<InputManager>().FromNewComponentOnNewGameObject().AsSingle();
+        container.Bind<InputManager>().AsSingle();
         container.Bind<CinemachineManager>().AsSingle();
         container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();
 

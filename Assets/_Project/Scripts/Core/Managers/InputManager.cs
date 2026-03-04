@@ -2,29 +2,35 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : IDisposable
 {
-    public Vector2 MoveInput { get; private set; }
-    public Vector2 LookInput { get; private set; }
-    public bool JumpPressed { get; private set; }
-    public bool SprintHeld { get; private set; }
-
+    [Header("Player Map Actions")]
     public InputAction InteractAction => _actions.Player.Interact;
     public InputAction ShowMiddleFingerAction => _actions.Player.ShowMiddleFinger;
     public InputAction ShowPointingFingerAction => _actions.Player.ShowPointingFinger;
-    public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
     public InputAction OpenDiaryAction => _actions.Player.OpenDiary;
+    public InputAction PlayerLookAction => _actions.Player.Look;
+    public InputAction PlayerMoveAction => _actions.Player.Move;
+    public InputAction PlayerSprintAction => _actions.Player.Sprint;
+    public InputAction PlayerJumpAction => _actions.Player.Jump;
+    [Header("Global Map Actions")]
+    public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
+    [Header("Diary Map Actions")]
     public InputAction CloseDiaryAction => _actions.Diary.Close;
-    public InputAction StopInteractionAction => _actions.Interaction.StopInteraction;
-    public InputAction InteractionDirectionAction => _actions.Interaction.InteractionDirection;
+    [Header("Gaming Map Actions")]
+    public InputAction StopGamingAction => _actions.Gaming.Stop;
+    public InputAction GamingDirectionAction => _actions.Gaming.Input;
+    public InputAction GamingLookAction => _actions.Gaming.Look;
+
 
     public ActionMapType CurrentMap { get; private set; } = ActionMapType.Player;
+    public event Action<ActionMapType> OnActionMapChanged;
 
-    public enum ActionMapType { Player = 0, Diary = 1, Interaction = 2,}
+    public enum ActionMapType { Player = 0, Diary = 1, Gaming = 2,}
 
     private InputSystem_Actions _actions;
 
-    private void Awake()
+    public InputManager()
     {
         _actions = new InputSystem_Actions();
         _actions.Enable();
@@ -32,8 +38,14 @@ public class InputManager : MonoBehaviour
         _actions.Diary.Disable();
         SetCursorLockState(CursorLockMode.Locked);
     }
-
-    private void OnDestroy() => _actions.Dispose();
+    public void Dispose()
+    {
+        _actions.Dispose();
+    }
+    public void SetCursorLockState(CursorLockMode lockMode)
+    {
+        Cursor.lockState = lockMode;
+    }
 
     public void SwitchActionMap(ActionMapType mapType)
     {
@@ -42,11 +54,7 @@ public class InputManager : MonoBehaviour
         FindActionMapByType(CurrentMap).Disable();
         CurrentMap = mapType;
         FindActionMapByType(CurrentMap).Enable();
-    }
-
-    public void SetCursorLockState(CursorLockMode lockMode)
-    {
-        Cursor.lockState = lockMode;
+        OnActionMapChanged?.Invoke(CurrentMap);
     }
 
     private InputActionMap FindActionMapByType(ActionMapType mapType)
@@ -55,27 +63,8 @@ public class InputManager : MonoBehaviour
         {
             ActionMapType.Player => _actions.Player.Get(),
             ActionMapType.Diary => _actions.Diary.Get(),
-            ActionMapType.Interaction => _actions.Interaction.Get(),
+            ActionMapType.Gaming => _actions.Gaming.Get(),
             _ => throw new ArgumentOutOfRangeException(nameof(mapType), mapType, null)
         };
-    }
-
-    private void Update() => UpdatePlayerMovement();
-
-    private void UpdatePlayerMovement()
-    {
-        if (CurrentMap != ActionMapType.Player)
-        {
-            MoveInput = Vector2.zero;
-            LookInput = Vector2.zero;
-            JumpPressed = false;
-            SprintHeld = false;
-            return;
-        }
-
-        MoveInput = _actions.Player.Move.ReadValue<Vector2>();
-        LookInput = _actions.Player.Look.ReadValue<Vector2>();
-        JumpPressed = _actions.Player.Jump.triggered;
-        SprintHeld = _actions.Player.Sprint.IsPressed();
     }
 }
