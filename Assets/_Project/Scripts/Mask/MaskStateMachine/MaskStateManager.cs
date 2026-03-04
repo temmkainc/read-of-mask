@@ -40,21 +40,11 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
         _inputsManager.ToggleMaskAction.performed += On_MaskToggleRequested;
 
         _playerStateManager = playerStateManager;
-        _playerStateManager.OnStateChanged += On_PlayerStateChanged;
-    }
-
-    private void On_PlayerStateChanged(PlayerStateType type)
-    {
-        if (CurrentStateType != MaskStateType.Wearing || type != PlayerStateType.Diary)
-            return;
-
-        On_MaskToggleRequested(new InputAction.CallbackContext());
     }
 
     public void Dispose()
     {
         _inputsManager.ToggleMaskAction.performed -= On_MaskToggleRequested;
-        _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
     }
 
     private void On_MaskToggleRequested(InputAction.CallbackContext context)

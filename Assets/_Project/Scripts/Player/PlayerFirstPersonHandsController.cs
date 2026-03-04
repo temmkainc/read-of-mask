@@ -77,8 +77,7 @@ public class FirstPersonHandsController : MonoBehaviour
     {
         _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, 0);
         _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0);
-        _animator.SetLayerWeight(MASK_LAYER_INDEX, 0);
-        _animator.SetLayerWeight(GAMING_LAYER_INDEX, 1);
+        _animator.SetLayerWeight(GAMING_LAYER_INDEX, _maskStateManager.CurrentStateType == MaskStateType.NotWearing ? 1 : 0);
         _animator.SetTrigger(DoStartGamingHash);
         _inputManager.InteractionDirectionAction.performed += On_GamingDirectionPerformed;
     }
@@ -87,7 +86,6 @@ public class FirstPersonHandsController : MonoBehaviour
     {
         _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, 1);
         _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1);
-        _animator.SetLayerWeight(MASK_LAYER_INDEX, 1);
         _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0);
         _animator.Play("Empty State", GAMING_LAYER_INDEX, 0f);
         _animator.ResetTrigger(DoStartGamingHash);
@@ -119,9 +117,11 @@ public class FirstPersonHandsController : MonoBehaviour
         {
             case MaskStateType.NotWearing:
                 _animator.SetTrigger(PutOffMaskHash);
+                _animator.SetLayerWeight(GAMING_LAYER_INDEX, 1);
                 break;
             case MaskStateType.Wearing:
                 _animator.SetTrigger(PutOnMaskHash);
+                _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0);
                 break;
         }
     }

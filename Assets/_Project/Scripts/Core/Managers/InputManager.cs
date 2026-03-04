@@ -12,7 +12,7 @@ public class InputManager : MonoBehaviour
     public InputAction InteractAction => _actions.Player.Interact;
     public InputAction ShowMiddleFingerAction => _actions.Player.ShowMiddleFinger;
     public InputAction ShowPointingFingerAction => _actions.Player.ShowPointingFinger;
-    public InputAction ToggleMaskAction => _actions.Player.ToggleMask;
+    public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
     public InputAction OpenDiaryAction => _actions.Player.OpenDiary;
     public InputAction CloseDiaryAction => _actions.Diary.Close;
     public InputAction StopInteractionAction => _actions.Interaction.StopInteraction;

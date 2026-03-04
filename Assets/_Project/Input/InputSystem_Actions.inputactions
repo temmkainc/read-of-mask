@@ -3,6 +3,34 @@
     "name": "InputSystem_Actions",
     "maps": [
         {
+            "name": "Global",
+            "id": "8e89d51c-6e8b-4c76-8d55-df27c88b5ac0",
+            "actions": [
+                {
+                    "name": "ToggleMask",
+                    "type": "Button",
+                    "id": "0203e45e-f19d-4b5d-b8be-17623d69c4af",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3567a447-01e5-4fec-856a-5d09e954812f",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleMask",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Player",
             "id": "df70fa95-8a34-4494-b137-73ab6b9c7d37",
             "actions": [
@@ -55,15 +83,6 @@
                     "name": "ShowPointingFinger",
                     "type": "Button",
                     "id": "c55b5dc1-2974-4b1b-a6b2-95a504adbd29",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ToggleMask",
-                    "type": "Button",
-                    "id": "75595730-530f-468e-8938-504de2b7d230",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -317,17 +336,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "ShowPointingFinger",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "dddab8c4-3c83-475e-ab7d-53280ddc0b84",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ToggleMask",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
