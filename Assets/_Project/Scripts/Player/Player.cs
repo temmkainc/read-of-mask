@@ -2,15 +2,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public PlayerGrabbing Grabbing { get; private set; }
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Grabbing = GetComponent<PlayerGrabbing>();
     }
 }

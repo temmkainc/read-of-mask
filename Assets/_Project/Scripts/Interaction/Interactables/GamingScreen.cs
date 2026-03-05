@@ -20,6 +20,8 @@ public class GamingScreen : MonoBehaviour, IInteractable
 
     public void Interact(Player player)
     {
+        if(player.Grabbing.IsHolding) 
+            return;
         _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
         _playerStateManager.OnStateChanged += On_PlayerStateChanged;
         CameraSnapPoint.SetActive(false);

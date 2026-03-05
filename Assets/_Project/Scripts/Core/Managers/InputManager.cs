@@ -13,6 +13,8 @@ public class InputManager : IDisposable
     public InputAction PlayerMoveAction => _actions.Player.Move;
     public InputAction PlayerSprintAction => _actions.Player.Sprint;
     public InputAction PlayerJumpAction => _actions.Player.Jump;
+    public InputAction PlayerGrabAction => _actions.Player.Grab;
+    public InputAction PlayerThrowAction => _actions.Player.Throw;
     [Header("Global Map Actions")]
     public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
     [Header("Diary Map Actions")]

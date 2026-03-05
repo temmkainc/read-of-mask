@@ -105,6 +105,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Grab",
+                    "type": "Button",
+                    "id": "f04d3b12-5606-4a13-8864-870b41b9fbca",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "a610284c-6376-4873-9828-056ee8bb35f2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -360,6 +378,28 @@
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "841671a4-5e11-48de-81a6-c6b924400b42",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb6dbcd8-ee01-4537-ac2f-f5ffd16f040e",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -392,11 +432,11 @@
             ]
         },
         {
-            "name": "Interaction",
+            "name": "Gaming",
             "id": "5a71d39e-34c9-4ba5-86d5-8c01fd823a5b",
             "actions": [
                 {
-                    "name": "StopInteraction",
+                    "name": "Stop",
                     "type": "Button",
                     "id": "cb61ec46-a69e-4a6b-9437-4b11aae55ad0",
                     "expectedControlType": "",
@@ -405,7 +445,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "InteractionDirection",
+                    "name": "Input",
                     "type": "Value",
                     "id": "6fa928f2-20a5-45e4-a741-5896bb5ac1bc",
                     "expectedControlType": "Vector2",
@@ -431,7 +471,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "StopInteraction",
+                    "action": "Stop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -442,7 +482,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -453,7 +493,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -464,7 +504,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -475,7 +515,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -486,7 +526,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -497,7 +537,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -508,7 +548,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -519,7 +559,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -530,7 +570,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "InteractionDirection",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
