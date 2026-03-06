@@ -1,4 +1,4 @@
 public interface IHighlightable
 {
-    bool HighlightWhenHolding { get; }
+    bool CanHighlight(PlayerGrabbing grabbing);
 }

@@ -5,13 +5,20 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
 {
     [SerializeField] private float _throwForceMultiplier = 1f;
     [SerializeField] private LayerMask _grabbedLayer;
+    [SerializeField] private float _wallOffset = 0.2f;
+    [SerializeField] private float _minCameraDistance = 0.8f; 
+    [SerializeField] private float _throwForce = 10f;
 
     private Rigidbody _rb;
 
     private int _originalLayer;
     public bool IsGrabbed { get; private set; }
 
-    public bool HighlightWhenHolding => false;
+    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
+    public float WallOffset => _wallOffset;
+    public float MinCameraDistance => _minCameraDistance;
+    public float ThrowForce => _throwForce;
+
 
     private void Awake()
     {

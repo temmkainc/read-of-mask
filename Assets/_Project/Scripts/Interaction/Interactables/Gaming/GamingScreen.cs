@@ -9,6 +9,7 @@ public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
     [SerializeField] private CanvasGroup _turnedOnScreenCanvasGroup;
     [SerializeField] private float _turnOnDuration = 0.1f;
     [SerializeField] private float _turnOffDuration = 0.1f;
+    [SerializeField] private GamingCartridgeSlot _cartridgeSlot;
 
     [Inject] InteractionCinemachineCamera _interactionCamera;
     [Inject] ICommandBus _commandBus;
@@ -18,7 +19,24 @@ public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
 
     [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
 
-    public bool HighlightWhenHolding => false;
+    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
+
+
+    private void Start()
+    {
+        _cartridgeSlot.OnCartridgeInserted += On_CartridgeInserted;
+        _cartridgeSlot.OnCartridgeEjected += On_CartridgeEjected;
+    }
+
+    private void On_CartridgeEjected()
+    {
+        On_CartridgeEjectedAsync().Forget();
+    }
+
+    private void On_CartridgeInserted()
+    {
+        On_CartridgeInsertedAsync().Forget();
+    }
 
     public void Interact(Player player)
     {
@@ -36,17 +54,17 @@ public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
         if (type == PlayerStateType.Gaming)
         {
             CameraSnapPoint.SetActive(true);
-            On_EnterInteractionState().Forget();
+
         }
         else if (_previousPlayerStateType == PlayerStateType.Gaming)
         {
-            On_ExitInteractionState().Forget();
+            _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
         }
 
         _previousPlayerStateType = type;
     }
 
-    private async UniTask On_ExitInteractionState()
+    private async UniTask On_CartridgeEjectedAsync()
     {
         await _turnedOnScreenCanvasGroup
             .DOFade(1.2f, 0.05f)
@@ -57,11 +75,9 @@ public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
             .DOFade(0f, _turnOffDuration)
             .SetEase(Ease.Flash)
             .AsyncWaitForCompletion();
-
-        _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
     }
 
-    private async UniTask On_EnterInteractionState()
+    private async UniTask On_CartridgeInsertedAsync()
     {
         _turnedOnScreenCanvasGroup.alpha = 0f;
 

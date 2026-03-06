@@ -46,7 +46,7 @@ public class PlayerLookTarget
             Current = null;
 
         var highlightable = hit.collider.GetComponent<IHighlightable>();
-        bool canHighlight = highlightable != null && (!_playerGrabbing.IsHolding || highlightable.HighlightWhenHolding);
+        bool canHighlight = highlightable != null && highlightable.CanHighlight(_playerGrabbing);
 
         if (canHighlight)
         {

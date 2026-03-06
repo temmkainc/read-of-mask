@@ -14,8 +14,6 @@ public class PlayerGrabbing : MonoBehaviour
     [SerializeField] private float _maxHoldAngle = 30f;
 
     [SerializeField] private LayerMask _collisionMask; 
-    [SerializeField] private float _wallOffset = 0.2f;
-    [SerializeField] private float _minCameraToObjectDistance = 0.8f;
 
     [SerializeField] private Transform _cameraFollowTarget;
     [SerializeField] private Transform _holdPoint;
@@ -59,6 +57,36 @@ public class PlayerGrabbing : MonoBehaviour
             UpdateHeldObjectPosition();
     }
 
+    public bool TryGetHeld<T>(out T result) where T : class
+    {
+        if (_heldObject is T typed)
+        {
+            result = typed;
+            return true;
+        }
+
+        result = null;
+        return false;
+    }
+    public GameObject ReleaseHeldObject()
+    {
+        if (_heldObject == null)
+            return null;
+
+        _cameraFollowTarget.localPosition = _cameraFollowOriginalLocalPosition;
+
+        var obj = (_heldObject as MonoBehaviour).gameObject;
+
+        _heldObject.Release(Vector3.zero);
+
+        _heldObject = null;
+
+        _inputManager.PlayerGrabAction.performed -= OnThrowPerformed;
+        _inputManager.PlayerGrabAction.performed += OnGrabPerformed;
+
+        return obj;
+    }
+
     private void UpdateHeldObjectPosition()
     {
         var heldTransform = (_heldObject as MonoBehaviour).transform;
@@ -79,7 +107,7 @@ public class PlayerGrabbing : MonoBehaviour
         float dist = dir.magnitude;
         if (Physics.Raycast(_playerCamera.transform.position, dir.normalized, out RaycastHit hit, dist, _collisionMask))
         {
-            clampedPosition = hit.point + hit.normal * _wallOffset;
+            clampedPosition = hit.point + hit.normal * _heldObject.WallOffset;
             _isObjectBlocked = true;
         }
         else
@@ -110,7 +138,7 @@ public class PlayerGrabbing : MonoBehaviour
         Vector3 toObject = heldTransform.position - _playerCamera.transform.position;
         float distanceToObject = toObject.magnitude;
 
-        float pushRatio = Mathf.Clamp01((_minCameraToObjectDistance - distanceToObject) / _minCameraToObjectDistance);
+        float pushRatio = Mathf.Clamp01((_heldObject.MinCameraDistance - distanceToObject) / _heldObject.MinCameraDistance);
         float targetZ = Mathf.Lerp(_cameraFollowOriginalLocalPosition.z, _cameraFollowOriginalLocalPosition.z - 1f, pushRatio);
 
         _cameraFollowTarget.localPosition = new Vector3(
@@ -162,14 +190,12 @@ public class PlayerGrabbing : MonoBehaviour
     private void Throw()
     {
         _cameraFollowTarget.localPosition = _cameraFollowOriginalLocalPosition;
-        Vector3 force = _playerCamera.transform.forward * _throwForce;
+        Vector3 force = _playerCamera.transform.forward * _heldObject.ThrowForce;
         _heldObject.Release(force);
-        Debug.Log($"[Grabbing] Threw object with force: {force}");
         _heldObject = null;
         _inputManager.PlayerGrabAction.performed -= OnThrowPerformed;
         _inputManager.PlayerGrabAction.performed += OnGrabPerformed;
     }
-
     private async UniTaskVoid SubscribeThrowNextFrame()
     {
         await UniTask.NextFrame();
