@@ -459,6 +459,7 @@ GameObject:
   - component: {fileID: 4796208148772439091}
   - component: {fileID: 3958749370429398399}
   - component: {fileID: 5035199497665843216}
+  - component: {fileID: -9139961344322167664}
   m_Layer: 7
   m_Name: cube_C
   m_TagString: Untagged
@@ -609,6 +610,24 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-9139961344322167664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6607439132416501562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &8617493016298507419
 GameObject:
   m_ObjectHideFlags: 0

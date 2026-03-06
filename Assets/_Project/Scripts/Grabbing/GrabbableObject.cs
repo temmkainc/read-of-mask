@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class GrabbableObject : MonoBehaviour, IGrabbable
+public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
 {
     [SerializeField] private float _throwForceMultiplier = 1f;
     [SerializeField] private LayerMask _grabbedLayer;
@@ -10,6 +10,8 @@ public class GrabbableObject : MonoBehaviour, IGrabbable
 
     private int _originalLayer;
     public bool IsGrabbed { get; private set; }
+
+    public bool HighlightWhenHolding => false;
 
     private void Awake()
     {

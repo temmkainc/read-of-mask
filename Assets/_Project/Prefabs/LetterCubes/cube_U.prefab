@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 6144869997598153859}
   - component: {fileID: 342210698457944364}
   - component: {fileID: 5583673210819253019}
+  - component: {fileID: -5870726318884187909}
   m_Layer: 7
   m_Name: cube_U
   m_TagString: Untagged
@@ -253,6 +254,24 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-5870726318884187909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2552377139079620453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2724613844142388264
 GameObject:
   m_ObjectHideFlags: 0

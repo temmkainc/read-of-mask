@@ -8,7 +8,6 @@ public class PlayerGrabbing : MonoBehaviour
     public bool IsHolding => _heldObject != null;
 
     [SerializeField] private LayerMask _grabbableLayer;
-    [SerializeField] private float _grabDistance = 3f;
     [SerializeField] private float _holdDistance = 0f;
     [SerializeField] private float _throwForce = 10f;
     [SerializeField] private float _holdFollowSpeed = 10f;
@@ -28,7 +27,7 @@ public class PlayerGrabbing : MonoBehaviour
     private Vector3 _currentHoldPosition;
     private bool _isObjectBlocked;
 
-    private IRaycaster _raycaster;
+    [Inject] private PlayerLookTarget _lookTarget;
     private IGrabbable _currentLookTarget;
     private IGrabbable _heldObject;
 
@@ -39,7 +38,6 @@ public class PlayerGrabbing : MonoBehaviour
     {
         _player = GetComponent<Player>();
         _playerCamera = Camera.main;
-        _raycaster = new CameraCenterRaycaster(_playerCamera, _grabDistance, _grabbableLayer);
         _cameraFollowOriginalLocalPosition = _cameraFollowTarget.localPosition;
     }
 
@@ -124,12 +122,11 @@ public class PlayerGrabbing : MonoBehaviour
 
     private void UpdateLookTarget()
     {
-        if (_raycaster.TryHit<IGrabbable>(out var grabbable))
+        if (_lookTarget.TryGet<IGrabbable>(out var grabbable))
         {
             if (_currentLookTarget != grabbable)
             {
                 _currentLookTarget = grabbable;
-                Debug.Log($"[Grabbing] Looking at: {grabbable}");
             }
             return;
         }

@@ -4,7 +4,7 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 
-public class GamingScreen : MonoBehaviour, IInteractable
+public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
 {
     [SerializeField] private CanvasGroup _turnedOnScreenCanvasGroup;
     [SerializeField] private float _turnOnDuration = 0.1f;
@@ -18,10 +18,13 @@ public class GamingScreen : MonoBehaviour, IInteractable
 
     [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
 
+    public bool HighlightWhenHolding => false;
+
     public void Interact(Player player)
     {
         if(player.Grabbing.IsHolding) 
             return;
+
         _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
         _playerStateManager.OnStateChanged += On_PlayerStateChanged;
         CameraSnapPoint.SetActive(false);
