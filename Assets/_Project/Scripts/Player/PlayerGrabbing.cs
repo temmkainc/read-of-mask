@@ -9,7 +9,6 @@ public class PlayerGrabbing : MonoBehaviour
 
     [SerializeField] private LayerMask _grabbableLayer;
     [SerializeField] private float _holdDistance = 0f;
-    [SerializeField] private float _throwForce = 10f;
     [SerializeField] private float _holdFollowSpeed = 10f;
     [SerializeField] private float _maxHoldAngle = 30f;
 

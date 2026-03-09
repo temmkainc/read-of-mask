@@ -23,12 +23,15 @@ public class InputManager : IDisposable
     public InputAction StopGamingAction => _actions.Gaming.Stop;
     public InputAction GamingDirectionAction => _actions.Gaming.Input;
     public InputAction GamingLookAction => _actions.Gaming.Look;
+    [Header("LookCloser Map Actions")]
+    public InputAction StopLookCloserAction => _actions.LookCloser.Stop;
+    public InputAction LookCloserLookAction => _actions.LookCloser.Look;
 
 
     public ActionMapType CurrentMap { get; private set; } = ActionMapType.Player;
     public event Action<ActionMapType> OnActionMapChanged;
 
-    public enum ActionMapType { Player = 0, Diary = 1, Gaming = 2,}
+    public enum ActionMapType { Player = 0, Diary = 1, Gaming = 2, LookCloser = 3,}
 
     private InputSystem_Actions _actions;
 
@@ -66,6 +69,7 @@ public class InputManager : IDisposable
             ActionMapType.Player => _actions.Player.Get(),
             ActionMapType.Diary => _actions.Diary.Get(),
             ActionMapType.Gaming => _actions.Gaming.Get(),
+            ActionMapType.LookCloser => _actions.LookCloser.Get(),
             _ => throw new ArgumentOutOfRangeException(nameof(mapType), mapType, null)
         };
     }

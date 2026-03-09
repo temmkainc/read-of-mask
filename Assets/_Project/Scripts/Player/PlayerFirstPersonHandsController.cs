@@ -1,4 +1,4 @@
-using System;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -10,6 +10,8 @@ public class FirstPersonHandsController : MonoBehaviour
     [Inject] IMaskStateManager _maskStateManager;
     [Inject] IPlayerStateManager _playerStateManager;
     [Inject] PlayerController _playerController;
+
+    [SerializeField] private Image _handsImage;
 
     private Animator _animator;
     private PlayerStateType _previousPlayerStateType;
@@ -68,10 +70,15 @@ public class FirstPersonHandsController : MonoBehaviour
     private void On_PlayerStateChanged(PlayerStateType type)
     {
         if (type == PlayerStateType.Gaming)
+        {
             On_EnterGamingState();
+        }
         else if (_previousPlayerStateType == PlayerStateType.Gaming)
+        {
             On_ExitGamingState();
-
+        }
+        
+        _handsImage.gameObject.SetActive(type != PlayerStateType.LookCloser);
         _previousPlayerStateType = type;
     }
 

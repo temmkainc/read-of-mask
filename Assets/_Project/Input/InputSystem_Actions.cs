@@ -694,6 +694,76 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""LookCloser"",
+            ""id"": ""7f5bf435-2ed2-4996-8266-762412cfdb39"",
+            ""actions"": [
+                {
+                    ""name"": ""Stop"",
+                    ""type"": ""Button"",
+                    ""id"": ""c84a5b11-69b5-4baf-8121-16af81fd3562"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""9c3dde51-f816-46a9-bb0a-475680448b5a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""6ff664ff-dc2c-49d3-b69a-cc35320edc8f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""75cfbd60-4ec1-4d24-8622-3aa37aa1f084"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fa1407f1-181a-459e-8ab8-48a90d6dc505"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse;Touch"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ada74ed6-3185-4f69-b23e-75ae78dfd2e1"",
+                    ""path"": ""<Joystick>/{Hatswitch}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Joystick"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -782,6 +852,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Gaming_Stop = m_Gaming.FindAction("Stop", throwIfNotFound: true);
         m_Gaming_Input = m_Gaming.FindAction("Input", throwIfNotFound: true);
         m_Gaming_Look = m_Gaming.FindAction("Look", throwIfNotFound: true);
+        // LookCloser
+        m_LookCloser = asset.FindActionMap("LookCloser", throwIfNotFound: true);
+        m_LookCloser_Stop = m_LookCloser.FindAction("Stop", throwIfNotFound: true);
+        m_LookCloser_Look = m_LookCloser.FindAction("Look", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -790,6 +864,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Diary.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Diary.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Gaming.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Gaming.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_LookCloser.enabled, "This will cause a leak and performance issues, InputSystem_Actions.LookCloser.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1366,6 +1441,113 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="GamingActions" /> instance referencing this action map.
     /// </summary>
     public GamingActions @Gaming => new GamingActions(this);
+
+    // LookCloser
+    private readonly InputActionMap m_LookCloser;
+    private List<ILookCloserActions> m_LookCloserActionsCallbackInterfaces = new List<ILookCloserActions>();
+    private readonly InputAction m_LookCloser_Stop;
+    private readonly InputAction m_LookCloser_Look;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "LookCloser".
+    /// </summary>
+    public struct LookCloserActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public LookCloserActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "LookCloser/Stop".
+        /// </summary>
+        public InputAction @Stop => m_Wrapper.m_LookCloser_Stop;
+        /// <summary>
+        /// Provides access to the underlying input action "LookCloser/Look".
+        /// </summary>
+        public InputAction @Look => m_Wrapper.m_LookCloser_Look;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_LookCloser; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="LookCloserActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(LookCloserActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="LookCloserActions" />
+        public void AddCallbacks(ILookCloserActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LookCloserActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LookCloserActionsCallbackInterfaces.Add(instance);
+            @Stop.started += instance.OnStop;
+            @Stop.performed += instance.OnStop;
+            @Stop.canceled += instance.OnStop;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="LookCloserActions" />
+        private void UnregisterCallbacks(ILookCloserActions instance)
+        {
+            @Stop.started -= instance.OnStop;
+            @Stop.performed -= instance.OnStop;
+            @Stop.canceled -= instance.OnStop;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="LookCloserActions.UnregisterCallbacks(ILookCloserActions)" />.
+        /// </summary>
+        /// <seealso cref="LookCloserActions.UnregisterCallbacks(ILookCloserActions)" />
+        public void RemoveCallbacks(ILookCloserActions instance)
+        {
+            if (m_Wrapper.m_LookCloserActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="LookCloserActions.AddCallbacks(ILookCloserActions)" />
+        /// <seealso cref="LookCloserActions.RemoveCallbacks(ILookCloserActions)" />
+        /// <seealso cref="LookCloserActions.UnregisterCallbacks(ILookCloserActions)" />
+        public void SetCallbacks(ILookCloserActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LookCloserActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LookCloserActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="LookCloserActions" /> instance referencing this action map.
+    /// </summary>
+    public LookCloserActions @LookCloser => new LookCloserActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1560,6 +1742,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInput(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Look" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLook(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LookCloser" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="LookCloserActions.AddCallbacks(ILookCloserActions)" />
+    /// <seealso cref="LookCloserActions.RemoveCallbacks(ILookCloserActions)" />
+    public interface ILookCloserActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Stop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnStop(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Look" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

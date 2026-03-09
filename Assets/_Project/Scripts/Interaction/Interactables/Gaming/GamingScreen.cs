@@ -4,22 +4,12 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 
-public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
+public class GamingScreen : LookCloserInteractableBase
 {
     [SerializeField] private CanvasGroup _turnedOnScreenCanvasGroup;
     [SerializeField] private float _turnOnDuration = 0.1f;
     [SerializeField] private float _turnOffDuration = 0.1f;
     [SerializeField] private GamingCartridgeSlot _cartridgeSlot;
-
-    [Inject] InteractionCinemachineCamera _interactionCamera;
-    [Inject] ICommandBus _commandBus;
-    [Inject] IPlayerStateManager _playerStateManager;
-
-    private PlayerStateType _previousPlayerStateType;
-
-    [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
-
-    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
 
 
     private void Start()
@@ -38,7 +28,7 @@ public class GamingScreen : MonoBehaviour, IInteractable, IHighlightable
         On_CartridgeInsertedAsync().Forget();
     }
 
-    public void Interact(Player player)
+    public override void Interact(Player player)
     {
         if(player.Grabbing.IsHolding) 
             return;

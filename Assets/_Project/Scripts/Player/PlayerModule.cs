@@ -10,6 +10,7 @@ public static class PlayerModule
         [field: SerializeField] public PlayerStateData GeneralState { get; private set;  }
         [field: SerializeField] public PlayerStateData DiaryState { get; private set; }
         [field: SerializeField] public PlayerStateData InteractionState { get; private set; }
+        [field: SerializeField] public PlayerStateData LookCloserState { get; private set; }
         [field: SerializeField] public PlayerLookTarget.Config LookTargetConfig { get; private set; }
 
     }

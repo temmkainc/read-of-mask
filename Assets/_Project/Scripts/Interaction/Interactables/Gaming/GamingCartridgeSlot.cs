@@ -9,7 +9,6 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding || grabbing.TryGetHeld<GamingCartridgeItem>(out _);
 
     [SerializeField] private Transform _ejectPoint;
-    [SerializeField] private float _ejectForce = 2f;
 
     private GamingCartridgeItem _currentCartridgeItem; 
 

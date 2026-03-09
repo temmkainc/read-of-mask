@@ -3,7 +3,7 @@ using Zenject;
 
 public class InteractionLookPoint : MonoBehaviour
 {
-    [SerializeField] private float _sensitivity = 1f;
+    [SerializeField] private float _sensitivity = 0f;
     [SerializeField] private float _maxVerticalAngle = 30f;
     [SerializeField] private float _maxHorizontalAngle = 30f;
 
@@ -13,6 +13,13 @@ public class InteractionLookPoint : MonoBehaviour
     private float _yRotation;
     private bool _isActive;
 
+    private Quaternion _baseRotation;
+
+    private void Start()
+    {
+        _baseRotation = transform.localRotation;
+    }
+
     public void SetActive(bool active)
     {
         _isActive = active;
@@ -21,7 +28,7 @@ public class InteractionLookPoint : MonoBehaviour
         {
             _xRotation = 0f;
             _yRotation = 0f;
-            transform.localRotation = Quaternion.identity; 
+            transform.localRotation = _baseRotation;
         }
     }
 
@@ -37,6 +44,8 @@ public class InteractionLookPoint : MonoBehaviour
         _yRotation += look.x;
         _yRotation = Mathf.Clamp(_yRotation, -_maxHorizontalAngle, _maxHorizontalAngle);
 
-        transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0f);
+        Quaternion offset = Quaternion.Euler(_xRotation, _yRotation, 0f);
+
+        transform.localRotation = _baseRotation * offset;
     }
 }
