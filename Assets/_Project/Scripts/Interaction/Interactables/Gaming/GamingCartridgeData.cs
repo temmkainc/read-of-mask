@@ -4,5 +4,5 @@ using UnityEngine;
 public class GamingCartridgeData : ScriptableObject
 {
     public string GameName;
-    public GameObject MiniGamePrefab;
+    public MinigameType MinigameType;
 }

@@ -1,0 +1,1006 @@
+fileFormatVersion: 2
+guid: 9a0c2a9b01541bc4c8898a52ae21926d
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 908
+        width: 64
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e55f00e01610754bb651f94507b9c3b
+      internalID: -858296054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_1
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 880
+        width: 76
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63139e3bcfa40084db33bd86920f5b8f
+      internalID: 859505938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_2
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 984
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: caea75f60b6631643b3730fde7256032
+      internalID: 1340632477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_3
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 492
+        width: 64
+        height: 532
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d59a61aa12984f94799b199aa5d135ab
+      internalID: -855500231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_4
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 492
+        width: 64
+        height: 532
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6a41dac2a269dd4fac7e1a2279c5258
+      internalID: 331878481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_5
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 940
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73db3829e7e21594d8c980e9e1da9d1e
+      internalID: -914131822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_6
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 896
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e60fbc6a01b01244ad5e2ca12fdaace
+      internalID: 1339523365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_7
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 772
+        width: 92
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d933d39dc93e1c847a3df84496e81a41
+      internalID: -1101123417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_8
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 736
+        width: 96
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9f929aa82968db428a8a656a92dc788
+      internalID: -1849949629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_9
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 852
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 538feb196d747944dbe348a0f54cfbf9
+      internalID: 1730701457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_10
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 808
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 036ebfc1cb8b76141aaee6ca3fae0ac8
+      internalID: -821506902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_11
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 764
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ebadf840c5d11a4fb54762e1ec8fa4d
+      internalID: 257149537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_12
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 628
+        width: 68
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d2226d4da257b44fae8b5116a63d540
+      internalID: -1941189343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_13
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 572
+        width: 80
+        height: 148
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27651b2cbc90b56419a1371fb625a5f9
+      internalID: -1683330297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_14
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 720
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0a109ab983b1a34284160d3e5ee026e
+      internalID: 1090163358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_15
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 676
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 911e20047679cf3448fa17be77d01881
+      internalID: -1521800239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_16
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 632
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1acdb64838094fb4b94bfb7405fc264c
+      internalID: 1375459001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_17
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 508
+        width: 88
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41f6d73783fee5a40987bafd27e8d301
+      internalID: -714819170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_18
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 588
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 386bcb5e47b388d438992912a7981e19
+      internalID: -599077154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_19
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 424
+        width: 76
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e139c538e0080af45acfa27d7650f820
+      internalID: -2054947058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_20
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 544
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 968d44f18055ec841b74e1b951adf4d3
+      internalID: 1406158973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_21
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 500
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cb0c629cc821f44299924c8a1846c15
+      internalID: -1841980244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_22
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 368
+        width: 80
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2bec74be55184743bb3be8b01288510
+      internalID: -583803482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_23
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 456
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4ed6d7bf1ddc504e806ec325d618ffe
+      internalID: -144994513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_24
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 412
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d585eaa04ecd99f4898002bf5e10a331
+      internalID: -1794237240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_25
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 372
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ee046b40dc0680498a934d7708d2373
+      internalID: 1259273128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_26
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 300
+        width: 68
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77d13eae6c329ff499a76ed8182f1191
+      internalID: 833298865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_27
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 368
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0998f9d298883f043bb313f0ef46e3c4
+      internalID: 2132544064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_28
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 324
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eed0851e10b3f2f458c195b36ebba890
+      internalID: -15460176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_29
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 280
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4628ada105cc46a4e8a091a1bc9a4b4f
+      internalID: 1904320121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_30
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 172
+        width: 64
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a33845a31b73f604aa1d9a8cdcfd62fe
+      internalID: -736648796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_31
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 172
+        width: 68
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff5cabc6925c8044d8a3a906448063a8
+      internalID: -22386089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_32
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 236
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eef167d4ff156e4694f429f4517d55e
+      internalID: -143420977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_33
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 192
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e6baad9115808944992b8fda54023e8
+      internalID: -454263774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_34
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 148
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60eee27f6f2bc2447a47dc81e92d82eb
+      internalID: -1397577747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_35
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 104
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1492aa7c78703bb409f36e439a9e0aa8
+      internalID: -429206653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_36
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 60
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1139bc2c6287844987f86e3a000a3ed
+      internalID: -931682945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pong_minigame_spritesheet_37
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 16
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57a6208ae60f4c84bac58eae9847e62c
+      internalID: -447669039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      pong_minigame_spritesheet_0: -858296054
+      pong_minigame_spritesheet_1: 859505938
+      pong_minigame_spritesheet_10: -821506902
+      pong_minigame_spritesheet_11: 257149537
+      pong_minigame_spritesheet_12: -1941189343
+      pong_minigame_spritesheet_13: -1683330297
+      pong_minigame_spritesheet_14: 1090163358
+      pong_minigame_spritesheet_15: -1521800239
+      pong_minigame_spritesheet_16: 1375459001
+      pong_minigame_spritesheet_17: -714819170
+      pong_minigame_spritesheet_18: -599077154
+      pong_minigame_spritesheet_19: -2054947058
+      pong_minigame_spritesheet_2: 1340632477
+      pong_minigame_spritesheet_20: 1406158973
+      pong_minigame_spritesheet_21: -1841980244
+      pong_minigame_spritesheet_22: -583803482
+      pong_minigame_spritesheet_23: -144994513
+      pong_minigame_spritesheet_24: -1794237240
+      pong_minigame_spritesheet_25: 1259273128
+      pong_minigame_spritesheet_26: 833298865
+      pong_minigame_spritesheet_27: 2132544064
+      pong_minigame_spritesheet_28: -15460176
+      pong_minigame_spritesheet_29: 1904320121
+      pong_minigame_spritesheet_3: -855500231
+      pong_minigame_spritesheet_30: -736648796
+      pong_minigame_spritesheet_31: -22386089
+      pong_minigame_spritesheet_32: -143420977
+      pong_minigame_spritesheet_33: -454263774
+      pong_minigame_spritesheet_34: -1397577747
+      pong_minigame_spritesheet_35: -429206653
+      pong_minigame_spritesheet_36: -931682945
+      pong_minigame_spritesheet_37: -447669039
+      pong_minigame_spritesheet_4: 331878481
+      pong_minigame_spritesheet_5: -914131822
+      pong_minigame_spritesheet_6: 1339523365
+      pong_minigame_spritesheet_7: -1101123417
+      pong_minigame_spritesheet_8: -1849949629
+      pong_minigame_spritesheet_9: 1730701457
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

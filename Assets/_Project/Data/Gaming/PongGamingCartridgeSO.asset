@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d4c877867c2151408e426ef73efdb92, type: 3}
-  m_Name: SampleGamingCartridgeSO
+  m_Name: PongGamingCartridgeSO
   m_EditorClassIdentifier: Assembly-CSharp::GamingCartridgeData
-  GameName: Sample Game
-  MiniGamePrefab: {fileID: 0}
+  GameName: Pong
+  MinigameType: 0

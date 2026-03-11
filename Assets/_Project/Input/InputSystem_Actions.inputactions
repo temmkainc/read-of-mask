@@ -461,6 +461,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Action",
+                    "type": "Button",
+                    "id": "f056b3de-6515-413c-b8ea-dce206b71f06",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -604,6 +613,17 @@
                     "processors": "",
                     "groups": "Joystick",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8da1a2c9-cf8d-4f2a-9069-bc597d3df3f3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

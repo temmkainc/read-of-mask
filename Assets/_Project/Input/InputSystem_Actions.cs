@@ -547,6 +547,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Action"",
+                    ""type"": ""Button"",
+                    ""id"": ""f056b3de-6515-413c-b8ea-dce206b71f06"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -690,6 +699,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Joystick"",
                     ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8da1a2c9-cf8d-4f2a-9069-bc597d3df3f3"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -852,6 +872,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Gaming_Stop = m_Gaming.FindAction("Stop", throwIfNotFound: true);
         m_Gaming_Input = m_Gaming.FindAction("Input", throwIfNotFound: true);
         m_Gaming_Look = m_Gaming.FindAction("Look", throwIfNotFound: true);
+        m_Gaming_Action = m_Gaming.FindAction("Action", throwIfNotFound: true);
         // LookCloser
         m_LookCloser = asset.FindActionMap("LookCloser", throwIfNotFound: true);
         m_LookCloser_Stop = m_LookCloser.FindAction("Stop", throwIfNotFound: true);
@@ -1330,6 +1351,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gaming_Stop;
     private readonly InputAction m_Gaming_Input;
     private readonly InputAction m_Gaming_Look;
+    private readonly InputAction m_Gaming_Action;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gaming".
     /// </summary>
@@ -1353,6 +1375,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gaming/Look".
         /// </summary>
         public InputAction @Look => m_Wrapper.m_Gaming_Look;
+        /// <summary>
+        /// Provides access to the underlying input action "Gaming/Action".
+        /// </summary>
+        public InputAction @Action => m_Wrapper.m_Gaming_Action;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1388,6 +1414,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
+            @Action.started += instance.OnAction;
+            @Action.performed += instance.OnAction;
+            @Action.canceled += instance.OnAction;
         }
 
         /// <summary>
@@ -1408,6 +1437,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
+            @Action.started -= instance.OnAction;
+            @Action.performed -= instance.OnAction;
+            @Action.canceled -= instance.OnAction;
         }
 
         /// <summary>
@@ -1749,6 +1781,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLook(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAction(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LookCloser" which allows adding and removing callbacks.

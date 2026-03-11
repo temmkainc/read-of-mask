@@ -23,6 +23,7 @@ public class InputManager : IDisposable
     public InputAction StopGamingAction => _actions.Gaming.Stop;
     public InputAction GamingDirectionAction => _actions.Gaming.Input;
     public InputAction GamingLookAction => _actions.Gaming.Look;
+    public InputAction GamingActionAction => _actions.Gaming.Action;
     [Header("LookCloser Map Actions")]
     public InputAction StopLookCloserAction => _actions.LookCloser.Stop;
     public InputAction LookCloserLookAction => _actions.LookCloser.Look;

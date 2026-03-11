@@ -7,6 +7,7 @@ public class AppInstaller : MonoInstaller
     [SerializeField] private CoreModule.ConfigData _coreModuleConfigData;
     [SerializeField] private PlayerModule.ConfigData _playerModuleConfigData;
     [SerializeField] private DiaryModule.ConfigData _diaryModuleConfigData;
+    [SerializeField] private GamingModule.ConfigData _gamingModuleConfigData;
 
     public override void InstallBindings()
     {
@@ -14,5 +15,6 @@ public class AppInstaller : MonoInstaller
         PlayerModule.Install(Container, _playerModuleConfigData);
         MaskModule.Install(Container, _maskModuleConfigData);
         DiaryModule.Install(Container, _diaryModuleConfigData);
+        GamingModule.Install(Container, _gamingModuleConfigData);
     }
 }

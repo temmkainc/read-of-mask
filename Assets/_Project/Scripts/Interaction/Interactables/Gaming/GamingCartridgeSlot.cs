@@ -12,8 +12,10 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
 
     private GamingCartridgeItem _currentCartridgeItem; 
 
-    public event Action OnCartridgeInserted;
+    public event Action<MinigameType> OnCartridgeInserted;
     public event Action OnCartridgeEjected;
+
+    [Inject] private MinigameManager _minigameManager;
 
     public void Interact(Player player)
     {
@@ -40,7 +42,8 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
             return false;
 
         CurrentCartridge = item.CartridgeData;
-        OnCartridgeInserted?.Invoke();
+        OnCartridgeInserted?.Invoke(CurrentCartridge.MinigameType);
+        _minigameManager.OnMinigameExitedInternally += Eject;
 
         return true;
     }
@@ -53,6 +56,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
         OnCartridgeEjected?.Invoke();
 
         ThrowCartridgeOut();
+        _minigameManager.OnMinigameExitedInternally -= Eject;
     }
 
     private void ThrowCartridgeOut()
@@ -77,7 +81,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
-            rb.AddForce((_ejectPoint.forward + Vector3.up * 0.3f) * 2f, ForceMode.Impulse);
+            rb.AddForce((_ejectPoint.forward + Vector3.up * 0.1f) * 0.5f, ForceMode.Impulse);
         }
 
         _currentCartridgeItem = null;

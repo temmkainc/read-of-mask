@@ -1,8 +1,10 @@
-using System;
-using UnityEngine;
-using Zenject;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
+using System.Threading;
+using UnityEngine;
+using UnityEngine.UI;   
+using Zenject;
 
 public class GamingScreen : LookCloserInteractableBase
 {
@@ -10,7 +12,17 @@ public class GamingScreen : LookCloserInteractableBase
     [SerializeField] private float _turnOnDuration = 0.1f;
     [SerializeField] private float _turnOffDuration = 0.1f;
     [SerializeField] private GamingCartridgeSlot _cartridgeSlot;
+    [SerializeField] private Image _minigameLoadingBarImage;
 
+    [Inject] private MinigameManager _minigameManager;
+    private GamingScreenVisuals _loader;
+
+    private CancellationTokenSource _loadingCts;
+
+    private void Awake()
+    {
+        _loader = new GamingScreenVisuals(_minigameLoadingBarImage);
+    }
 
     private void Start()
     {
@@ -23,9 +35,10 @@ public class GamingScreen : LookCloserInteractableBase
         On_CartridgeEjectedAsync().Forget();
     }
 
-    private void On_CartridgeInserted()
+    private void On_CartridgeInserted(MinigameType minigameType)
     {
         On_CartridgeInsertedAsync().Forget();
+        _minigameManager.EnterMinigame(minigameType);
     }
 
     public override void Interact(Player player)
@@ -54,23 +67,41 @@ public class GamingScreen : LookCloserInteractableBase
         _previousPlayerStateType = type;
     }
 
+
+    private async UniTask On_CartridgeInsertedAsync()
+    {
+        _loadingCts?.Cancel();
+        _loadingCts = new CancellationTokenSource();
+
+        _turnedOnScreenCanvasGroup.alpha = 0f;
+
+        try
+        {
+            await _loader.SimulateLoadingAsync(_loadingCts.Token);
+            await TurnScreenOn();
+        }
+        catch (OperationCanceledException)
+        {
+            // Do nothing — screen stays off
+        }
+    }
     private async UniTask On_CartridgeEjectedAsync()
     {
-        await _turnedOnScreenCanvasGroup
-            .DOFade(1.2f, 0.05f)
-            .SetEase(Ease.Flash)
-            .AsyncWaitForCompletion();
+        _loadingCts?.Cancel();
+        _loader.Reset();
+        await TurnScreenOff();
+    }
 
+    private async UniTask TurnScreenOff()
+    {
         await _turnedOnScreenCanvasGroup
             .DOFade(0f, _turnOffDuration)
             .SetEase(Ease.Flash)
             .AsyncWaitForCompletion();
     }
 
-    private async UniTask On_CartridgeInsertedAsync()
+    private async UniTask TurnScreenOn()
     {
-        _turnedOnScreenCanvasGroup.alpha = 0f;
-
         await _turnedOnScreenCanvasGroup
             .DOFade(1f, _turnOnDuration)
             .SetEase(Ease.Flash)
