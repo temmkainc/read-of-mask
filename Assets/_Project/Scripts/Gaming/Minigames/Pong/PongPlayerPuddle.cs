@@ -9,20 +9,19 @@ public class PongPlayerPaddle : MonoBehaviour
     private float _maxY;
 
     private float _initialLocalY;
+    private Collider2D _collider;
 
-    private SpriteRenderer _sr;
-
-    public float Y => transform.localPosition.y; // Restore this for AI
+    public float Y => transform.localPosition.y; 
 
     private void Awake()
     {
         _initialLocalY = transform.localPosition.y;
-        _sr = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<Collider2D>();
     }
 
     public void SetInput(float input) => _moveInput = input;
 
-    public void SetBounds(float minOffset, float maxOffset)
+    public void Initialize(float minOffset, float maxOffset)
     {
         _minY = _initialLocalY + minOffset;
         _maxY = _initialLocalY + maxOffset;
@@ -38,16 +37,8 @@ public class PongPlayerPaddle : MonoBehaviour
 
         transform.localPosition = pos;
     }
-
-    public Rect GetRect()
+    public float GetHalfHeight()
     {
-        Vector3 pos = transform.localPosition;
-        Vector3 size = GetComponent<SpriteRenderer>().size; 
-        return new Rect(
-            pos.x - size.x / 2f,
-            pos.y - size.y / 2f,
-            size.x,
-            size.y
-        );
+        return _collider.bounds.extents.y;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Zenject;
 
 public enum MinigameType
 {
@@ -9,7 +10,7 @@ public enum MinigameType
     Pacman
 }
 
-public class MinigameManager
+public class MinigameManager : IInitializable
 {
     private readonly PongMinigame _pongGame;
 
@@ -19,6 +20,10 @@ public class MinigameManager
     public MinigameManager(GamingModule.ConfigData config)
     {
         _pongGame = config.PongMinigame;
+    }
+
+    public void Initialize()
+    {
         _pongGame.Initialize();
     }
 

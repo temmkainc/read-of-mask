@@ -37,8 +37,8 @@ public class GamingScreen : LookCloserInteractableBase
 
     private void On_CartridgeInserted(MinigameType minigameType)
     {
-        On_CartridgeInsertedAsync().Forget();
-        _minigameManager.EnterMinigame(minigameType);
+        On_CartridgeInsertedAsync(minigameType).Forget();
+
     }
 
     public override void Interact(Player player)
@@ -68,7 +68,7 @@ public class GamingScreen : LookCloserInteractableBase
     }
 
 
-    private async UniTask On_CartridgeInsertedAsync()
+    private async UniTask On_CartridgeInsertedAsync(MinigameType minigameType)
     {
         _loadingCts?.Cancel();
         _loadingCts = new CancellationTokenSource();
@@ -79,11 +79,13 @@ public class GamingScreen : LookCloserInteractableBase
         {
             await _loader.SimulateLoadingAsync(_loadingCts.Token);
             await TurnScreenOn();
+            _minigameManager.EnterMinigame(minigameType);
         }
         catch (OperationCanceledException)
         {
             // Do nothing — screen stays off
         }
+
     }
     private async UniTask On_CartridgeEjectedAsync()
     {

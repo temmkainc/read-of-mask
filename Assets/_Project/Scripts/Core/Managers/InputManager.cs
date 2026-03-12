@@ -24,6 +24,7 @@ public class InputManager : IDisposable
     public InputAction GamingDirectionAction => _actions.Gaming.Input;
     public InputAction GamingLookAction => _actions.Gaming.Look;
     public InputAction GamingActionAction => _actions.Gaming.Action;
+    public InputAction GamingPauseAction => _actions.Gaming.Pause;
     [Header("LookCloser Map Actions")]
     public InputAction StopLookCloserAction => _actions.LookCloser.Stop;
     public InputAction LookCloserLookAction => _actions.LookCloser.Look;
@@ -42,6 +43,8 @@ public class InputManager : IDisposable
         _actions.Enable();
         _actions.Player.Enable();
         _actions.Diary.Disable();
+        _actions.Gaming.Disable();
+        _actions.LookCloser.Disable();
         SetCursorLockState(CursorLockMode.Locked);
     }
     public void Dispose()

@@ -15,7 +15,7 @@ public class MinigameMenu
     private readonly InputAction _directionInputAction;
     private readonly InputAction _actionInputAction;
 
-    public Action<int> OnButtonSelected; // invoked when current button is activated
+    public Action<int> OnButtonSelected;
 
     public MinigameMenu(List<Button> buttons, InputAction directionInputAction, InputAction actionInputAction)
     {

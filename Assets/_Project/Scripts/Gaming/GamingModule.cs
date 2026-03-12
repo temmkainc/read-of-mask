@@ -12,6 +12,6 @@ public static class GamingModule
 
     public static void Install(DiContainer container, ConfigData config)
     {
-        container.Bind<MinigameManager>().AsSingle().WithArguments(config);
+        container.BindInterfacesAndSelfTo<MinigameManager>().AsSingle().WithArguments(config);
     }
 }
