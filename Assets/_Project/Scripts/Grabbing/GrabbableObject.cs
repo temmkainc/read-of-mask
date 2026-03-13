@@ -20,12 +20,12 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     public float ThrowForce => _throwForce;
 
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _rb = GetComponent<Rigidbody>();
     }
 
-    public void Grab(Player player, Transform holdPoint)
+    public virtual void Grab(Player player, Transform holdPoint)
     {
         IsGrabbed = true;
         _rb.isKinematic = true;
