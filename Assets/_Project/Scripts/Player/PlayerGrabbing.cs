@@ -8,7 +8,6 @@ public class PlayerGrabbing : MonoBehaviour
     public bool IsHolding => _heldObject != null;
 
     [SerializeField] private LayerMask _grabbableLayer;
-    [SerializeField] private float _holdDistance = 0f;
     [SerializeField] private float _holdFollowSpeed = 10f;
     [SerializeField] private float _maxHoldAngle = 30f;
 
@@ -91,16 +90,16 @@ public class PlayerGrabbing : MonoBehaviour
         var heldTransform = (_heldObject as MonoBehaviour).transform;
 
         Ray centerRay = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        Vector3 desiredPosition = centerRay.GetPoint(_holdDistance);
+        Vector3 desiredPosition = centerRay.GetPoint(_heldObject.HoldDistance);
 
         Vector3 toDesired = desiredPosition - _holdPoint.position;
         Vector3 toDesiredClamped = Vector3.RotateTowards(
-            _holdPoint.forward * _holdDistance,
+            _holdPoint.forward * _heldObject.HoldDistance,
             toDesired,
             Mathf.Deg2Rad * _maxHoldAngle,
             float.MaxValue
         );
-        Vector3 clampedPosition = _holdPoint.position + toDesiredClamped.normalized * _holdDistance;
+        Vector3 clampedPosition = _holdPoint.position + toDesiredClamped.normalized * _heldObject.HoldDistance;
 
         Vector3 dir = clampedPosition - _playerCamera.transform.position;
         float dist = dir.magnitude;

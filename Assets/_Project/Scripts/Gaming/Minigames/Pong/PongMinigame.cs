@@ -76,16 +76,6 @@ public class PongMinigame : MinigameBase
         _ball.StartRound();
     }
 
-    public override void ExitGame()
-    {
-        base.ExitGame();
-    }
-
-    public override void EnterGame()
-    {
-        base.EnterGame();
-    }
-
     public override void PauseGame()
     {
         base.PauseGame();

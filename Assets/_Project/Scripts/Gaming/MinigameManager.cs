@@ -5,7 +5,7 @@ public enum MinigameType
 {
     Pong,
     Snake,
-    Brekout,
+    Breakout,
     Tetris,
     Pacman
 }
@@ -13,6 +13,7 @@ public enum MinigameType
 public class MinigameManager : IInitializable
 {
     private readonly PongMinigame _pongGame;
+    private readonly BreakoutMinigame _breakoutMinigame;
 
     public MinigameBase CurrentGame { get; private set; }
     public event Action OnMinigameExitedInternally;
@@ -20,11 +21,13 @@ public class MinigameManager : IInitializable
     public MinigameManager(GamingModule.ConfigData config)
     {
         _pongGame = config.PongMinigame;
+        _breakoutMinigame = config.BreakoutMinigame;
     }
 
     public void Initialize()
     {
         _pongGame.Initialize();
+        _breakoutMinigame.Initialize();
     }
 
     public void EnterMinigame(MinigameType type)
@@ -56,6 +59,7 @@ public class MinigameManager : IInitializable
         return type switch
         {
             MinigameType.Pong => _pongGame,
+            MinigameType.Breakout => _breakoutMinigame,
             _ => null
         };
     }

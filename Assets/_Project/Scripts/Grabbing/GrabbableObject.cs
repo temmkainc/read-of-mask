@@ -8,6 +8,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     [SerializeField] private float _wallOffset = 0.2f;
     [SerializeField] private float _minCameraDistance = 0.8f; 
     [SerializeField] private float _throwForce = 10f;
+    [SerializeField] private float _holdDistance = 2f;
 
     private Rigidbody _rb;
 
@@ -18,7 +19,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     public float WallOffset => _wallOffset;
     public float MinCameraDistance => _minCameraDistance;
     public float ThrowForce => _throwForce;
-
+    public float HoldDistance => _holdDistance;
 
     protected virtual void Awake()
     {

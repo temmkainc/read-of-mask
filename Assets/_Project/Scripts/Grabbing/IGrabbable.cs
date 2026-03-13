@@ -6,6 +6,7 @@ public interface IGrabbable
     void Grab(Player player, Transform holdPoint);
     void Release(Vector3 throwForce);
     float WallOffset { get; }
+    float HoldDistance { get; }
     float MinCameraDistance { get; }
     float ThrowForce { get; }
 }

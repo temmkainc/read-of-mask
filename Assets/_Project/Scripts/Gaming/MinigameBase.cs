@@ -14,6 +14,7 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
     [SerializeField] protected List<Button> _menuButtons;
     [SerializeField] protected GameObject _pauseMenuRoot;
     [SerializeField] protected List<Button> _pauseMenuButtons;
+    [SerializeField] protected Camera _camera;
     [Inject] protected InputManager _inputManager;
 
     protected MinigameMenu _menu;
@@ -41,6 +42,7 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
         _menuRoot.SetActive(false); 
         _gameplayRoot.SetActive(false);
         _pauseMenuRoot.SetActive(false);
+        _camera.gameObject.SetActive(false);
     }
 
     private void On_PauseInputPerformed(InputAction.CallbackContext context)
@@ -50,6 +52,7 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
 
     public virtual void EnterGame()
     {
+        _camera.gameObject.SetActive(true);
         _isPaused = true;
         _menuRoot.SetActive(true);
         _menu.EnterMenu();
@@ -57,6 +60,7 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
 
     public virtual void ExitGame()
     {
+        _camera.gameObject.SetActive(false);
         _isPaused = true;
         _pauseInputAction.performed -= On_PauseInputPerformed;
 

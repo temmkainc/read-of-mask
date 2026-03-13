@@ -8,6 +8,7 @@ public static class GamingModule
     public struct ConfigData
     {
         public PongMinigame PongMinigame;
+        public BreakoutMinigame BreakoutMinigame;
     }
 
     public static void Install(DiContainer container, ConfigData config)
