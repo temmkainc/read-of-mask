@@ -59,7 +59,7 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
         var tagBuffer = new StringBuilder();
 
         var sizeStack = new System.Collections.Generic.Stack<float>();
-        float currentSize = 100f; 
+        float currentSize = 100f;
 
         foreach (var ch in input)
         {
@@ -133,11 +133,16 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
 
     private float GetGlyphWidth(TMP_FontAsset fontAsset, char c)
     {
-        if (!fontAsset.characterLookupTable.TryGetValue(c, out TMP_Character character))
-            return 0;
+        if (fontAsset == null) return 0f;
 
-        if (character.glyph == null)
-            return 0;
+        if (!fontAsset.characterLookupTable.TryGetValue(c, out TMP_Character character))
+        {
+            fontAsset.TryAddCharacters(c.ToString());
+            if (!fontAsset.characterLookupTable.TryGetValue(c, out character))
+                return 0f;
+        }
+
+        if (character.glyph == null) return 0f;
 
         return character.glyph.metrics.horizontalAdvance;
     }
