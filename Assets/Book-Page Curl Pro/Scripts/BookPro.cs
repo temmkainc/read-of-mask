@@ -407,7 +407,6 @@ namespace BookCurlPro
             }
             return Vector2.zero;
             #endif
-            return Input.mousePosition;
 
         }
         public void UpdateBook()
