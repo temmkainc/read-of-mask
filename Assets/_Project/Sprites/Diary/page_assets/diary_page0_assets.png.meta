@@ -179,10 +179,10 @@ TextureImporter:
       name: diary_page0_assets_2
       rect:
         serializedVersion: 2
-        x: 1193
-        y: 420
+        x: 1030
+        y: 548
         width: 693
-        height: 591
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -193,6 +193,28 @@ TextureImporter:
       bones: []
       spriteID: d0693299717689241924d64672f651e1
       internalID: 475868855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: diary_page0_assets_3
+      rect:
+        serializedVersion: 2
+        x: 1767
+        y: 24
+        width: 94
+        height: 968
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd15f20268c7f714b8dc967b4676eb6e
+      internalID: 1878556831
       vertices: []
       indices: 
       edges: []
