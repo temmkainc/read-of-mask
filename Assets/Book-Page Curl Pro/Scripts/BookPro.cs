@@ -28,6 +28,7 @@ namespace BookCurlPro
         public RectTransform RightPageTransform;
         public bool interactable = true;
         public bool enableShadowEffect = true;
+        [SerializeField] private int activePagesRadius = 3;
         [Tooltip("Uncheck this if the book does not contain transparent pages to improve the overall performance")]
         public bool hasTransparentPages = true;
         [HideInInspector]
@@ -187,18 +188,32 @@ namespace BookCurlPro
             int previousPaper = pageDragging ? currentPaper - 2 : currentPaper - 1;
 
             //Hide all pages
+            int min = Mathf.Max(0, currentPaper - activePagesRadius);
+            int max = Mathf.Min(papers.Length - 1, currentPaper + activePagesRadius);
+
             for (int i = 0; i < papers.Length; i++)
             {
-                BookUtility.HidePage(papers[i].Front);
-                papers[i].Front.transform.SetParent(BookPanel.transform);
-                BookUtility.HidePage(papers[i].Back);
-                papers[i].Back.transform.SetParent(BookPanel.transform);
+                bool inRange = i >= min && i <= max;
+
+                papers[i].Front.SetActive(inRange);
+                papers[i].Back.SetActive(inRange);
+
+                if (inRange)
+                {
+                    BookUtility.HidePage(papers[i].Front);
+                    BookUtility.HidePage(papers[i].Back);
+
+                    papers[i].Front.transform.SetParent(BookPanel.transform);
+                    papers[i].Back.transform.SetParent(BookPanel.transform);
+                }
             }
 
             if (hasTransparentPages)
             {
-                //Show the back page of all previous papers
-                for (int i = 0; i <= previousPaper; i++)
+                int prevStart = Mathf.Max(0, min);
+                int prevEnd = Mathf.Min(previousPaper, max);
+
+                for (int i = prevStart; i <= prevEnd; i++)
                 {
                     BookUtility.ShowPage(papers[i].Back);
                     papers[i].Back.transform.SetParent(BookPanel.transform);
@@ -206,8 +221,10 @@ namespace BookCurlPro
                     BookUtility.CopyTransform(LeftPageTransform.transform, papers[i].Back.transform);
                 }
 
-                //Show the front page of all next papers
-                for (int i = papers.Length - 1; i >= currentPaper; i--)
+                int nextStart = Mathf.Min(papers.Length - 1, max);
+                int nextEnd = Mathf.Max(currentPaper, min);
+
+                for (int i = nextStart; i >= nextEnd; i--)
                 {
                     BookUtility.ShowPage(papers[i].Front);
                     papers[i].Front.transform.SetSiblingIndex(papers.Length - i + previousPaper);
