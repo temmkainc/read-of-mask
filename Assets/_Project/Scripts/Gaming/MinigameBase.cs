@@ -11,14 +11,14 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
 
     [SerializeField] protected GameObject _gameplayRoot;
     [SerializeField] protected GameObject _menuRoot;
-    [SerializeField] protected List<Button> _menuButtons;
+    [SerializeField] protected List<InGameMenuItemBase> _menuButtons;
     [SerializeField] protected GameObject _pauseMenuRoot;
-    [SerializeField] protected List<Button> _pauseMenuButtons;
+    [SerializeField] protected List<InGameMenuItemBase> _pauseMenuButtons;
     [SerializeField] protected Camera _camera;
     [Inject] protected InputManager _inputManager;
 
-    protected MinigameMenu _menu;
-    protected MinigameMenu _pauseMenu;
+    protected InGameMenu _menu;
+    protected InGameMenu _pauseMenu;
 
     protected bool _isPaused = true;
 
@@ -32,12 +32,19 @@ public abstract class MinigameBase : MonoBehaviour, IMinigame
         _actionInputAction = _inputManager.GamingActionAction;
         _pauseInputAction = _inputManager.GamingPauseAction;
 
-        
-        _menu = new MinigameMenu(_menuButtons, _gamingInputAction, _actionInputAction);
-        _menu.OnButtonSelected += OnMenuButtonSelected;
-        
-        _pauseMenu = new MinigameMenu(_pauseMenuButtons, _gamingInputAction, _actionInputAction);
-        _pauseMenu.OnButtonSelected += OnPauseMenuButtonSelected;
+        _menu = new InGameMenu(
+            _menuButtons.ConvertAll(x => (IInGameMenuItem)x),
+            _gamingInputAction,
+            _actionInputAction
+        );
+        _menu.OnItemSubmitted += OnMenuButtonSelected;
+
+        _pauseMenu = new InGameMenu(
+           _pauseMenuButtons.ConvertAll(x => (IInGameMenuItem)x),
+           _gamingInputAction,
+           _actionInputAction
+       );
+        _pauseMenu.OnItemSubmitted += OnPauseMenuButtonSelected;
 
         _menuRoot.SetActive(false); 
         _gameplayRoot.SetActive(false);

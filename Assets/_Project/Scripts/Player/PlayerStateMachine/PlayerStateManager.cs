@@ -28,7 +28,7 @@ public sealed class PlayerStateManager : IPlayerStateManager
         _map[PlayerStateType.General] = new GeneralState(configData.GeneralState);
         _map[PlayerStateType.Diary] = new DiaryState(configData.DiaryState);
         _map[PlayerStateType.Gaming] = new GamingState(configData.InteractionState);
-        _map[PlayerStateType.LookCloser] = new LookCloserState(configData.InteractionState);
+        _map[PlayerStateType.LookCloser] = new LookCloserState(configData.LookCloserState);
 
         foreach (var state in _map.Values)
         {

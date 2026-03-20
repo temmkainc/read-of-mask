@@ -15,6 +15,7 @@ public class InputManager : IDisposable
     public InputAction PlayerJumpAction => _actions.Player.Jump;
     public InputAction PlayerGrabAction => _actions.Player.Grab;
     public InputAction PlayerThrowAction => _actions.Player.Throw;
+    public InputAction PlayerOpenMenuAction => _actions.Player.OpenMenu;
     [Header("Global Map Actions")]
     public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
     [Header("Diary Map Actions")]
@@ -28,6 +29,9 @@ public class InputManager : IDisposable
     [Header("LookCloser Map Actions")]
     public InputAction StopLookCloserAction => _actions.LookCloser.Stop;
     public InputAction LookCloserLookAction => _actions.LookCloser.Look;
+    public InputAction LookCloserDirectionAction => _actions.LookCloser.Input;
+    public InputAction LookCloserActionAction => _actions.LookCloser.Action;
+    
 
 
     public ActionMapType CurrentMap { get; private set; } = ActionMapType.Player;
@@ -60,6 +64,7 @@ public class InputManager : IDisposable
     {
         if (CurrentMap == mapType) return;
 
+        Debug.Log("Current Map is" + mapType);
         FindActionMapByType(CurrentMap).Disable();
         CurrentMap = mapType;
         FindActionMapByType(CurrentMap).Enable();

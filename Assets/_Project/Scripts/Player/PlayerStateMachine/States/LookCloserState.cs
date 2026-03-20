@@ -12,19 +12,19 @@ public sealed class LookCloserState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        SubscribeAfterFrame().Forget();
+        _inputsManager.StopLookCloserAction.performed += On_StopLookCloserRequestedHandler;
     }
 
     public override void Exit()
     {
         base.Exit();
-        _inputsManager.StopGamingAction.started -= On_StopLookCloserRequestedHandler;
+        _inputsManager.StopLookCloserAction.started -= On_StopLookCloserRequestedHandler;
     }
 
     private async UniTaskVoid SubscribeAfterFrame()
     {
         await UniTask.NextFrame();
-        _inputsManager.StopGamingAction.started += On_StopLookCloserRequestedHandler;
+        _inputsManager.StopLookCloserAction.started += On_StopLookCloserRequestedHandler;
     }
 
     private void On_StopLookCloserRequestedHandler(InputAction.CallbackContext context)

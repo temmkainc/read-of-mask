@@ -13,7 +13,7 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
 
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
 
-    public virtual void Interact(Player player)
+    public virtual void Interact(Player player = null)
     {
         if (player.Grabbing.IsHolding)
             return;
@@ -24,7 +24,7 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.LookCloser)).Execute();
     }
 
-    private void On_PlayerStateChanged(PlayerStateType type)
+    protected virtual void On_PlayerStateChanged(PlayerStateType type)
     {
         if (type == PlayerStateType.LookCloser)
         {

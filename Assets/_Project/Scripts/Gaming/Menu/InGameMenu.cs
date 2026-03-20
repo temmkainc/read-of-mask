@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-/// <summary>
-/// Generic menu for minigames: navigates up/down and activates buttons.
-/// </summary>
-public class MinigameMenu
+public class InGameMenu
 {
-    private readonly List<Button> _buttons;
+    private readonly List<IInGameMenuItem> _items;
     private int _focusedIndex = 0;
     private bool _isActive = false;
     private readonly InputAction _directionInputAction;
     private readonly InputAction _actionInputAction;
 
-    public Action<int> OnButtonSelected;
+    public Action<int> OnItemSubmitted;
 
-    public MinigameMenu(List<Button> buttons, InputAction directionInputAction, InputAction actionInputAction)
+    public InGameMenu(List<IInGameMenuItem> items, InputAction directionInputAction, InputAction actionInputAction)
     {
-        _buttons = buttons;
+        _items = items;
         _directionInputAction = directionInputAction;
         _actionInputAction = actionInputAction;
         UpdateFocus();
@@ -45,59 +43,50 @@ public class MinigameMenu
     private void On_DirectionInputPerformed(InputAction.CallbackContext ctx)
     {
         if (!_isActive) return;
-        if (!ctx.performed) return;
 
         Vector2 input = ctx.ReadValue<Vector2>();
 
         if (input.y > 0.5f) MoveFocusUp();
         else if (input.y < -0.5f) MoveFocusDown();
+        else if (input.x < -0.5f) _items[_focusedIndex].OnLeft();
+        else if (input.x > 0.5f) _items[_focusedIndex].OnRight();
     }
 
     private void MoveFocusUp()
     {
         _focusedIndex--;
-        if (_focusedIndex < 0) _focusedIndex = _buttons.Count - 1;
+        if (_focusedIndex < 0) _focusedIndex = _items.Count - 1;
         UpdateFocus();
     }
 
     private void MoveFocusDown()
     {
         _focusedIndex++;
-        if (_focusedIndex >= _buttons.Count) _focusedIndex = 0;
+        if (_focusedIndex >= _items.Count) _focusedIndex = 0;
         UpdateFocus();
     }
 
     private void UpdateFocus()
     {
-        for (int i = 0; i < _buttons.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
         {
-            if (i == _focusedIndex)
-            {
-                _buttons[i].transform.localScale = Vector3.one * 1.3f;
-            }
-            else
-            {
-                _buttons[i].transform.localScale = Vector3.one;
-            }
+            _items[i].OnFocus(i == _focusedIndex);
         }
-
-        Debug.Log($"Focused button: {_buttons[_focusedIndex].name}");
     }
 
     private void ClearFocus()
     {
-        foreach (var btn in _buttons)
+        foreach (var btn in _items)
         {
-            btn.transform.localScale = Vector3.one;
+            btn.OnFocus(false);
         }
     }
 
-    /// <summary>
-    /// Activate the currently focused button
-    /// </summary>
     public void On_ActionInputPerformed(InputAction.CallbackContext ctx)
     {
         if (!_isActive) return;
-        OnButtonSelected?.Invoke(_focusedIndex);
+
+        _items[_focusedIndex].OnSubmit();
+        OnItemSubmitted?.Invoke(_focusedIndex);
     }
 }
