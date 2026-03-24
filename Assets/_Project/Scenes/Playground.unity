@@ -1006,7 +1006,6 @@ GameObject:
   m_Component:
   - component: {fileID: 23496674}
   - component: {fileID: 23496678}
-  - component: {fileID: 23496677}
   - component: {fileID: 23496675}
   - component: {fileID: 23496679}
   m_Layer: 0
@@ -1053,29 +1052,6 @@ MonoBehaviour:
   _enterDelay: 0.15
   _scaleDuration: 0.6
   _sensitivityMenuItem: {fileID: 663933727}
---- !u!136 &23496677
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 23496673}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 3.3637836
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.1818918, z: 0}
 --- !u!95 &23496678
 Animator:
   serializedVersion: 7
@@ -1089,7 +1065,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 0ef730d781f7c784495f229a75d55e6f, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -7268,7 +7244,7 @@ MonoBehaviour:
   _walkSpeed: 5
   _sprintSpeed: 8
   _gravity: -9.81
-  _jumpForce: 1.5
+  _jumpForce: 1.2
   _orientation: {fileID: 1912205599}
 --- !u!143 &387639112
 CharacterController:
@@ -64763,7 +64739,7 @@ Transform:
   m_GameObject: {fileID: 1737148019}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.70710707, z: -0, w: 0.70710653}
-  m_LocalPosition: {x: -0.696, y: 0, z: -1.191}
+  m_LocalPosition: {x: -0.67, y: 0.06, z: -1.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
