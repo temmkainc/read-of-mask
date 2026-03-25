@@ -3,15 +3,17 @@ using Zenject;
 
 public class InteractionLookPoint : MonoBehaviour
 {
-    [SerializeField] private float _sensitivity = 0f;
     [SerializeField] private float _maxVerticalAngle = 30f;
     [SerializeField] private float _maxHorizontalAngle = 30f;
 
     [Inject] private InputManager _input;
+    [Inject] private GameOptions _gameOptions;
 
     private float _xRotation;
     private float _yRotation;
     private bool _isActive;
+
+    private const float SENSITIVITY_SCALE_FACTOR = 0.05f;
 
     private Quaternion _baseRotation;
 
@@ -36,7 +38,7 @@ public class InteractionLookPoint : MonoBehaviour
     {
         if (!_isActive) return;
 
-        Vector2 look = _input.GamingLookAction.ReadValue<Vector2>() * _sensitivity;
+        Vector2 look = _input.GamingLookAction.ReadValue<Vector2>() * _gameOptions.Sensitivity * SENSITIVITY_SCALE_FACTOR;
 
         _xRotation -= look.y;
         _xRotation = Mathf.Clamp(_xRotation, -_maxVerticalAngle, _maxVerticalAngle);

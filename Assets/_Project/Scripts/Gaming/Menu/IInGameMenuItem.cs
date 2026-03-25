@@ -6,4 +6,5 @@ public interface IInGameMenuItem
     void OnLeft();
     void OnRight();
     void OnSubmit();
+    void SetVisible(bool visible);
 }

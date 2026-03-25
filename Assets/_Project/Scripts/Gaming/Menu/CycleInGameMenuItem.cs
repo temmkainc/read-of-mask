@@ -1,24 +1,19 @@
 using UnityEngine;
-using System;
 using TMPro;
+using System;
 
-public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
+public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
 {
     [SerializeField] private TMP_Text _label;
     [SerializeField] private TMP_Text _valueText;
-    [SerializeField] private float _min = 0.1f;
-    [SerializeField] private float _max = 3f;
-    [SerializeField] private float _step = 0.1f;
-    [SerializeField] private float _current = 1f;
 
-    private float _confirmed;
+    private string[] _options;
+    private int _currentIndex;
+    private int _confirmedIndex;
     private bool _isEditing;
 
-    public float CurrentValue => _confirmed;
-    public float MinValue => _min;
-    public float MaxValue => _max;
-    public float Step => _step;
-    public Action<float> OnValueChanged { get; set; }
+    public string CurrentValue => _options[_confirmedIndex];
+    public Action<string> OnValueChanged { get; set; }
 
     public override void OnFocus(bool focused)
     {
@@ -27,7 +22,7 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
         if (!focused)
         {
             _isEditing = false;
-            _current = _confirmed;
+            _currentIndex = _confirmedIndex;
         }
 
         UpdateDisplay();
@@ -36,14 +31,16 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
     public override void OnLeft()
     {
         if (!_isEditing) return;
-        _current = Mathf.Clamp(_current - _step, _min, _max);
+        _currentIndex--;
+        if (_currentIndex < 0) _currentIndex = _options.Length - 1;
         UpdateDisplay();
     }
 
     public override void OnRight()
     {
         if (!_isEditing) return;
-        _current = Mathf.Clamp(_current + _step, _min, _max);
+        _currentIndex++;
+        if (_currentIndex >= _options.Length) _currentIndex = 0;
         UpdateDisplay();
     }
 
@@ -52,8 +49,8 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
         if (_isEditing)
         {
             _isEditing = false;
-            _confirmed = _current;
-            OnValueChanged?.Invoke(_confirmed);
+            _confirmedIndex = _currentIndex;
+            OnValueChanged?.Invoke(CurrentValue);
         }
         else
         {
@@ -66,8 +63,8 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
     private void UpdateDisplay()
     {
         _valueText.text = _isEditing
-            ? $"<{_current:0.0}>"
-            : _current.ToString("0.0");
+            ? $"<{_options[_currentIndex]}>"
+            : _options[_currentIndex];
         _valueText.color = new Color(
             _valueText.color.r,
             _valueText.color.g,
@@ -76,11 +73,12 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
         );
     }
 
-    public void Initialize(float startValue, Action<float> callback)
+    public void Initialize(string[] options, string startValue, Action<string> callback)
     {
-        _confirmed = Mathf.Clamp(startValue, _min, _max);
-        _current = _confirmed;
-        _valueText.text = _current.ToString("0.0");
+        _options = options;
+        _confirmedIndex = Mathf.Max(0, Array.IndexOf(options, startValue));
+        _currentIndex = _confirmedIndex;
+        _valueText.text = _options[_currentIndex];
         OnValueChanged = callback;
     }
 }

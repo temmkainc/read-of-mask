@@ -12,10 +12,11 @@ public static class CoreModule
 
     public static void Install(DiContainer container, ConfigData config)
     {
+        container.BindInterfacesAndSelfTo<GameOptions>().AsSingle();
+
         container.Bind<InputManager>().AsSingle();
         container.Bind<CinemachineManager>().AsSingle();
         container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();
-
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();
     }

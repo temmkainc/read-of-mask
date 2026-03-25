@@ -1,26 +1,28 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class InGameMenu
 {
     private readonly List<IInGameMenuItem> _items;
+    private readonly int _visibleCount;
     private int _focusedIndex = 0;
+    private int _scrollOffset = 0;    
     private bool _isActive = false;
     private readonly InputAction _directionInputAction;
     private readonly InputAction _actionInputAction;
 
     public Action<int> OnItemSubmitted;
 
-    public InGameMenu(List<IInGameMenuItem> items, InputAction directionInputAction, InputAction actionInputAction)
+    public InGameMenu(List<IInGameMenuItem> items, InputAction directionInputAction,
+                      InputAction actionInputAction, int visibleCount = int.MaxValue)
     {
         _items = items;
+        _visibleCount = Mathf.Min(visibleCount, items.Count);
         _directionInputAction = directionInputAction;
         _actionInputAction = actionInputAction;
-        UpdateFocus();
+        RefreshView();
     }
 
     public void EnterMenu()
@@ -29,14 +31,17 @@ public class InGameMenu
         _actionInputAction.performed += On_ActionInputPerformed;
         _isActive = true;
         _focusedIndex = 0;
-        UpdateFocus();
+        _scrollOffset = 0;
+        RefreshView();
     }
 
-    public void ExitMenu()
+    public void ExitMenu(bool clearFocus = true)
     {
         _directionInputAction.performed -= On_DirectionInputPerformed;
         _actionInputAction.performed -= On_ActionInputPerformed;
         _isActive = false;
+        if (!clearFocus)
+            return;
         ClearFocus();
     }
 
@@ -55,30 +60,54 @@ public class InGameMenu
     private void MoveFocusUp()
     {
         _focusedIndex--;
-        if (_focusedIndex < 0) _focusedIndex = _items.Count - 1;
-        UpdateFocus();
+
+        if (_focusedIndex < 0)
+        {
+            _focusedIndex = _items.Count - 1;
+            _scrollOffset = _items.Count - _visibleCount;
+        }
+        else if (_focusedIndex < _scrollOffset)
+        {
+            _scrollOffset--;
+        }
+
+        RefreshView();
     }
 
     private void MoveFocusDown()
     {
         _focusedIndex++;
-        if (_focusedIndex >= _items.Count) _focusedIndex = 0;
-        UpdateFocus();
+
+        if (_focusedIndex >= _items.Count)
+        {
+            _focusedIndex = 0;
+            _scrollOffset = 0;
+        }
+        else if (_focusedIndex >= _scrollOffset + _visibleCount)
+        {
+            _scrollOffset++;
+        }
+
+        RefreshView();
     }
 
-    private void UpdateFocus()
+    private void RefreshView()
     {
+        int windowEnd = _scrollOffset + _visibleCount;
+
         for (int i = 0; i < _items.Count; i++)
         {
-            _items[i].OnFocus(i == _focusedIndex);
+            bool inWindow = i >= _scrollOffset && i < windowEnd;
+            _items[i].SetVisible(inWindow);
+            _items[i].OnFocus(inWindow && i == _focusedIndex);
         }
     }
 
     private void ClearFocus()
     {
-        foreach (var btn in _items)
+        foreach (var item in _items)
         {
-            btn.OnFocus(false);
+            item.OnFocus(false);
         }
     }
 

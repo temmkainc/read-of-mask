@@ -3,36 +3,96 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Zenject;
 
 public class FacelessCharacterMenu : LookCloserInteractableBase
 {
     [SerializeField] protected List<InGameMenuItemBase> _menuItems;
+    [SerializeField] protected List<InGameMenuItemBase> _optionsItems;
+    [SerializeField] protected Transform _menuRoot;
+    [SerializeField] protected Transform _optionsRoot;
     [SerializeField] private float _enterDelay = 0.2f;
     [SerializeField] private float _scaleDuration = 0.6f;
 
     [SerializeField] private ValueInGameMenuItem _sensitivityMenuItem;
+    [SerializeField] private ValueInGameMenuItem _masterVolumeMenuItem;
+    [SerializeField] private ValueInGameMenuItem _musicVolumeMenuItem;
+    [SerializeField] private CycleInGameMenuItem _fullScreenMenuItem;
+    [SerializeField] private CycleInGameMenuItem _resolutionScreenMenuItem;
 
     [Inject] protected InputManager _inputManager;
+    [Inject] private GameOptions _options;
 
     protected InputAction _directionInputAction;
     protected InputAction _actionInputAction;
 
     protected InGameMenu _menu;
+    protected InGameMenu _optionsMenu;
+
+    private bool _isInOptions = false;
+    private const int MAX_VISIBLE_ITEMS = 4;
 
     private void Awake()
     {
         _directionInputAction = _inputManager.LookCloserDirectionAction;
         _actionInputAction = _inputManager.LookCloserActionAction;
+        InitializeOptionsMenuItems();
+        InitializeMenus();
+    }
 
+    private void OnOptionsButtonSelected(int index)
+    {
+        switch (index)
+        {
+            case 0: ToggleOptions(false); break;
+            default: break;
+        }
+    }
+
+    private void InitializeOptionsMenuItems()
+    {
+        _sensitivityMenuItem.Initialize(_options.Sensitivity,
+            value => _options.Sensitivity = value);
+
+        _masterVolumeMenuItem.Initialize(_options.MasterVolume,
+            value => _options.MasterVolume = value);
+
+        _musicVolumeMenuItem.Initialize(_options.MusicVolume,
+            value => _options.MusicVolume = value);
+
+        _fullScreenMenuItem.Initialize(
+            new[] { "On", "Off" },
+            _options.Fullscreen ? "On" : "Off",
+            value => _options.Fullscreen = value == "On"
+        );
+
+        _resolutionScreenMenuItem.Initialize(
+            new[] { "1280x720", "1920x1080" },
+            _options.Resolution,
+            value => _options.Resolution = value
+        );
+    }
+
+    private void InitializeMenus()
+    {
         _menu = new InGameMenu(
             _menuItems.ConvertAll(x => (IInGameMenuItem)x),
             _directionInputAction,
-            _actionInputAction
+            _actionInputAction,
+            MAX_VISIBLE_ITEMS
         );
-        _menu.OnItemSubmitted += OnMenuButtonSelected;
 
-        _sensitivityMenuItem.Initialize(1f, null);
+        _optionsMenu = new InGameMenu(
+            _optionsItems.ConvertAll(x => (IInGameMenuItem)x),
+            _directionInputAction,
+            _actionInputAction,
+            MAX_VISIBLE_ITEMS
+        );
+
+        _menu.OnItemSubmitted += OnMenuButtonSelected;
+        _menu.EnterMenu();
+        _optionsMenu.OnItemSubmitted += OnOptionsButtonSelected;
     }
 
     private void OnMenuButtonSelected(int index)
@@ -40,7 +100,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
         switch (index)
         {
             case 0: ContinueGame(); break;
-            case 1: break; //sensitivity;
+            case 1: ToggleOptions(true); break;
             case 2: CloseGame(); break;
         }
     }
@@ -53,25 +113,44 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
         CameraSnapPoint.SetActive(false);
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.LookCloser)).Execute();
     }
+    private void ToggleOptions(bool isEnter)
+    {
+        _isInOptions = isEnter;
+        _menuRoot.gameObject.SetActive(!isEnter);
+        _optionsRoot.gameObject.SetActive(isEnter);
 
+        if (isEnter)
+        {
+            _menu.ExitMenu();
+            _optionsMenu.EnterMenu();
+            return;
+        }
+
+        _menu.EnterMenu();
+        _optionsMenu.ExitMenu();
+    }
+    private void CloseGame()
+    {
+        Application.Quit();
+    }
     private void ContinueGame()
     {
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.General)).Execute();
         ExitMenu();
     }
-
-    private void CloseGame()
-    {
-        Application.Quit();
-    }
-
     public void EnterMenu()
     {
         DOVirtual.DelayedCall(_enterDelay, () =>
         {
             PlayEnterAnimation();
             Interact();
-            _menu.EnterMenu();
+            if (_isInOptions)
+            {
+                _optionsMenu.EnterMenu();
+            } else
+            {
+                _menu.EnterMenu();
+            }
         });
     }
     private void ExitMenu()
@@ -81,7 +160,8 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
             .OnComplete(() =>
             {
                 gameObject.SetActive(false);
-                _menu.ExitMenu();
+                _menu.ExitMenu(clearFocus: false);
+                _optionsMenu.ExitMenu(clearFocus: false);
             });
     }
     private void PlayEnterAnimation()
