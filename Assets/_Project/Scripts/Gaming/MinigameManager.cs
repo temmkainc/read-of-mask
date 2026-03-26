@@ -14,6 +14,7 @@ public class MinigameManager : IInitializable
 {
     private readonly PongMinigame _pongGame;
     private readonly BreakoutMinigame _breakoutMinigame;
+    private readonly SnakeMinigame _snakeMinigame;
 
     public MinigameBase CurrentGame { get; private set; }
     public event Action OnMinigameExitedInternally;
@@ -22,12 +23,14 @@ public class MinigameManager : IInitializable
     {
         _pongGame = config.PongMinigame;
         _breakoutMinigame = config.BreakoutMinigame;
+        _snakeMinigame = config.SnakeMinigame;
     }
 
     public void Initialize()
     {
         _pongGame.Initialize();
         _breakoutMinigame.Initialize();
+        _snakeMinigame.Initialize();
     }
 
     public void EnterMinigame(MinigameType type)
@@ -60,6 +63,7 @@ public class MinigameManager : IInitializable
         {
             MinigameType.Pong => _pongGame,
             MinigameType.Breakout => _breakoutMinigame,
+            MinigameType.Snake => _snakeMinigame,
             _ => null
         };
     }

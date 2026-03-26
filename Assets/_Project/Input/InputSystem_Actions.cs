@@ -745,7 +745,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""fc00735f-38ce-4612-940a-e5959fb28016"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

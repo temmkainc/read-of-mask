@@ -9,6 +9,7 @@ public static class GamingModule
     {
         public PongMinigame PongMinigame;
         public BreakoutMinigame BreakoutMinigame;
+        public SnakeMinigame SnakeMinigame;
     }
 
     public static void Install(DiContainer container, ConfigData config)

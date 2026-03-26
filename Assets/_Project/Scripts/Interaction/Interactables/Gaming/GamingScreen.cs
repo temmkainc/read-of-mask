@@ -52,7 +52,7 @@ public class GamingScreen : LookCloserInteractableBase
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Gaming)).Execute();
     }
 
-    private void On_PlayerStateChanged(PlayerStateType type)
+    protected override void On_PlayerStateChanged(PlayerStateType type)
     {
         if (type == PlayerStateType.Gaming)
         {
@@ -83,7 +83,7 @@ public class GamingScreen : LookCloserInteractableBase
         }
         catch (OperationCanceledException)
         {
-            // Do nothing — screen stays off
+            // Do nothing - screen stays off
         }
 
     }

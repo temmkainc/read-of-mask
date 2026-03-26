@@ -16,9 +16,6 @@ public class GamingScreenVisuals
         Reset();
     }
 
-    /// <summary>
-    /// Simulates the loading bar animation with random freezes.
-    /// </summary>
     public async UniTask SimulateLoadingAsync(CancellationToken token = default)
     {
         _loadingBarImage.fillAmount = 0f;

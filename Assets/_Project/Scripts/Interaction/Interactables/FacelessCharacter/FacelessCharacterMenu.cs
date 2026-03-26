@@ -13,7 +13,6 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     [SerializeField] protected Transform _menuRoot;
     [SerializeField] protected Transform _optionsRoot;
     [SerializeField] private float _enterDelay = 0.2f;
-    [SerializeField] private float _scaleDuration = 0.6f;
 
     [SerializeField] private ValueInGameMenuItem _sensitivityMenuItem;
     [SerializeField] private ValueInGameMenuItem _masterVolumeMenuItem;
