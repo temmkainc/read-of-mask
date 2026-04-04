@@ -140,7 +140,7 @@ TextureImporter:
         width: 245
         height: 222
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -149,6 +149,50 @@ TextureImporter:
       bones: []
       spriteID: bfd61f9c4abae25418daf31f8766b42f
       internalID: 164839998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: diary_page3_assets_2
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 21
+        width: 214
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77cf5c8d1dc59584081cf335b2cc2d40
+      internalID: -1588610623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: diary_page3_assets_3
+      rect:
+        serializedVersion: 2
+        x: 700
+        y: 173
+        width: 334
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6aaec239543d8047b4e71aca41a6fe7
+      internalID: 172565090
       vertices: []
       indices: 
       edges: []
@@ -171,6 +215,8 @@ TextureImporter:
     nameFileIdTable:
       diary_page3_assets_0: -1473027769
       diary_page3_assets_1: 164839998
+      diary_page3_assets_2: -1588610623
+      diary_page3_assets_3: 172565090
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

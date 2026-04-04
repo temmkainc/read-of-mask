@@ -9,6 +9,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     [SerializeField] private float _minCameraDistance = 0.8f; 
     [SerializeField] private float _throwForce = 10f;
     [SerializeField] private float _holdDistance = 2f;
+    [SerializeField] private Vector3 _grabRotationOffset = Vector3.zero;
 
     private Rigidbody _rb;
 
@@ -20,6 +21,11 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     public float MinCameraDistance => _minCameraDistance;
     public float ThrowForce => _throwForce;
     public float HoldDistance => _holdDistance;
+    public Quaternion GrabRotationOffset => Quaternion.Euler(_grabRotationOffset);
+
+    public SlotReceiver CurrentSlot { get; private set; }
+
+    public void SetCurrentSlot(SlotReceiver slot) => CurrentSlot = slot;
 
     protected virtual void Awake()
     {
@@ -35,9 +41,15 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
         gameObject.layer = LayerMaskToLayer(_grabbedLayer);
 
         Physics.IgnoreLayerCollision(gameObject.layer, LayerMask.NameToLayer("Player"), true);
+
+        if (CurrentSlot != null)
+        {
+            CurrentSlot.Clear();
+            CurrentSlot = null;
+        }
     }
 
-    public void Release(Vector3 throwForce)
+    public virtual void Release(Vector3 throwForce)
     {
         IsGrabbed = false;
         transform.SetParent(null);

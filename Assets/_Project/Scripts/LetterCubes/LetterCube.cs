@@ -4,9 +4,9 @@ public class LetterCube : GrabbableObject
 {
     [field: SerializeField] public char Letter { get; set; }
 
-    public LetterCubeHolder CurrentLetterCubeHolder { get; private set; }
+    public LetterCubeSlotReceiver CurrentLetterCubeHolder { get; private set; }
 
-    public void SetCurrentHolder(LetterCubeHolder letterCubeHolder)
+    public void SetCurrentHolder(LetterCubeSlotReceiver letterCubeHolder)
     {
         CurrentLetterCubeHolder = letterCubeHolder;
     }
@@ -17,7 +17,7 @@ public class LetterCube : GrabbableObject
         if (CurrentLetterCubeHolder == null)
             return;
 
-        CurrentLetterCubeHolder.SetCurrentLetter();
+        CurrentLetterCubeHolder.Clear();
         CurrentLetterCubeHolder = null;
     }
 }

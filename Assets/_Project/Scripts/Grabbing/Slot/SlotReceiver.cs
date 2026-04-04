@@ -1,0 +1,77 @@
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+
+public abstract class SlotReceiver : MonoBehaviour, IInteractable, IHighlightable
+{
+    public virtual bool CanHighlight(PlayerGrabbing grabbing) => true;
+    public abstract void Interact(Player player);
+    public abstract void Show(bool active);
+    public abstract void Clear();
+}
+
+public abstract class SlotReceiver<T> : SlotReceiver
+    where T : GrabbableObject
+{
+    [SerializeField] private float _snapDuration = 0.25f;
+
+    protected T CurrentObject { get; private set; }
+    public bool IsOccupied => CurrentObject != null;
+
+    public override bool CanHighlight(PlayerGrabbing grabbing)
+        => !grabbing.IsHolding || grabbing.TryGetHeld<T>(out _);
+
+    public override void Interact(Player player)
+    {
+        var grabbing = player.Grabbing;
+
+        if (!grabbing.TryGetHeld<T>(out var obj))
+            return;
+
+        if (!CanAccept(obj))
+            return;
+
+        grabbing.ReleaseHeldObject();
+
+        CurrentObject = obj;
+        var rb = CurrentObject.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+
+        SnapIntoPlace(CurrentObject).Forget();
+        OnObjectInserted(CurrentObject);
+    }
+
+    public override void Show(bool active) { }
+
+    protected virtual bool CanAccept(T obj) => !IsOccupied;
+
+    protected abstract void OnObjectInserted(T obj);
+
+    private async UniTask SnapIntoPlace(T obj)
+    {
+        Transform t = obj.transform;
+
+        Vector3 startPos = t.position;
+        Quaternion startRot = t.rotation;
+        float elapsed = 0f;
+
+        while (elapsed < _snapDuration)
+        {
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / _snapDuration);
+            t.position = Vector3.Lerp(startPos, transform.position, progress);
+            t.rotation = Quaternion.Slerp(startRot, transform.rotation, progress);
+            elapsed += Time.deltaTime;
+            await UniTask.Yield();
+        }
+
+        t.SetParent(transform);
+        t.localPosition = Vector3.zero;
+        t.localRotation = Quaternion.identity;
+    }
+    public override void Clear()
+    {
+        CurrentObject = null;
+        OnCleared();
+    }
+
+    protected virtual void OnCleared() { }
+}

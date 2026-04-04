@@ -9,4 +9,5 @@ public interface IGrabbable
     float HoldDistance { get; }
     float MinCameraDistance { get; }
     float ThrowForce { get; }
+    Quaternion GrabRotationOffset { get; }
 }

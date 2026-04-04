@@ -116,7 +116,11 @@ public class PlayerGrabbing : MonoBehaviour
         _currentHoldPosition = Vector3.Lerp(_currentHoldPosition, clampedPosition, Time.deltaTime * _holdFollowSpeed);
 
         heldTransform.position = _currentHoldPosition;
-        heldTransform.rotation = _holdPoint.rotation;
+        heldTransform.rotation = Quaternion.Lerp(
+            heldTransform.rotation,
+            _holdPoint.rotation * _heldObject.GrabRotationOffset,
+            Time.deltaTime * _holdFollowSpeed
+        );
 
         PushCameraFollowTargetFromHeldObject(heldTransform);
     }
