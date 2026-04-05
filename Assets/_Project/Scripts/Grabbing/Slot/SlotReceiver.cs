@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 
 public abstract class SlotReceiver : MonoBehaviour, IInteractable, IHighlightable
@@ -16,6 +17,10 @@ public abstract class SlotReceiver<T> : SlotReceiver
 
     protected T CurrentObject { get; private set; }
     public bool IsOccupied => CurrentObject != null;
+
+    public event Action<T> OnInserted;
+    public event Action OnCleared;
+
 
     public override bool CanHighlight(PlayerGrabbing grabbing)
         => !grabbing.IsHolding || grabbing.TryGetHeld<T>(out _);
@@ -44,7 +49,10 @@ public abstract class SlotReceiver<T> : SlotReceiver
 
     protected virtual bool CanAccept(T obj) => !IsOccupied;
 
-    protected abstract void OnObjectInserted(T obj);
+    protected virtual void OnObjectInserted(T obj)
+    {
+        OnInserted?.Invoke(obj);
+    }
 
     private async UniTask SnapIntoPlace(T obj)
     {
@@ -67,11 +75,10 @@ public abstract class SlotReceiver<T> : SlotReceiver
         t.localPosition = Vector3.zero;
         t.localRotation = Quaternion.identity;
     }
+
     public override void Clear()
     {
         CurrentObject = null;
-        OnCleared();
+        OnCleared?.Invoke();
     }
-
-    protected virtual void OnCleared() { }
 }

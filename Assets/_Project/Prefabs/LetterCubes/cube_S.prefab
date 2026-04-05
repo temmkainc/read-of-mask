@@ -121,7 +121,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -8.538416, y: 6.7127314, z: -0.99124336}
-  m_LocalScale: {x: 80, y: 80, z: 80}
+  m_LocalScale: {x: 55, y: 55, z: 55}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 291068045594746599}
@@ -205,6 +205,11 @@ MonoBehaviour:
   _grabbedLayer:
     serializedVersion: 2
     m_Bits: 256
+  _wallOffset: 0.2
+  _minCameraDistance: 0.8
+  _throwForce: 10
+  _holdDistance: 2
+  _grabRotationOffset: {x: 0, y: 0, z: 0}
   <Letter>k__BackingField: 83
 --- !u!65 &8715724322264659162
 BoxCollider:
