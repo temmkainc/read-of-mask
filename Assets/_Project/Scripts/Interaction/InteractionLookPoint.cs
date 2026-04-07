@@ -38,7 +38,17 @@ public class InteractionLookPoint : MonoBehaviour
     {
         if (!_isActive) return;
 
-        Vector2 look = _input.GamingLookAction.ReadValue<Vector2>() * _gameOptions.Sensitivity * SENSITIVITY_SCALE_FACTOR;
+        var inputAction = _input.CurrentMap switch
+        {
+            InputManager.ActionMapType.Gaming => _input.GamingLookAction,
+            InputManager.ActionMapType.LookCloser => _input.LookCloserLookAction,
+            _ => null
+        };
+
+        if(inputAction == null) 
+            return;
+
+        Vector2 look = inputAction.ReadValue<Vector2>() * _gameOptions.Sensitivity * SENSITIVITY_SCALE_FACTOR;
 
         _xRotation -= look.y;
         _xRotation = Mathf.Clamp(_xRotation, -_maxVerticalAngle, _maxVerticalAngle);

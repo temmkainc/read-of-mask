@@ -21,7 +21,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     public float MinCameraDistance => _minCameraDistance;
     public float ThrowForce => _throwForce;
     public float HoldDistance => _holdDistance;
-    public Quaternion GrabRotationOffset => Quaternion.Euler(_grabRotationOffset);
+    public virtual Quaternion GrabRotationOffset => Quaternion.Euler(_grabRotationOffset);
 
     public SlotReceiver CurrentSlot { get; private set; }
 
