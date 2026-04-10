@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_IntroSpeech
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_intro_speech
+  AudioClip: {fileID: 8300000, guid: 6bce4d5f9dae2424fa616176122675a0, type: 3}
+  Subtitles:
+  - startTime: 0.75
+    endTime: 1.8166667
+    text: My Boy...
+  - startTime: 3.3953333
+    endTime: 4.91
+    text: Here you go again...
+  - startTime: 5.891333
+    endTime: 8.33
+    text: You know how I dislike the mess
+  - startTime: 8.34
+    endTime: 10.35
+    text: yet you have scattered your thoughts again
+  - startTime: 11.16
+    endTime: 11.88
+    text: Like...
+  - startTime: 12.82
+    endTime: 14.32
+    text: Like old toys...

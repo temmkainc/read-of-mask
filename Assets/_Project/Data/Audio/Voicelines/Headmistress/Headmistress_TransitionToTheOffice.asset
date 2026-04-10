@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_TransitionToTheOffice
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_transition_to_the_office
+  AudioClip: {fileID: 8300000, guid: e7ae23567bbd09a4ea2dfb84107613f6, type: 3}
+  Subtitles:
+  - startTime: 0.93866664
+    endTime: 1.8986666
+    text: Though...
+  - startTime: 2.298
+    endTime: 3.829
+    text: What am I even saying?
+  - startTime: 4.837
+    endTime: 7.5676665
+    text: Your performance is falling into the galf
+  - startTime: 7.5676665
+    endTime: 9.999666
+    text: just as fast as your ability
+  - startTime: 9.999666
+    endTime: 11.492999
+    text: to keep your back straight
+  - startTime: 12.580999
+    endTime: 13.519666
+    text: You are late!
+  - startTime: 14.436999
+    endTime: 15.4609995
+    text: Again!

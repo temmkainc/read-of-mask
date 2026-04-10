@@ -26,7 +26,9 @@ public class LevelManager : IInitializable, IDisposable
 
     public void Initialize()
     {
-        GoToLevel(0);
+        _currentIndex = 0;
+        GoToLevel(_currentIndex);
+        TurnOffLevelsExcept(_currentIndex);
     }
 
     public void GoToLevel(int targetIndex)
@@ -52,6 +54,17 @@ public class LevelManager : IInitializable, IDisposable
     private void On_CurrentLevelComplete()
     {
         GoToNextLevel();
+    }
+
+    private void TurnOffLevelsExcept(int index)
+    {
+        for (int i = 0; i < _levels.Count; i++)
+        {
+            if (i != index)
+            {
+                _levels[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     private bool IsValidIndex(int index) => index >= 0 && index < _levels.Count;

@@ -3,10 +3,17 @@ using UnityEngine;
 
 public class Level01 : LevelBase
 {
+    [SerializeField] private AudioSource _headmistressAudioSource;
     public override void Begin()
     {
         base.Begin();
-        Debug.Log("Level 01 activated!");
+        PlayIntroSequence().Forget();
+    }
+
+    private async UniTask PlayIntroSequence()
+    {
+        await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressTransitionToTheOffice, _headmistressAudioSource);
+
     }
 
     protected override async UniTask BeforeCompleteAsync()
