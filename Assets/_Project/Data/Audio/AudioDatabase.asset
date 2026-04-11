@@ -15,7 +15,10 @@ MonoBehaviour:
   _voicelines:
   - {fileID: 11400000, guid: ab26066af09691f429373422b776984d, type: 2}
   - {fileID: 11400000, guid: d61bf69f36bab554591dde199c106e0c, type: 2}
+  - {fileID: 11400000, guid: 869fd622751f9d84fa843569fcd56fe0, type: 2}
   _music:
   - {fileID: 11400000, guid: 77d2fbccfa5cbc5419b629e4d309acee, type: 2}
+  - {fileID: 11400000, guid: 54edb7e6ba0ac8948b0d798cbf5d67fb, type: 2}
+  - {fileID: 11400000, guid: ffb403074ea35a7428cc852a32b2e13d, type: 2}
   _sfx:
   - {fileID: 11400000, guid: d728623d3bd6e904da4975f47a4019c5, type: 2}

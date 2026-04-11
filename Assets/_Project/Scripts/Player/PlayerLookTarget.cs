@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class PlayerLookTarget
 {
@@ -10,20 +11,23 @@ public class PlayerLookTarget
         [field: SerializeField] public LayerMask Mask { get; private set; }
     }
 
+    
     private readonly Camera _camera;
     private readonly float _distance;
     private readonly LayerMask _mask;
     private readonly HighlightManager _highlightManager;
     private readonly PlayerGrabbing _playerGrabbing;
+    private readonly IPlayerStateManager _playerStateManager;
     public object Current { get; private set; }
 
-    public PlayerLookTarget(Config config, HighlightManager highlightManager, PlayerGrabbing playerGrabbing)
+    public PlayerLookTarget(Config config, HighlightManager highlightManager, PlayerGrabbing playerGrabbing, IPlayerStateManager playerStateManager)
     {
         _camera = Camera.main;
         _distance = config.Distance;
         _mask = config.Mask;
         _highlightManager = highlightManager;
 
+        _playerStateManager = playerStateManager;
         _playerGrabbing = playerGrabbing;
     }
 
@@ -46,7 +50,7 @@ public class PlayerLookTarget
             Current = null;
 
         var highlightable = hit.collider.GetComponent<IHighlightable>();
-        bool canHighlight = highlightable != null && highlightable.CanHighlight(_playerGrabbing);
+        bool canHighlight = highlightable != null && highlightable.CanHighlight(_playerGrabbing) && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
 
         if (canHighlight)
         {

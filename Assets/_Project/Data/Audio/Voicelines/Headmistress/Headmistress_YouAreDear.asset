@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_YouAreDear
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_you_are_dear
+  AudioClip: {fileID: 8300000, guid: 094ede03de8659940b24bef89a5b5e51, type: 3}
+  Subtitles:
+  - startTime: 0
+    endTime: 1.8133334
+    text: You are very dear to me
+  - startTime: 2.3893335
+    endTime: 3.7760003
+    text: and you know that
+  - startTime: 4.4160004
+    endTime: 7.96
+    text: But there must be an ORDER in everything
+  - startTime: 8.64
+    endTime: 11.7
+    text: Everything in life has its place
+  - startTime: 12.41
+    endTime: 13.64
+    text: even you
+  - startTime: 14.23
+    endTime: 15.92
+    text: Pick up the letter.

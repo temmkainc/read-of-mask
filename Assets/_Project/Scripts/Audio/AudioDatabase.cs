@@ -43,10 +43,12 @@ public static class Voicelines
 {
     public const string HeadmistressIntroSpeech = "headmistress_intro_speech";
     public const string HeadmistressTransitionToTheOffice = "headmistress_transition_to_the_office";
+    public const string HeadmistressYouAreDear = "headmistress_you_are_dear";
 }
 public static class MusicTracks
 {
     public const string Level00Intro = "level00_intro_music";
+    public const string Level01Music = "level01_music";
 }
 public static class SfxTracks
 {

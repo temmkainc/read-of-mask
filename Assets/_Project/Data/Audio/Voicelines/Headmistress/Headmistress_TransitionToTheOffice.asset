@@ -15,24 +15,24 @@ MonoBehaviour:
   Id: headmistress_transition_to_the_office
   AudioClip: {fileID: 8300000, guid: e7ae23567bbd09a4ea2dfb84107613f6, type: 3}
   Subtitles:
-  - startTime: 0.93866664
-    endTime: 1.8986666
+  - startTime: 0
+    endTime: 0.78
     text: Though...
-  - startTime: 2.298
-    endTime: 3.829
+  - startTime: 1.42
+    endTime: 2.68
     text: What am I even saying?
-  - startTime: 4.837
-    endTime: 7.5676665
+  - startTime: 3.87
+    endTime: 6.56
     text: Your performance is falling into the galf
-  - startTime: 7.5676665
-    endTime: 9.999666
+  - startTime: 6.55
+    endTime: 8.72
     text: just as fast as your ability
-  - startTime: 9.999666
-    endTime: 11.492999
+  - startTime: 8.73
+    endTime: 10.36
     text: to keep your back straight
-  - startTime: 12.580999
-    endTime: 13.519666
+  - startTime: 11.69
+    endTime: 12.4
     text: You are late!
-  - startTime: 14.436999
-    endTime: 15.4609995
+  - startTime: 13.6
+    endTime: 14.2
     text: Again!

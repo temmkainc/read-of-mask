@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioDatabase _db;
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource _musicSource;
+    [SerializeField] private AudioSource _defaultMusicSource;
     [SerializeField] private AudioSource _sfxSource;
     [SerializeField] private AudioSource _defaultVoiceSource;
 
@@ -37,7 +37,7 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
-    // ── Volume ───────────────────────────────────────────────────────────────
+    // Volume
 
     public void SetMasterVolume(float v) { _masterVolume = Mathf.Clamp01(v); ApplyVolumes(); }
     public void SetMusicVolume(float v) { _musicVolume = Mathf.Clamp01(v); ApplyVolumes(); }
@@ -46,87 +46,95 @@ public class AudioManager : MonoBehaviour
 
     private void ApplyVolumes()
     {
-        if (_musicSource) _musicSource.volume = _masterVolume * _musicVolume;
+        if (_defaultMusicSource) _defaultMusicSource.volume = _masterVolume * _musicVolume;
         if (_sfxSource) _sfxSource.volume = _masterVolume * _sfxVolume;
         if (_defaultVoiceSource) _defaultVoiceSource.volume = _masterVolume * _voiceVolume;
     }
 
-    // ── Music ────────────────────────────────────────────────────────────────
+    // Music
+    private AudioSource _currentMusicSource;
 
-    public void PlayMusic(string id, float fadeDuration = 1.5f)
+    public void PlayMusic(string id, float fadeDuration = 0, AudioSource source = null)
     {
         var data = _db.GetMusic(id);
         if (data == null || data.AudioClip == null) return;
 
+        var sourceToPlay = source ?? _defaultMusicSource;
+
         if (_musicFadeRoutine != null)
             StopCoroutine(_musicFadeRoutine);
 
-        if (_musicSource.isPlaying)
-            _musicFadeRoutine = StartCoroutine(CrossfadeMusic(data.AudioClip, fadeDuration));
+        if (_currentMusicSource != null && _currentMusicSource.isPlaying)
+            _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, sourceToPlay, data.AudioClip, fadeDuration));
         else
-            StartInstantMusic(data.AudioClip, fadeDuration);
-    }
-    private void StartInstantMusic(AudioClip clip, float fadeDuration)
-    {
-        _musicSource.clip = clip;
-        _musicSource.volume = 0f;
-        _musicSource.Play();
+            StartInstantMusic(data.AudioClip, fadeDuration, sourceToPlay);
 
-        StartCoroutine(FadeInMusic(fadeDuration));
+        _currentMusicSource = sourceToPlay;
     }
-    private IEnumerator FadeInMusic(float duration)
+
+    private void StartInstantMusic(AudioClip clip, float fadeDuration, AudioSource source)
+    {
+        source.clip = clip;
+        source.volume = 0f;
+        source.Play();
+        StartCoroutine(FadeInMusic(fadeDuration, source));
+    }
+
+    private IEnumerator FadeInMusic(float duration, AudioSource source)
     {
         float targetVol = _masterVolume * _musicVolume;
-
         float elapsed = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            _musicSource.volume = Mathf.Lerp(0f, targetVol, elapsed / duration);
+            source.volume = Mathf.Lerp(0f, targetVol, elapsed / duration);
             yield return null;
         }
-
-        _musicSource.volume = targetVol;
+        source.volume = targetVol;
     }
 
     public void StopMusic(float fadeDuration = 1.5f)
     {
         if (_musicFadeRoutine != null) StopCoroutine(_musicFadeRoutine);
-        _musicFadeRoutine = StartCoroutine(CrossfadeMusic(null, fadeDuration));
+        if (_currentMusicSource != null)
+            _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, null, null, fadeDuration));
     }
 
-    private IEnumerator CrossfadeMusic(AudioClip newClip, float duration)
+    private IEnumerator CrossfadeMusic(AudioSource oldSource, AudioSource newSource, AudioClip newClip, float duration)
     {
         float targetVol = _masterVolume * _musicVolume;
-        float startVol = _musicSource.volume;
+        float startVol = oldSource.volume;
 
+        // Fade out old source
         float elapsed = 0f;
         while (elapsed < duration * 0.5f)
         {
             elapsed += Time.deltaTime;
-            _musicSource.volume = Mathf.Lerp(startVol, 0f, elapsed / (duration * 0.5f));
+            oldSource.volume = Mathf.Lerp(startVol, 0f, elapsed / (duration * 0.5f));
             yield return null;
         }
+        oldSource.Stop();
+        oldSource.volume = 0f;
 
-        _musicSource.Stop();
-        if (newClip != null)
+        // Fade in new source
+        if (newSource != null && newClip != null)
         {
-            _musicSource.clip = newClip;
-            _musicSource.Play();
+            newSource.clip = newClip;
+            newSource.volume = 0f;
+            newSource.Play();
 
             elapsed = 0f;
             while (elapsed < duration * 0.5f)
             {
                 elapsed += Time.deltaTime;
-                _musicSource.volume = Mathf.Lerp(0f, targetVol, elapsed / (duration * 0.5f));
+                newSource.volume = Mathf.Lerp(0f, targetVol, elapsed / (duration * 0.5f));
                 yield return null;
             }
+            newSource.volume = targetVol;
         }
-
-        _musicSource.volume = newClip != null ? targetVol : 0f;
     }
 
-    // ── SFX ──────────────────────────────────────────────────────────────────
+    // SFX
 
     public void PlaySFX(string id, float volumeScale = 1f)
     {
@@ -136,9 +144,10 @@ public class AudioManager : MonoBehaviour
     }
 
 
+    private AudioSource _currentVoiceSource;
+    private bool _voicelineInProgress;
 
-
-    public async UniTask PlayVoicelineAsync(string id, AudioSource source = null)
+    public async UniTask PlayVoicelineAsync(string id, AudioSource source = null, CancellationToken externalToken = default)
     {
         var data = _db.GetVoiceline(id);
         if (data == null || data.AudioClip == null)
@@ -146,11 +155,28 @@ public class AudioManager : MonoBehaviour
 
         var sourceToPlay = source ?? _defaultVoiceSource;
 
+        // Guard: don't play on a dead/disabled source
+        if (sourceToPlay == null || !sourceToPlay.gameObject.activeInHierarchy)
+            return;
+
+        bool isInterrupting = _voicelineInProgress;
+
+        if (_currentVoiceSource != null && _currentVoiceSource.isPlaying)
+            _currentVoiceSource.Stop();
+
         _voiceCts?.Cancel();
         _voiceCts?.Dispose();
         _voiceCts = new CancellationTokenSource();
-   
-        var token = _voiceCts.Token;
+
+        var linkedCts = externalToken != default
+            ? CancellationTokenSource.CreateLinkedTokenSource(_voiceCts.Token, externalToken)
+            : _voiceCts;
+
+        _currentVoiceSource = sourceToPlay;
+        _voicelineInProgress = true;
+
+        if (isInterrupting)
+            PlaySFX(SfxTracks.VoicelineInterruptionSound);
 
         sourceToPlay.clip = data.AudioClip;
         sourceToPlay.Play();
@@ -159,14 +185,16 @@ public class AudioManager : MonoBehaviour
 
         try
         {
-            await UniTask.WaitUntil(
-                () => !sourceToPlay.isPlaying,
-                cancellationToken: token
+            await UniTask.Delay(
+                TimeSpan.FromSeconds(data.AudioClip.length),
+                cancellationToken: linkedCts.Token
             );
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) { }
+        finally
         {
-            // expected on interrupt
+            if (linkedCts != _voiceCts) linkedCts.Dispose();
+            _voicelineInProgress = false;
         }
     }
 }
