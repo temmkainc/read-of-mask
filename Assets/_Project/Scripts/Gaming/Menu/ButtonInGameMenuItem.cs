@@ -5,8 +5,9 @@ public class ButtonInGameMenuItem : InGameMenuItemBase
 {
     [SerializeField] private Button _button;
 
-    public override void OnFocus(bool focused)
+    public override void OnFocus(bool focused, bool playSound = true)
     {
+        base.OnFocus(focused, playSound);
         transform.localScale = focused ? Vector3.one * 1.1f : Vector3.one;
     }
 
@@ -15,6 +16,7 @@ public class ButtonInGameMenuItem : InGameMenuItemBase
 
     public override void OnSubmit()
     {
+        base.OnSubmit();
         _button.onClick.Invoke();
     }
 }

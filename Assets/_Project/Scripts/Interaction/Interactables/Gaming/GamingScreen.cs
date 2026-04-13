@@ -13,6 +13,7 @@ public class GamingScreen : LookCloserInteractableBase
     [SerializeField] private float _turnOffDuration = 0.1f;
     [SerializeField] private GamingCartridgeSlot _cartridgeSlot;
     [SerializeField] private Image _minigameLoadingBarImage;
+    [SerializeField] private AudioSource _audioSource;
 
     [Inject] private MinigameManager _minigameManager;
     private GamingScreenVisuals _loader;
@@ -33,12 +34,13 @@ public class GamingScreen : LookCloserInteractableBase
     private void On_CartridgeEjected()
     {
         On_CartridgeEjectedAsync().Forget();
+        AudioManager.Instance.CurrentMinigamesSource = null;
     }
 
     private void On_CartridgeInserted(MinigameType minigameType)
     {
         On_CartridgeInsertedAsync(minigameType).Forget();
-
+        AudioManager.Instance.CurrentMinigamesSource = _audioSource;
     }
 
     public override void Interact(Player player)
@@ -79,6 +81,12 @@ public class GamingScreen : LookCloserInteractableBase
         {
             await _loader.SimulateLoadingAsync(_loadingCts.Token);
             await TurnScreenOn();
+
+            var musicId = GetMusicIdForMinigame(minigameType);
+            if (string.IsNullOrEmpty(musicId))
+                return;
+
+            AudioManager.Instance.PlayMusicForSource(musicId, _audioSource);
             _minigameManager.EnterMinigame(minigameType);
         }
         catch (OperationCanceledException)
@@ -92,6 +100,8 @@ public class GamingScreen : LookCloserInteractableBase
         _loadingCts?.Cancel();
         _loader.Reset();
         await TurnScreenOff();
+        _minigameManager.ExitCurrentMinigame();
+        AudioManager.Instance.StopMusicForSource(_audioSource);
     }
 
     private async UniTask TurnScreenOff()
@@ -108,5 +118,16 @@ public class GamingScreen : LookCloserInteractableBase
             .DOFade(1f, _turnOnDuration)
             .SetEase(Ease.Flash)
             .AsyncWaitForCompletion();
+    }
+
+    private string GetMusicIdForMinigame(MinigameType type)
+    {
+        return type switch
+        {
+            MinigameType.Pong => MusicTracks.PongMusic,
+            //MinigameType.Platformer => MusicTracks.PlatformerMusic,
+            //MinigameType.Puzzle => MusicTracks.PuzzleGameMusic,
+            _ => null
+        };
     }
 }

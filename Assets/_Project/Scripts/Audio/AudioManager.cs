@@ -29,6 +29,8 @@ public class AudioManager : MonoBehaviour
     
     private CancellationTokenSource _voiceCts;
 
+    public AudioSource CurrentMinigamesSource { get; set; }
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -54,7 +56,7 @@ public class AudioManager : MonoBehaviour
     // Music
     private AudioSource _currentMusicSource;
 
-    public void PlayMusic(string id, float fadeDuration = 0, AudioSource source = null)
+    public void PlayMusic(string id, float fadeDuration = 0, AudioSource source = null, bool loop = true)
     {
         var data = _db.GetMusic(id);
         if (data == null || data.AudioClip == null) return;
@@ -67,15 +69,17 @@ public class AudioManager : MonoBehaviour
         if (_currentMusicSource != null && _currentMusicSource.isPlaying)
             _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, sourceToPlay, data.AudioClip, fadeDuration));
         else
-            StartInstantMusic(data.AudioClip, fadeDuration, sourceToPlay);
+            StartInstantMusic(data.AudioClip, fadeDuration, sourceToPlay, loop);
 
         _currentMusicSource = sourceToPlay;
     }
 
-    private void StartInstantMusic(AudioClip clip, float fadeDuration, AudioSource source)
+
+    private void StartInstantMusic(AudioClip clip, float fadeDuration, AudioSource source, bool loop)
     {
         source.clip = clip;
         source.volume = 0f;
+        source.loop = loop;
         source.Play();
         StartCoroutine(FadeInMusic(fadeDuration, source));
     }
@@ -100,12 +104,33 @@ public class AudioManager : MonoBehaviour
             _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, null, null, fadeDuration));
     }
 
+    public void PlayMusicForSource(string id, AudioSource source, bool loop = true)
+    {
+        if (source == null) return;
+
+        var data = _db.GetMusic(id);
+        if (data == null || data.AudioClip == null) return;
+
+        source.clip = data.AudioClip;
+        source.loop = true;
+        source.loop = loop;
+        source.volume = _masterVolume * _musicVolume; 
+        source.Play();
+    }
+
+    public void StopMusicForSource(AudioSource source)
+    {
+        if (source == null) return;
+
+        source.Stop();
+        source.clip = null;
+    }
+
     private IEnumerator CrossfadeMusic(AudioSource oldSource, AudioSource newSource, AudioClip newClip, float duration)
     {
         float targetVol = _masterVolume * _musicVolume;
         float startVol = oldSource.volume;
 
-        // Fade out old source
         float elapsed = 0f;
         while (elapsed < duration * 0.5f)
         {
@@ -116,7 +141,6 @@ public class AudioManager : MonoBehaviour
         oldSource.Stop();
         oldSource.volume = 0f;
 
-        // Fade in new source
         if (newSource != null && newClip != null)
         {
             newSource.clip = newClip;
@@ -136,11 +160,12 @@ public class AudioManager : MonoBehaviour
 
     // SFX
 
-    public void PlaySFX(string id, float volumeScale = 1f)
+    public void PlaySFX(string id, float volumeScale = 1f, AudioSource source = null)
     {
         var data = _db.GetSfx(id);
         if (data == null || data.AudioClip == null) return;
-        _sfxSource.PlayOneShot(data.AudioClip, volumeScale);
+        var sourceToPlay = source ?? _sfxSource;
+        sourceToPlay.PlayOneShot(data.AudioClip, volumeScale);
     }
 
 

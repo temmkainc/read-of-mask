@@ -14,6 +14,7 @@ public class InGameMenu
     private readonly InputAction _actionInputAction;
 
     public Action<int> OnItemSubmitted;
+    private bool _suppressFirstFocusSound;
 
     public InGameMenu(List<IInGameMenuItem> items, InputAction directionInputAction,
                       InputAction actionInputAction, int visibleCount = int.MaxValue)
@@ -22,7 +23,6 @@ public class InGameMenu
         _visibleCount = Mathf.Min(visibleCount, items.Count);
         _directionInputAction = directionInputAction;
         _actionInputAction = actionInputAction;
-        RefreshView();
     }
 
     public void EnterMenu()
@@ -32,7 +32,9 @@ public class InGameMenu
         _isActive = true;
         _focusedIndex = 0;
         _scrollOffset = 0;
+        _suppressFirstFocusSound = true;
         RefreshView();
+        _suppressFirstFocusSound = false;
     }
 
     public void ExitMenu(bool clearFocus = true)
@@ -99,7 +101,7 @@ public class InGameMenu
         {
             bool inWindow = i >= _scrollOffset && i < windowEnd;
             _items[i].SetVisible(inWindow);
-            _items[i].OnFocus(inWindow && i == _focusedIndex);
+            _items[i].OnFocus(inWindow && i == _focusedIndex, !_suppressFirstFocusSound);
         }
     }
 

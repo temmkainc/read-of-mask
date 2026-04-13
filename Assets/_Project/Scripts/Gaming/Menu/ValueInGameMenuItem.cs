@@ -20,8 +20,9 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
     public float Step => _step;
     public Action<float> OnValueChanged { get; set; }
 
-    public override void OnFocus(bool focused)
+    public override void OnFocus(bool focused, bool playSound = true)
     {
+        base.OnFocus(focused, playSound);
         transform.localScale = focused ? Vector3.one * 1.1f : Vector3.one;
 
         if (!focused)
@@ -36,6 +37,8 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
     public override void OnLeft()
     {
         if (!_isEditing) return;
+
+        base.OnLeft();
         _current = Mathf.Clamp(_current - _step, _min, _max);
         UpdateDisplay();
     }
@@ -43,12 +46,15 @@ public class ValueInGameMenuItem : InGameMenuItemBase, IValueInGameMenuItem
     public override void OnRight()
     {
         if (!_isEditing) return;
+
+        base.OnRight();
         _current = Mathf.Clamp(_current + _step, _min, _max);
         UpdateDisplay();
     }
 
     public override void OnSubmit()
     {
+        base.OnSubmit();
         if (_isEditing)
         {
             _isEditing = false;

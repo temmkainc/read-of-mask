@@ -21,8 +21,8 @@ public class Level00 : LevelBase
     {
         AudioManager.Instance.PlayMusic(MusicTracks.Level00Intro);
         await UniTask.WaitForSeconds(1f, cancellationToken: ct);
-        await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressIntroSpeech, _headmistressAudioSource, ct);
-        await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressYouAreDear, _headmistressAudioSource, ct);
+        //await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressIntroSpeech, _headmistressAudioSource, ct);
+        //await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressYouAreDear, _headmistressAudioSource, ct);
     }
 
     protected override async UniTask BeforeCompleteAsync()

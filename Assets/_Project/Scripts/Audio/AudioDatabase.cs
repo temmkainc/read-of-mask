@@ -49,8 +49,14 @@ public static class MusicTracks
 {
     public const string Level00Intro = "level00_intro_music";
     public const string Level01Music = "level01_music";
+    public const string PongMusic = "pong_music";
 }
 public static class SfxTracks
 {
     public const string VoicelineInterruptionSound = "voiceline_interrupt";
+    public const string MenuHover = "8bit_focus";
+    public const string MenuConfirm = "8bit_confirm";
+    public const string MinigameHit = "8bit_collision";
+    public const string MinigameLose = "8bit_lose";
+    public const string MinigameScore = "8bit_score";
 }

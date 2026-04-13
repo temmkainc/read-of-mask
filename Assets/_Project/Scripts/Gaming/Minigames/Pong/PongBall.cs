@@ -53,6 +53,7 @@ public class PongBall : MonoBehaviour
         PongPlayerPaddle paddle = collision.collider.GetComponent<PongPlayerPaddle>();
         if (paddle == null) return;
 
+        AudioManager.Instance.PlaySFX(SfxTracks.MinigameHit, 1f, AudioManager.Instance.CurrentMinigamesSource);
         _currentSpeed = Mathf.Min(_currentSpeed + _speedIncrease, _maxSpeed);
 
         float dirX = Mathf.Sign(_rigidbody2D.linearVelocity.x);

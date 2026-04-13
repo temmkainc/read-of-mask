@@ -6,7 +6,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
 {
     public GamingCartridgeData CurrentCartridge { get; private set; }
 
-    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding || grabbing.TryGetHeld<GamingCartridgeItem>(out _);
+    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding || (_currentCartridgeItem == null && grabbing.TryGetHeld<GamingCartridgeItem>(out _));
 
     [SerializeField] private Transform _ejectPoint;
 
@@ -21,6 +21,8 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
     {
         if(_currentCartridgeItem != null)
         {
+            if(player.Grabbing.IsHolding)
+                return;
             Eject();
             return;
         }
@@ -63,12 +65,6 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
     {
         if (_currentCartridgeItem == null)
             return;
-
-        if (_ejectPoint == null)
-        {
-            Debug.LogWarning("[CartridgeSlot] EjectPoint not assigned, using slot position.", this);
-            _ejectPoint = transform;
-        }
 
         var cartridgeTransform = _currentCartridgeItem.transform;
         cartridgeTransform.SetParent(null);

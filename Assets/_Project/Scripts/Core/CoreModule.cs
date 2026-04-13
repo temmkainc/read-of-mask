@@ -10,6 +10,7 @@ public static class CoreModule
     {
         [field: SerializeField] public List<LevelBase> Levels { get; private set; }
         [field: SerializeField] public CameraEffects CameraEffects { get; private set; }
+        [field: SerializeField] public bool WithLevelsScenario { get; private set; } 
     }
 
     public static void Install(DiContainer container, ConfigData config)
@@ -21,7 +22,7 @@ public static class CoreModule
         container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();
-        container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels);
+        container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario);
         container.BindInstance(config.CameraEffects).AsSingle();
     }
 }

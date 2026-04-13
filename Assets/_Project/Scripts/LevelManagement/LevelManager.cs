@@ -10,10 +10,13 @@ public class LevelManager : IInitializable, IDisposable
     private LevelBase CurrentLevel => IsValidIndex(_currentIndex) ? _levels[_currentIndex] : null;
 
     public int CurrentLevelIndex => _currentIndex;
+    
+    private bool _initializeOnStart;
 
-    public LevelManager(List<LevelBase> levels)
+    public LevelManager(List<LevelBase> levels, bool initializeOnStart)
     {
         _levels = levels;
+        _initializeOnStart = initializeOnStart;
     }
 
     public void Dispose()
@@ -26,6 +29,8 @@ public class LevelManager : IInitializable, IDisposable
 
     public void Initialize()
     {
+       if(!_initializeOnStart)
+           return;
         _currentIndex = 0;
         GoToLevel(_currentIndex);
         TurnOffLevelsExcept(_currentIndex);

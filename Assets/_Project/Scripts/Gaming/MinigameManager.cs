@@ -67,4 +67,5 @@ public class MinigameManager : IInitializable
             _ => null
         };
     }
+
 }

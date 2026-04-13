@@ -13,6 +13,10 @@ public class InteractionLookPoint : MonoBehaviour
     private float _yRotation;
     private bool _isActive;
 
+    private bool _externalPositionOverride;
+    private Vector3 _externalPosition;
+    private Vector3 _basePosition;
+
     private const float SENSITIVITY_SCALE_FACTOR = 0.05f;
 
     private Quaternion _baseRotation;
@@ -20,6 +24,7 @@ public class InteractionLookPoint : MonoBehaviour
     private void Start()
     {
         _baseRotation = transform.localRotation;
+        _basePosition = transform.position;
     }
 
     public void SetActive(bool active)
@@ -31,12 +36,16 @@ public class InteractionLookPoint : MonoBehaviour
             _xRotation = 0f;
             _yRotation = 0f;
             transform.localRotation = _baseRotation;
+            ClearExternalPosition();
         }
     }
 
     private void Update()
     {
         if (!_isActive) return;
+
+        if (_externalPositionOverride)
+            transform.position = _externalPosition;
 
         var inputAction = _input.CurrentMap switch
         {
@@ -59,5 +68,15 @@ public class InteractionLookPoint : MonoBehaviour
         Quaternion offset = Quaternion.Euler(_xRotation, _yRotation, 0f);
 
         transform.localRotation = _baseRotation * offset;
+    }
+    public void SetExternalPosition(Vector3 worldPosition)
+    {
+        _externalPosition = worldPosition;
+        _externalPositionOverride = true;
+    }
+
+    public void ClearExternalPosition()
+    {
+        _externalPositionOverride = false;
     }
 }

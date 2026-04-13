@@ -15,8 +15,9 @@ public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
     public string CurrentValue => _options[_confirmedIndex];
     public Action<string> OnValueChanged { get; set; }
 
-    public override void OnFocus(bool focused)
+    public override void OnFocus(bool focused, bool playSound = true)
     {
+        base.OnFocus(focused, playSound);
         transform.localScale = focused ? Vector3.one * 1.1f : Vector3.one;
 
         if (!focused)
@@ -31,6 +32,8 @@ public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
     public override void OnLeft()
     {
         if (!_isEditing) return;
+        
+        base.OnLeft();
         _currentIndex--;
         if (_currentIndex < 0) _currentIndex = _options.Length - 1;
         UpdateDisplay();
@@ -39,6 +42,8 @@ public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
     public override void OnRight()
     {
         if (!_isEditing) return;
+
+        base.OnRight();
         _currentIndex++;
         if (_currentIndex >= _options.Length) _currentIndex = 0;
         UpdateDisplay();
@@ -46,6 +51,7 @@ public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
 
     public override void OnSubmit()
     {
+        base.OnSubmit();
         if (_isEditing)
         {
             _isEditing = false;
