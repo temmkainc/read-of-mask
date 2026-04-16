@@ -6,7 +6,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     [SerializeField] private float _throwForceMultiplier = 1f;
     [SerializeField] private LayerMask _grabbedLayer;
     [SerializeField] private float _wallOffset = 0.2f;
-    [SerializeField] private float _minCameraDistance = 0.8f; 
+    [SerializeField] private float _minCameraDistance = 0.8f;
     [SerializeField] private float _throwForce = 10f;
     [SerializeField] private float _holdDistance = 2f;
     [SerializeField] private Vector3 _grabRotationOffset = Vector3.zero;

@@ -38,13 +38,13 @@ public class PongMinigame : MinigameBase
     {
         _scoreSystem.PlayerScored();
         _ball.StartRound();
-        AudioManager.Instance.PlaySFX(SfxTracks.MinigameScore, 1f, AudioManager.Instance.CurrentMinigamesSource);
+        AudioManager.Instance.PlaySFX(SfxClips.MinigameScore, 1f, AudioManager.Instance.CurrentMinigamesSource);
     }
     private void On_ComputerScore()
     {
         _scoreSystem.ComputerScored();
         _ball.StartRound();
-        AudioManager.Instance.PlaySFX(SfxTracks.MinigameLose, 1f, AudioManager.Instance.CurrentMinigamesSource);
+        AudioManager.Instance.PlaySFX(SfxClips.MinigameLose, 1f, AudioManager.Instance.CurrentMinigamesSource);
     }
 
     private void On_GameFinished(bool playerWon)

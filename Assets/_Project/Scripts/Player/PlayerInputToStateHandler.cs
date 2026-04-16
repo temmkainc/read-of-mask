@@ -30,6 +30,4 @@ public class PlayerInputToStateHandler : MonoBehaviour
     {
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Diary)).Execute();
     }
-
-
 }

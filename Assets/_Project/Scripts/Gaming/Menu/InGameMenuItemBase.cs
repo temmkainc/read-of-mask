@@ -8,19 +8,19 @@ public abstract class InGameMenuItemBase : MonoBehaviour, IInGameMenuItem
         if (!focused || playSound == false)
             return;
 
-        AudioManager.Instance.PlaySFX(SfxTracks.MenuHover, SOUND_VOLUME_SCALE);
+        AudioManager.Instance.PlaySFX(SfxClips.MenuHover, SOUND_VOLUME_SCALE);
     }
     public virtual void OnLeft()
     {
-        AudioManager.Instance.PlaySFX(SfxTracks.MenuHover, SOUND_VOLUME_SCALE);
+        AudioManager.Instance.PlaySFX(SfxClips.MenuHover, SOUND_VOLUME_SCALE);
     }
     public virtual void OnRight()
     {
-        AudioManager.Instance.PlaySFX(SfxTracks.MenuHover, SOUND_VOLUME_SCALE);
+        AudioManager.Instance.PlaySFX(SfxClips.MenuHover, SOUND_VOLUME_SCALE);
     }
     public virtual void OnSubmit()
     {
-        AudioManager.Instance.PlaySFX(SfxTracks.MenuConfirm, SOUND_VOLUME_SCALE);
+        AudioManager.Instance.PlaySFX(SfxClips.MenuConfirm, SOUND_VOLUME_SCALE);
     }
     
     public void SetVisible(bool visible) => gameObject.SetActive(visible);

@@ -13,6 +13,6 @@ public class Gramophone : MonoBehaviour, IInteractable, IHighlightable
             return;
 
         _hasInteracted = true;
-        AudioManager.Instance.PlayMusic(_musicId, 0.5f, _audioSource);
+        AudioManager.Instance.PlayMusicForSource(_musicId, _audioSource, volumeScale: 0.5f);
     }
 }

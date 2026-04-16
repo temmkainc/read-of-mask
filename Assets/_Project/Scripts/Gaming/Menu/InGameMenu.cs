@@ -8,7 +8,7 @@ public class InGameMenu
     private readonly List<IInGameMenuItem> _items;
     private readonly int _visibleCount;
     private int _focusedIndex = 0;
-    private int _scrollOffset = 0;    
+    private int _scrollOffset = 0;
     private bool _isActive = false;
     private readonly InputAction _directionInputAction;
     private readonly InputAction _actionInputAction;
@@ -35,6 +35,7 @@ public class InGameMenu
         _suppressFirstFocusSound = true;
         RefreshView();
         _suppressFirstFocusSound = false;
+        Debug.Log("Entered menu with " + _items.Count + " items, showing " + _visibleCount);
     }
 
     public void ExitMenu(bool clearFocus = true)
@@ -119,5 +120,15 @@ public class InGameMenu
 
         _items[_focusedIndex].OnSubmit();
         OnItemSubmitted?.Invoke(_focusedIndex);
+    }
+
+    public void Dispose()
+    {
+        ExitMenu();
+
+        _directionInputAction.performed -= On_DirectionInputPerformed;
+        _actionInputAction.performed -= On_ActionInputPerformed;
+
+        OnItemSubmitted = null;
     }
 }

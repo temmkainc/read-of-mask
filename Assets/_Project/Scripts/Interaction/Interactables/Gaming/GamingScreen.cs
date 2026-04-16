@@ -20,9 +20,11 @@ public class GamingScreen : LookCloserInteractableBase
 
     private CancellationTokenSource _loadingCts;
 
+    private const float SFX_VOLUME_SCALE = 0.4f;
+    private const float LOADING_DURATION = 0.5f;
     private void Awake()
     {
-        _loader = new GamingScreenVisuals(_minigameLoadingBarImage);
+        _loader = new GamingScreenVisuals(_minigameLoadingBarImage, LOADING_DURATION);
     }
 
     private void Start()
@@ -79,6 +81,8 @@ public class GamingScreen : LookCloserInteractableBase
 
         try
         {
+            AudioManager.Instance.PlaySFX(SfxClips.CartridgeInsert, volumeScale: SFX_VOLUME_SCALE, source: _audioSource);
+            AudioManager.Instance.PlaySFX(SfxClips.ConsoleLoading, volumeScale: SFX_VOLUME_SCALE, source: _audioSource);
             await _loader.SimulateLoadingAsync(_loadingCts.Token);
             await TurnScreenOn();
 
@@ -91,7 +95,7 @@ public class GamingScreen : LookCloserInteractableBase
         }
         catch (OperationCanceledException)
         {
-            // Do nothing - screen stays off
+
         }
 
     }
@@ -101,6 +105,7 @@ public class GamingScreen : LookCloserInteractableBase
         _loader.Reset();
         await TurnScreenOff();
         _minigameManager.ExitCurrentMinigame();
+        await AudioManager.Instance.PlaySFXAsync(SfxClips.CartridgeEject, volumeScale: SFX_VOLUME_SCALE, source: _audioSource);
         AudioManager.Instance.StopMusicForSource(_audioSource);
     }
 

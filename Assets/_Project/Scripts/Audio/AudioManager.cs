@@ -35,7 +35,7 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
         ApplyVolumes();
     }
 
@@ -104,7 +104,7 @@ public class AudioManager : MonoBehaviour
             _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, null, null, fadeDuration));
     }
 
-    public void PlayMusicForSource(string id, AudioSource source, bool loop = true)
+    public void PlayMusicForSource(string id, AudioSource source, bool loop = true, float volumeScale = 1f)
     {
         if (source == null) return;
 
@@ -114,7 +114,7 @@ public class AudioManager : MonoBehaviour
         source.clip = data.AudioClip;
         source.loop = true;
         source.loop = loop;
-        source.volume = _masterVolume * _musicVolume; 
+        source.volume = _masterVolume * _musicVolume * volumeScale; 
         source.Play();
     }
 
@@ -168,6 +168,19 @@ public class AudioManager : MonoBehaviour
         sourceToPlay.PlayOneShot(data.AudioClip, volumeScale);
     }
 
+    public async UniTask PlaySFXAsync (string id, float volumeScale = 1f, AudioSource source = null, CancellationToken cancellationToken = default)
+    {
+        var data = _db.GetSfx(id);
+        if (data == null || data.AudioClip == null) return;
+        var sourceToPlay = source ?? _sfxSource;
+        sourceToPlay.PlayOneShot(data.AudioClip, volumeScale);
+        try
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(data.AudioClip.length), cancellationToken: cancellationToken);
+        }
+        catch (OperationCanceledException) { }
+    }
+
 
     private AudioSource _currentVoiceSource;
     private bool _voicelineInProgress;
@@ -201,7 +214,7 @@ public class AudioManager : MonoBehaviour
         _voicelineInProgress = true;
 
         if (isInterrupting)
-            PlaySFX(SfxTracks.VoicelineInterruptionSound);
+            PlaySFX(SfxClips.VoicelineInterruptionSound);
 
         sourceToPlay.clip = data.AudioClip;
         sourceToPlay.Play();

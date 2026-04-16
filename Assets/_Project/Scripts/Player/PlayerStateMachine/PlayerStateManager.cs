@@ -32,6 +32,8 @@ public sealed class PlayerStateManager : IPlayerStateManager
 
         foreach (var state in _map.Values)
         {
+            if(!state.Data.IsStateUsed)
+                continue;
             diContainer.Inject(state);
         }
     }

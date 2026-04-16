@@ -152,6 +152,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
             }
         });
     }
+    
     private void ExitMenu()
     {
         transform.DOScaleY(0.05f, 0.2f)

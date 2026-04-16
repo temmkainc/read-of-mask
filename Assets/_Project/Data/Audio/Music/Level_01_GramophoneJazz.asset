@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MusicData
   Id: level01_gramophone_music
   AudioClip: {fileID: 8300000, guid: 59aef592f49a7604982956d70a8fcb60, type: 3}
-  Loop: 0
