@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 1.5f;
 
     [Header("References")]
+
     [SerializeField] private Transform _orientation;
+    [SerializeField] private PlayerFootstepsReader _footstepsReader;
 
     [Inject] private InputManager _input;
     private CharacterController _cc;
@@ -34,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private void On_InputActionMapChanged(InputManager.ActionMapType type)
     {
-        if(type != InputManager.ActionMapType.Player)
+        if (type != InputManager.ActionMapType.Player)
         {
             _isCurrentMapPlayer = false;
             return;
@@ -64,6 +66,7 @@ public class PlayerController : MonoBehaviour
 
         float speed = _sprintHeld ? _sprintSpeed : _walkSpeed;
 
+
         Vector3 forward = _orientation.forward;
         Vector3 right = _orientation.right;
         forward.y = 0f;
@@ -72,14 +75,32 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
 
         Vector3 move = forward * MoveInput.y + right * MoveInput.x;
+
         if (move.magnitude > 1f)
+        {
             move.Normalize();
+        }
+
+        if (move.magnitude > 0f)
+        {
+            float speedNormalized = move.magnitude * (_sprintHeld ? 1f : 0.6f);
+            _footstepsReader.UpdateFootsteps(speedNormalized);
+        }
+        else
+        {
+            _footstepsReader.UpdateFootsteps(0f);
+        }
 
         _cc.Move(move * speed * Time.deltaTime);
 
         if (_jumpPressed && _isGrounded)
+        {
             _velocity.y = Mathf.Sqrt(_jumpForce * -2f * _gravity);
+        }
         _velocity.y += _gravity * Time.deltaTime;
         _cc.Move(_velocity * Time.deltaTime);
+
+        Vector3 horizontalVelocity = _cc.velocity;
+        horizontalVelocity.y = 0f;
     }
 }

@@ -168,6 +168,12 @@ public class AudioManager : MonoBehaviour
         sourceToPlay.PlayOneShot(data.AudioClip, volumeScale);
     }
 
+    public void PlaySFX(AudioClip clip, float volumeScale = 1f, AudioSource source = null)
+    {
+        var sourceToPlay = source ?? _sfxSource;
+        sourceToPlay.PlayOneShot(clip, volumeScale);
+    }    
+
     public async UniTask PlaySFXAsync (string id, float volumeScale = 1f, AudioSource source = null, CancellationToken cancellationToken = default)
     {
         var data = _db.GetSfx(id);
@@ -193,7 +199,6 @@ public class AudioManager : MonoBehaviour
 
         var sourceToPlay = source ?? _defaultVoiceSource;
 
-        // Guard: don't play on a dead/disabled source
         if (sourceToPlay == null || !sourceToPlay.gameObject.activeInHierarchy)
             return;
 

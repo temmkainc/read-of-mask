@@ -12,6 +12,7 @@ public class Level00 : LevelBase
     [Inject] private EffectsContainer _effectsContainer;
     [SerializeField] private AudioSource _headmistressAudioSource;
     [SerializeField] private Image _fadeImage;
+    [SerializeField] private bool _withEyeEffect;
 
     private const float SECONDS_BEFORE_COMPLETE = 0.2f;
     private CancellationTokenSource _levelCts;
@@ -26,13 +27,17 @@ public class Level00 : LevelBase
     {
         AudioManager.Instance.PlayMusic(MusicTracks.Level00Intro);
 
-        _fadeImage.color = Color.white;
-        await UniTask.WaitForSeconds(0.5f, cancellationToken: ct);
-        _fadeImage
-            .DOFade(0f, 4f)
-            .SetEase(Ease.InOutQuad);
-        await UniTask.WaitForSeconds(2f, cancellationToken: ct);
-        _effectsContainer.EyeOpenEffect.Play().Forget();
+        if (_withEyeEffect)
+        {
+            _effectsContainer.EyeOpenEffect.gameObject.SetActive(true);
+            _fadeImage.color = Color.white;
+            await UniTask.WaitForSeconds(0.5f, cancellationToken: ct);
+            _fadeImage
+                .DOFade(0f, 4f)
+                .SetEase(Ease.InOutQuad);
+            await UniTask.WaitForSeconds(2f, cancellationToken: ct);
+            _effectsContainer.EyeOpenEffect.Play().Forget();
+        }
         await UniTask.WaitForSeconds(2f, cancellationToken: ct);
         await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressIntroSpeech, _headmistressAudioSource, ct);
         await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressYouAreDear, _headmistressAudioSource, ct);
