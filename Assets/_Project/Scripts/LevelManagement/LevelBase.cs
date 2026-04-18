@@ -9,6 +9,7 @@ public class LevelBase : MonoBehaviour
     public event Action OnLevelComplete;
 
     [SerializeField] private GameObject[] _objectsToDeactivateOnFinish;
+    [SerializeField] private LevelDoor _levelDoor;
 
     private List<ILevelCompleteCondition> _conditions = new();
     private int _conditionsMet;
@@ -76,5 +77,10 @@ public class LevelBase : MonoBehaviour
     protected virtual void Complete()
     {
         OnLevelComplete?.Invoke();
+        
+        if(_levelDoor == null)
+            return;
+
+        _levelDoor.Open();
     }
 }

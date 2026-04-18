@@ -50,6 +50,7 @@ public static class MusicTracks
     public const string Level00Intro = "level00_intro_music";
     public const string Level01Music = "level01_music";
     public const string PongMusic = "pong_music";
+    public const string TuftaMusic = "tufta_music";
 }
 public static class SfxClips
 {

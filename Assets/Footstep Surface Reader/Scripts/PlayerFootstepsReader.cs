@@ -15,7 +15,7 @@ public class PlayerFootstepsReader : MonoBehaviour
     private float _stepTimer;
     private int _lastIndex = -1;
 
-    private const float VOLUME_SCALE = 0.35f;
+    private const float VOLUME_SCALE = 0.15f;
 
     public void UpdateFootsteps(float speedNormalized)
     {
