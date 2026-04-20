@@ -18,8 +18,10 @@ public abstract class InGameMenuItemBase : MonoBehaviour, IInGameMenuItem
     {
         AudioManager.Instance.PlaySFX(SfxClips.MenuHover, SOUND_VOLUME_SCALE);
     }
-    public virtual void OnSubmit()
+    public virtual void OnSubmit(bool playSound = true)
     {
+        if(!playSound)
+            return;
         AudioManager.Instance.PlaySFX(SfxClips.MenuConfirm, SOUND_VOLUME_SCALE);
     }
     

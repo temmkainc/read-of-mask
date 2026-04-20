@@ -49,9 +49,9 @@ public class CycleInGameMenuItem : InGameMenuItemBase, IInGameMenuItem
         UpdateDisplay();
     }
 
-    public override void OnSubmit()
+    public override void OnSubmit(bool playSound = true)
     {
-        base.OnSubmit();
+        base.OnSubmit(playSound);
         if (_isEditing)
         {
             _isEditing = false;

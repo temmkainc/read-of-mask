@@ -15,9 +15,9 @@ public class ButtonInGameMenuItem : InGameMenuItemBase
     public override void OnLeft() { }
     public override void OnRight() { }
 
-    public override void OnSubmit()
+    public override void OnSubmit(bool playSound = true)
     {
-        base.OnSubmit();
+        base.OnSubmit(playSound);
         _button.onClick.Invoke();
     }
 }
