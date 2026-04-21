@@ -16,7 +16,10 @@ public class DomoPhoneMenuItem : InGameMenuItemBase
     public override void OnFocus(bool focused, bool playSound = true)
     {
         base.OnFocus(focused, false);
-
+        if (playSound && !focused)
+        {
+            AudioManager.Instance.PlaySFX(SfxClips.KeypadFocus, volumeScale: 0.2f);
+        }
         if (focused){
             transform.localScale = Vector3.one * 1.1f; 
         }
@@ -29,7 +32,9 @@ public class DomoPhoneMenuItem : InGameMenuItemBase
     public override void OnSubmit(bool playSound = true)
     {
         base.OnSubmit(false); 
-
+        if(playSound){
+            AudioManager.Instance.PlaySFX(SfxClips.KeypadEnter);
+        }
         switch (_buttonType)
         {
             case ButtonType.Digit:

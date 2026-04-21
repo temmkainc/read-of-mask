@@ -63,4 +63,8 @@ public static class SfxClips
     public const string ConsoleLoading = "console_loading";
     public const string CartridgeInsert = "cartridge_insert";
     public const string CartridgeEject = "cartridge_eject";
+    public const string KeypadEnter = "keypad_enter";
+    public const string KeypadFocus = "keypad_focus";
+    public const string KeypadWrong = "keypad_wrong";
+    public const string KeypadSuccess = "keypad_success";
 }

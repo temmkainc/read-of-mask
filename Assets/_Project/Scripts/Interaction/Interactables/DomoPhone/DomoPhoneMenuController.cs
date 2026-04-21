@@ -2,27 +2,21 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using Zenject;
 
-/// <summary>
-/// Manages the domophone numpad grid navigation and code entry logic.
-/// Grid layout (configurable via inspector):
-///   [1][2][3]
-///   [4][5][6]
-///   [7][8][9]
-///   [*][0][#]   (* = Backspace, # = Enter)
-///
-/// Indices 0-9 = digits 1-9,0  |  10 = Backspace  |  11 = Enter
-/// </summary>
+
 public class DomoPhoneMenuController : MonoBehaviour
 {
+    public enum Password {None, LevelTwo}
+
     [Header("Code settings")]
-    [SerializeField] private string _correctCode = "1234";
+    [SerializeField] private Password _passwordType = Password.LevelTwo;
     [SerializeField] private int _codeLength = 4;
+    private string _correctCode;
 
     [Header("Grid layout")]
     [SerializeField] private int _columns = 3;
-    // Assign in order: 1,2,3,4,5,6,7,8,9,0 then Backspace, Enter
     [SerializeField] private DomoPhoneMenuItem[] _menuItems;
 
     [Header("References")]
@@ -32,6 +26,7 @@ public class DomoPhoneMenuController : MonoBehaviour
     [SerializeField] private float _errorDisplayDuration = 0.8f;
 
     [Inject] private InputManager _inputManager;
+    [Inject] private LevelVariables _levelVariables;
 
     public event Action OnCodeCorrect;
 
@@ -42,6 +37,16 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     private void Awake()
     {
+        switch (_passwordType)
+        {
+            case Password.LevelTwo:
+                _correctCode = _levelVariables.CorrectPassword;
+                break;
+            default:
+                _correctCode = string.Empty;
+                break;
+        }
+
         for (int i = 0; i < _menuItems.Length; i++)
             _menuItems[i].Controller = this;
 
@@ -158,6 +163,7 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     public void InputEnter()
     {
+        if(_passwordType == Password.None) return;
         if (_isLocked) return;
         if (_enteredCode.Length < _codeLength) return;
 
@@ -172,6 +178,7 @@ public class DomoPhoneMenuController : MonoBehaviour
     }
     private IEnumerator ShowSuccess()
     {
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadSuccess, volumeScale: 0.5f);
         _isLocked = true;
         _display?.UpdateDisplay("OPEN");
 
@@ -183,6 +190,7 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     private IEnumerator ShowError()
     {
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadWrong, volumeScale: 0.5f);
         _isLocked = true;
         _display?.UpdateDisplay(_enteredCode, isError: true);
 
