@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HorizontalBarInteractable : LookCloserInteractableBase
 {
     [SerializeField] private PullUpController _pullUpController;
     [SerializeField] private PullUpUI _pullUpUI;
     [SerializeField] private HorizontalBarSway _barSway;
+    [SerializeField] private GameObject _firstPersonHands;
     public override void Interact(Player player = null)
     {
         if (player.Grabbing.IsHolding) return;
@@ -20,11 +22,13 @@ public class HorizontalBarInteractable : LookCloserInteractableBase
 
         if (type == PlayerStateType.LookCloser)
         {
+            _firstPersonHands.gameObject.SetActive(true);
             _barSway.SetActive(true);
             _pullUpUI.Show();
         }
         else if (previousType == PlayerStateType.LookCloser)
         {
+            _firstPersonHands.gameObject.SetActive(false);
             _barSway.SetActive(false);
             _pullUpController.Deactivate();
             CameraSnapPoint.ClearExternalPosition();

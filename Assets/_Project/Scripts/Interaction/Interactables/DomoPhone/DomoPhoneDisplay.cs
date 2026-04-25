@@ -4,8 +4,6 @@ using UnityEngine;
 public class DomoPhoneDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_Text _displayText;
-    [SerializeField] private int _codeLength = 4;
-
     private string _currentCode = string.Empty;
 
     public void UpdateDisplay(string code, bool isError = false, bool raw = false)

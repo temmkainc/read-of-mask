@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -19,6 +20,6 @@ public class LevelDoor : MonoBehaviour
 
     public void Close()
     {
-        _animator.SetTrigger(CloseTriggerHash); 
+        _animator.SetTrigger(CloseTriggerHash);
     }
 }

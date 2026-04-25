@@ -20,6 +20,7 @@ public class FacelessCharacter : LookCloserInteractableBase
     [SerializeField] private float _facelessThinkDuration = 1.2f;
     [SerializeField] private float _resultDisplayDuration = 1.5f;
     [SerializeField] private TMP_Text _displayInfoText;
+    [SerializeField] private PlayerFirstPersonRPSController _playerFirstPersonRPSController;
 
     private readonly int DoShowMiddleFingerHash = Animator.StringToHash("DoShowMiddleFinger");
     private readonly int DoHideMiddleFingerHash = Animator.StringToHash("DoHideMiddleFinger");
@@ -39,6 +40,15 @@ public class FacelessCharacter : LookCloserInteractableBase
         _inputManager.ShowMiddleFingerAction.performed += On_MiddleFingerPressed;
         _inputManager.ShowMiddleFingerAction.canceled += On_MiddleFingerReleased;
         _displayInfoText.gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (_inputManager != null)
+        {
+            _inputManager.ShowMiddleFingerAction.performed -= On_MiddleFingerPressed;
+            _inputManager.ShowMiddleFingerAction.canceled -= On_MiddleFingerReleased;
+        }
     }
 
     public override void Interact(Player player = null)
@@ -69,6 +79,7 @@ public class FacelessCharacter : LookCloserInteractableBase
         if (_interactionType == InteractionType.RockPaperScissors)
         {
             _animator.Play("Empty State", RPSLayerIndex, 0f);
+            _playerFirstPersonRPSController.gameObject.SetActive(true);
             _animator.SetLayerWeight(RPSLayerIndex, 1f);
             _rpsController.Activate();
             _rpsController.OnPlayerSubmitted += OnPlayerSubmitted;
@@ -87,6 +98,7 @@ public class FacelessCharacter : LookCloserInteractableBase
             if (_layerFadeCoroutine != null)
                 StopCoroutine(_layerFadeCoroutine);
             _layerFadeCoroutine = StartCoroutine(FadeLayerWeight(RPSLayerIndex, 0f, 0.3f));
+            _playerFirstPersonRPSController.gameObject.SetActive(false);
         }
     }
 
@@ -117,6 +129,7 @@ public class FacelessCharacter : LookCloserInteractableBase
 
         RockPaperScissorsChoice facelessChoice = (RockPaperScissorsChoice)UnityEngine.Random.Range(0, 3);
         PlayFacelessAnimation(facelessChoice);
+        _playerFirstPersonRPSController.PlayAnimation(playerChoice);
 
         yield return new WaitForSeconds(_resultDisplayDuration);
 

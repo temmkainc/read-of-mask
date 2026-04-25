@@ -12,6 +12,7 @@ public class Level02 : LevelBase
     private async UniTask PlayIntroSequence()
     {
         // AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic);
+        await UniTask.Delay(2000);
     }
 
     protected override async UniTask BeforeCompleteAsync()

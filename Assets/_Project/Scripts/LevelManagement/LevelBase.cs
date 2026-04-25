@@ -10,6 +10,7 @@ public class LevelBase : MonoBehaviour
 
     [SerializeField] private GameObject[] _objectsToDeactivateOnFinish;
     [SerializeField] private LevelDoor _levelDoor;
+    [SerializeField] private LevelDoor _levelDoorToClose;
 
     private List<ILevelCompleteCondition> _conditions = new();
     private int _conditionsMet;
