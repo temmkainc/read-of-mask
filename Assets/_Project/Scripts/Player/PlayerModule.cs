@@ -20,6 +20,7 @@ public static class PlayerModule
         container.Bind<IPlayerStateManager>().To<PlayerStateManager>().AsSingle()
             .WithArguments(config).NonLazy();
 
+        container.Bind<PlayerFirstPersonHandsController>().FromComponentInHierarchy().AsSingle();
         container.Bind<PlayerController>().FromComponentInHierarchy().AsSingle();
         container.Bind<PlayerGrabbing>().FromComponentInHierarchy().AsSingle();
         container.Bind<PlayerLookTarget>().AsSingle().WithArguments(config.LookTargetConfig).NonLazy();

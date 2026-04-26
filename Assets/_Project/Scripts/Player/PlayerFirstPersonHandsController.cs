@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class FirstPersonHandsController : MonoBehaviour
+public class PlayerFirstPersonHandsController : MonoBehaviour
 {
     [Inject] private InputManager _inputManager;
 
@@ -35,10 +35,16 @@ public class FirstPersonHandsController : MonoBehaviour
     private readonly int DoGamingLeftButtonHash = Animator.StringToHash("DoGamingLeftButton");
     private readonly int DoGamingRightButtonHash = Animator.StringToHash("DoGamingRightButton");
 
+    private readonly int DoAngryHash = Animator.StringToHash("DoAngry");
+    private readonly int DoNotAllowedHash = Animator.StringToHash("DoNotAllowed");
+
     private const int MOVEMENT_LAYER_INDEX = 1;
     private const int GESTURES_LAYER_INDEX = 2;
     private const int MASK_LAYER_INDEX = 3;
     private const int GAMING_LAYER_INDEX = 4;
+
+    private bool _isBlockingAnimationPlaying = false;
+
 
     private void Awake()
     {
@@ -77,7 +83,7 @@ public class FirstPersonHandsController : MonoBehaviour
         {
             On_ExitGamingState();
         }
-        
+
         _handsImage.gameObject.SetActive(type != PlayerStateType.LookCloser);
         _previousPlayerStateType = type;
     }
@@ -129,6 +135,27 @@ public class FirstPersonHandsController : MonoBehaviour
         }
     }
 
+    private void SetBlockingAnimation(int triggerHash)
+    {
+        if (_isBlockingAnimationPlaying) return;
+
+        _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
+        _animator.SetTrigger(triggerHash);
+        _isBlockingAnimationPlaying = true;
+    }
+
+    private void OnBlockingAnimationFinished(int triggerHash)
+    {
+        _animator.ResetTrigger(triggerHash);
+        _isBlockingAnimationPlaying = false;
+    }
+
+    public void PlayAngryAnimation() => SetBlockingAnimation(DoAngryHash);
+    public void On_AngryAnimationFinished() => OnBlockingAnimationFinished(DoAngryHash);
+
+    public void PlayNotAllowedAnimation() => SetBlockingAnimation(DoNotAllowedHash);
+    public void On_NotAllowedAnimationFinished() => OnBlockingAnimationFinished(DoNotAllowedHash);
+
     private void On_MaskStateChanged(MaskStateType state)
     {
         switch (state)
@@ -153,6 +180,8 @@ public class FirstPersonHandsController : MonoBehaviour
 
     private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)
     {
+        if (_isBlockingAnimationPlaying) return;
+
         if (!_holdingMiddleFingerLastFrame)
         {
             _animator.SetTrigger(DoMiddleFingerHash);
@@ -170,6 +199,8 @@ public class FirstPersonHandsController : MonoBehaviour
 
     private void On_PointingFingerPressed(InputAction.CallbackContext ctx)
     {
+        if (_isBlockingAnimationPlaying) return;
+
         if (!_holdingPointingFingerLastFrame)
         {
             _animator.SetTrigger(DoPointingFingerHash);

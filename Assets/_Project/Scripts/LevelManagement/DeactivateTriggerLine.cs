@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DeactivateTriggerLine : MonoBehaviour
@@ -59,7 +60,7 @@ public class DeactivateTriggerLine : MonoBehaviour
 
         if (_doorInteractable != null)
         {
-            _doorInteractable.CloseAndDisable();
+            yield return _doorInteractable.CloseAndDisable();
             yield return new WaitForSeconds(2f);
         }
 

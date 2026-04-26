@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
+using Zenject;
 
 public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 {
@@ -12,9 +13,11 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.InOutQuad;
 
+    [Inject] private PlayerFirstPersonHandsController _handsController;
+
     public enum Axis { X, Y, Z }
 
-    public bool CanHighlight(PlayerGrabbing grabbing) => !_disabled;
+    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
 
     private bool _isOpen = false;
     private bool _disabled = false;
@@ -29,7 +32,10 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 
     public void Interact(Player player)
     {
-        if (_disabled) return;
+        if (_disabled) {
+            _handsController.PlayNotAllowedAnimation();
+            return;
+        }
 
         _isOpen = !_isOpen;
         _tween?.Kill();
