@@ -26,7 +26,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField][Range(0f, 1f)] private float _voiceVolume = 1f;
 
     private Coroutine _musicFadeRoutine;
-    
+
     private CancellationTokenSource _voiceCts;
 
     public AudioSource CurrentMinigamesSource { get; set; }
@@ -67,9 +67,22 @@ public class AudioManager : MonoBehaviour
             StopCoroutine(_musicFadeRoutine);
 
         if (_currentMusicSource != null && _currentMusicSource.isPlaying)
-            _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, sourceToPlay, data.AudioClip, fadeDuration));
+        {
+            if (fadeDuration <= 0)
+            {
+                if (_currentMusicSource != sourceToPlay)
+                    _currentMusicSource.Stop();
+                StartInstantMusic(data.AudioClip, 0, sourceToPlay, loop);
+            }
+            else
+            {
+                _musicFadeRoutine = StartCoroutine(CrossfadeMusic(_currentMusicSource, sourceToPlay, data.AudioClip, fadeDuration));
+            }
+        }
         else
+        {
             StartInstantMusic(data.AudioClip, fadeDuration, sourceToPlay, loop);
+        }
 
         _currentMusicSource = sourceToPlay;
     }
@@ -78,12 +91,20 @@ public class AudioManager : MonoBehaviour
     private void StartInstantMusic(AudioClip clip, float fadeDuration, AudioSource source, bool loop)
     {
         source.clip = clip;
-        source.volume = 0f;
         source.loop = loop;
+
+        if (fadeDuration <= 0)
+        {
+            source.volume = _masterVolume * _musicVolume;
+            source.timeSamples = 0;
+            source.Play();
+            return;
+        }
+
+        source.volume = 0f;
         source.Play();
         StartCoroutine(FadeInMusic(fadeDuration, source));
     }
-
     private IEnumerator FadeInMusic(float duration, AudioSource source)
     {
         float targetVol = _masterVolume * _musicVolume;
@@ -114,7 +135,7 @@ public class AudioManager : MonoBehaviour
         source.clip = data.AudioClip;
         source.loop = true;
         source.loop = loop;
-        source.volume = _masterVolume * _musicVolume * volumeScale; 
+        source.volume = _masterVolume * _musicVolume * volumeScale;
         source.Play();
     }
 
@@ -160,11 +181,19 @@ public class AudioManager : MonoBehaviour
 
     // SFX
 
-    public void PlaySFX(string id, float volumeScale = 1f, AudioSource source = null)
+    public void PlaySFX(string id, float volumeScale = 1f, AudioSource source = null, bool isLooping = false)
     {
         var data = _db.GetSfx(id);
         if (data == null || data.AudioClip == null) return;
         var sourceToPlay = source ?? _sfxSource;
+        if (isLooping)
+        {
+            sourceToPlay.clip = data.AudioClip;
+            sourceToPlay.loop = true;
+            sourceToPlay.volume = _masterVolume * _sfxVolume * volumeScale;
+            sourceToPlay.Play();
+            return;
+        }
         sourceToPlay.PlayOneShot(data.AudioClip, volumeScale);
     }
 
@@ -172,9 +201,9 @@ public class AudioManager : MonoBehaviour
     {
         var sourceToPlay = source ?? _sfxSource;
         sourceToPlay.PlayOneShot(clip, volumeScale);
-    }    
+    }
 
-    public async UniTask PlaySFXAsync (string id, float volumeScale = 1f, AudioSource source = null, CancellationToken cancellationToken = default)
+    public async UniTask PlaySFXAsync(string id, float volumeScale = 1f, AudioSource source = null, CancellationToken cancellationToken = default)
     {
         var data = _db.GetSfx(id);
         if (data == null || data.AudioClip == null) return;

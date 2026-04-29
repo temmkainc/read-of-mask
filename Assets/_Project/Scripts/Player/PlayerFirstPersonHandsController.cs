@@ -73,6 +73,11 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
         _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
     }
 
+    public void ResetBlockingAnimation()
+    {
+        _isBlockingAnimationPlaying = false;
+    }
+
     private void On_PlayerStateChanged(PlayerStateType type)
     {
         if (type == PlayerStateType.Gaming)
@@ -132,6 +137,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
                 _animator.Play("Empty State", GAMING_LAYER_INDEX, 0f);
                 _animator.SetTrigger(DoStartGamingHash);
             }
+            _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
         }
     }
 
@@ -161,11 +167,14 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
         switch (state)
         {
             case MaskStateType.NotWearing:
+                _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f); 
                 _animator.SetTrigger(PutOffMaskHash);
                 break;
             case MaskStateType.Wearing:
                 if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
                 {
+                    _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
+                    _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f);
                     _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0f);
                 }
                 _animator.SetTrigger(PutOnMaskHash);

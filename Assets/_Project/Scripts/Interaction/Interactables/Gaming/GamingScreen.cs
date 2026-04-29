@@ -22,7 +22,7 @@ public class GamingScreen : LookCloserInteractableBase
 
     private const float SFX_VOLUME_SCALE = 0.4f;
     private const float LOADING_DURATION = 0.5f;
-    private void Awake()
+    protected virtual void Awake()
     {
         _loader = new GamingScreenVisuals(_minigameLoadingBarImage, LOADING_DURATION);
     }
@@ -33,13 +33,13 @@ public class GamingScreen : LookCloserInteractableBase
         _cartridgeSlot.OnCartridgeEjected += On_CartridgeEjected;
     }
 
-    private void On_CartridgeEjected()
+    protected virtual void On_CartridgeEjected()
     {
         On_CartridgeEjectedAsync().Forget();
         AudioManager.Instance.CurrentMinigamesSource = null;
     }
 
-    private void On_CartridgeInserted(MinigameType minigameType)
+    protected virtual void On_CartridgeInserted(MinigameType minigameType)
     {
         On_CartridgeInsertedAsync(minigameType).Forget();
         AudioManager.Instance.CurrentMinigamesSource = _audioSource;
@@ -87,10 +87,8 @@ public class GamingScreen : LookCloserInteractableBase
             await TurnScreenOn();
 
             var musicId = GetMusicIdForMinigame(minigameType);
-            if (string.IsNullOrEmpty(musicId))
-                return;
-
-            AudioManager.Instance.PlayMusicForSource(musicId, _audioSource);
+            if (!string.IsNullOrEmpty(musicId))
+                AudioManager.Instance.PlayMusicForSource(musicId, _audioSource);
             _minigameManager.EnterMinigame(minigameType);
         }
         catch (OperationCanceledException)

@@ -2,14 +2,18 @@ using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
 using Zenject;
+using System;
 
 public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 {
+    public event Action OnDoorOpened;
+
     [SerializeField] private Transform _transformToRotate;
     [SerializeField] private Axis _rotationAxis = Axis.Y;
     [SerializeField] private float _openAnglePush = 90f;
     [SerializeField] private float _openAnglePull = -90f;
     [SerializeField] private bool _isDependableFromSide = true;
+    [SerializeField] private bool _allowToOpenMoreThanOnce = true;
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.InOutQuad;
 
@@ -24,6 +28,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
     private Tween _tween;
     private float _currentTargetAngle = 0f;
     private Vector3 _closedRotation;
+    private bool _hasBeenOpened = false;
 
     private void Awake()
     {
@@ -32,7 +37,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 
     public void Interact(Player player)
     {
-        if (_disabled) {
+        if (_disabled || !_allowToOpenMoreThanOnce && _hasBeenOpened)
+        {
             _handsController.PlayNotAllowedAnimation();
             return;
         }
@@ -45,6 +51,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 
         if (_isOpen)
         {
+            _hasBeenOpened = true;
+            OnDoorOpened?.Invoke();
             float openAngle;
             if (_isDependableFromSide)
             {

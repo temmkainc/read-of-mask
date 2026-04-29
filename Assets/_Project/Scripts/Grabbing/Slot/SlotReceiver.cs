@@ -45,6 +45,20 @@ public abstract class SlotReceiver<T> : SlotReceiver
         OnObjectInserted(CurrentObject);
     }
 
+    public void ForceInsert(T obj)
+    {
+        if (CurrentObject != null)
+            Clear();
+
+        CurrentObject = obj;
+        var rb = CurrentObject.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+
+        SnapIntoPlace(CurrentObject).Forget();
+        OnObjectInserted(CurrentObject);
+    }
+    
+
     public override void Show(bool active) { }
 
     protected virtual bool CanAccept(T obj) => !IsOccupied;

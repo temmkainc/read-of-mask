@@ -3,16 +3,17 @@ using UnityEngine;
 
 public class Level04 : LevelBase
 {
+    [SerializeField] private AudioSource _fridgeBuzzSource;
     public override void Begin()
-    {
+    {   
+        AudioManager.Instance.PlayMusic(MusicTracks.Level04Music);
         base.Begin();
         PlayIntroSequence().Forget();
     }
 
     private async UniTask PlayIntroSequence()
     {
-        // AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic);
-        await UniTask.Delay(2000);
+
     }
 
     protected override async UniTask BeforeCompleteAsync()

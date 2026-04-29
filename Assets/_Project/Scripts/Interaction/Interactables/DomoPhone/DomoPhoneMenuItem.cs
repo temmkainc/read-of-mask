@@ -16,7 +16,7 @@ public class DomoPhoneMenuItem : InGameMenuItemBase
     public override void OnFocus(bool focused, bool playSound = true)
     {
         base.OnFocus(focused, false);
-        if (playSound && !focused)
+        if (playSound && focused)
         {
             AudioManager.Instance.PlaySFX(SfxClips.KeypadFocus, volumeScale: 0.2f);
         }

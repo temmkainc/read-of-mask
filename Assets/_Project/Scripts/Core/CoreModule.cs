@@ -26,6 +26,7 @@ public static class CoreModule
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();
         container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario);
+        container.Bind<LockableActionsManager>().AsSingle();
         container.BindInstance(config.CameraEffects).AsSingle();
         container.BindInstance(config.EffectsContainer).AsSingle();
     }

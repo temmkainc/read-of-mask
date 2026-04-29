@@ -11,7 +11,7 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
 
     protected PlayerStateType _previousPlayerStateType;
 
-    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
+    public virtual bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
 
     public virtual void Interact(Player player = null)
     {
@@ -26,15 +26,15 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
 
     protected virtual void On_PlayerStateChanged(PlayerStateType type)
     {
+        var previous = _previousPlayerStateType;
+        _previousPlayerStateType = type;
         if (type == PlayerStateType.LookCloser)
         {
             CameraSnapPoint.SetActive(true);
         }
-        else if (_previousPlayerStateType == PlayerStateType.LookCloser)
+        else if (previous == PlayerStateType.LookCloser)
         {
             _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
         }
-
-        _previousPlayerStateType = type;
     }
 }

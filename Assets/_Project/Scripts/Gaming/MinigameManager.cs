@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Zenject;
 
 public enum MinigameType
@@ -35,6 +36,7 @@ public class MinigameManager : IInitializable
 
     public void EnterMinigame(MinigameType type)
     {
+        Debug.Log($"Entering minigame: {type}");
         ExitCurrentMinigame();
 
         CurrentGame = GetGame(type);

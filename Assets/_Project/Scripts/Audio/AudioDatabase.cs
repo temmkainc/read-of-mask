@@ -49,6 +49,8 @@ public static class MusicTracks
 {
     public const string Level00Intro = "level00_intro_music";
     public const string Level01Music = "level01_music";
+    public const string Level02Music = "level02_music";
+    public const string Level04Music = "level04_music";
     public const string PongMusic = "pong_music";
     public const string TuftaMusic = "tufta_music";
 }
@@ -67,4 +69,8 @@ public static class SfxClips
     public const string KeypadFocus = "keypad_focus";
     public const string KeypadWrong = "keypad_wrong";
     public const string KeypadSuccess = "keypad_success";
+    public const string SwitchOn = "switch_on";
+    public const string SwitchOff = "switch_off";
+    public const string FridgeBuzzLoop = "fridge_buzz_loop";
+    public const string GlassBreak = "glass_break";
 }

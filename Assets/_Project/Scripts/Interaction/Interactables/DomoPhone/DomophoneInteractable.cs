@@ -13,13 +13,14 @@ public class DomoPhoneInteractable : LookCloserInteractableBase
 
     protected override void On_PlayerStateChanged(PlayerStateType type)
     {
+        var previous = _previousPlayerStateType; 
         base.On_PlayerStateChanged(type);
 
         if (type == PlayerStateType.LookCloser)
         {
             _menuController.Activate();
         }
-        else if (_previousPlayerStateType == PlayerStateType.LookCloser)
+        else if (previous == PlayerStateType.LookCloser)
         {
             _menuController.Deactivate();
         }

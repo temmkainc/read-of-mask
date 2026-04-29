@@ -21,6 +21,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     [SerializeField] private CycleInGameMenuItem _resolutionScreenMenuItem;
 
     [Inject] protected InputManager _inputManager;
+    [Inject] private PlayerFirstPersonHandsController _handsController;
     [Inject] private GameOptions _options;
 
     protected InputAction _directionInputAction;
@@ -110,6 +111,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
         _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
         _playerStateManager.OnStateChanged += On_PlayerStateChanged;
         CameraSnapPoint.SetActive(false);
+        _handsController.ResetBlockingAnimation();
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.LookCloser)).Execute();
     }
     private void ToggleOptions(bool isEnter)

@@ -25,6 +25,7 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
     private MaskStateType? _pendingState;
 
     [Inject] private IPlayerStateManager _playerStateManager;
+    [Inject] private LockableActionsManager _lockableActionsManager;
 
     public MaskStateManager(InputManager inputsManager, IPlayerStateManager playerStateManager, DiContainer diContainer)
     {
@@ -48,8 +49,10 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
     }
 
     private void On_MaskToggleRequested(InputAction.CallbackContext context)
-    {
-        Debug.Log("Mask Toggle Requested");
+    {   
+        if (_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.ToggleMask))
+            return;
+            
         if (_isTransitioning)
             return;
 
@@ -74,5 +77,15 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
 
         _pendingState = null;
         _isTransitioning = false;
+    }
+
+    public void ChangeState(MaskStateType state)
+    {
+        if(state == MaskStateType.Wearing)
+        {
+            if(CurrentStateType == MaskStateType.Wearing)
+                return;
+            On_MaskToggleRequested(new InputAction.CallbackContext());
+        }
     }
 }
