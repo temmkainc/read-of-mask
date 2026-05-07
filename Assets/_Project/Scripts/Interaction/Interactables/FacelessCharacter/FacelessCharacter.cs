@@ -37,7 +37,7 @@ public class FacelessCharacter : LookCloserInteractableBase
 
     public override void Interact(Player player = null)
     {
-        if (player.Grabbing.IsHolding && !_canInteract) return;
+        if (player.Grabbing.IsHolding || !_canInteract) return;
         base.Interact(player);
     }
 

@@ -16,10 +16,12 @@ public class LevelDoor : MonoBehaviour
     public void Open()
     {
         _animator.SetTrigger(OpenTriggerHash);
+        AudioManager.Instance.PlaySFX(SfxClips.DoorOpen, volumeScale: 0.6f);
     }
 
     public void Close()
     {
         _animator.SetTrigger(CloseTriggerHash);
+        AudioManager.Instance.PlaySFX(SfxClips.DoorClose, volumeScale: 0.6f);
     }
 }

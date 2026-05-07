@@ -66,6 +66,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!212 &6211521483085716229
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -111,6 +112,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 8d22f75a19b83524d926c80150f106f4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -120,7 +122,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3169416851344626713
 GameObject:
@@ -152,8 +153,8 @@ Transform:
   m_GameObject: {fileID: 3169416851344626713}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.0000005662441}
-  m_LocalPosition: {x: 0.8242, y: -0.1739, z: -0.017}
-  m_LocalScale: {x: 2.1442103, y: 3.8453085, z: 0.056738693}
+  m_LocalPosition: {x: 1.073, y: -0.1739, z: -0.017}
+  m_LocalScale: {x: 2.1804473, y: 3.8453085, z: 0.056738693}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3566433024693162178}
@@ -215,6 +216,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8040811466724938902
 BoxCollider:
@@ -254,8 +256,10 @@ MonoBehaviour:
   _openAnglePush: 90
   _openAnglePull: -90
   _isDependableFromSide: 1
+  _allowToOpenMoreThanOnce: 1
   _duration: 0.5
   _ease: 7
+  _withSfx: 1
 --- !u!114 &6215918851672272057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,7 +274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 4
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  outlineWidth: 40
+  outlineWidth: 30
   precomputeOutline: 1
   bakeKeys:
   - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
@@ -326,14 +330,15 @@ Transform:
   m_GameObject: {fileID: 6157563712350370885}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0021, y: 0.0059, z: -1.1}
-  m_LocalScale: {x: 0.16632976, y: 0.09945815, z: 0.219996}
+  m_LocalPosition: {x: -0.0179, y: 0.0061, z: -1.1}
+  m_LocalScale: {x: 0.15470165, y: 0.09782536, z: 0.219996}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5104793451792335071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5004433557960148401
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -379,7 +384,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 07126694b65852946b394b4d5a06250a, type: 3}
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: f4f0b009d9997e94db036386fe2f85a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -388,5 +394,4 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0

@@ -18,6 +18,7 @@ public class PlayerGrabbing : MonoBehaviour
     [SerializeField] private float _pushDampingSpeed = 10f;
 
     [Inject] private InputManager _inputManager;
+    [Inject] private OverlayHintsSceneContainer _overlayHintsSceneContainer;
 
     private Vector3 _cameraFollowOriginalLocalPosition;
     private Vector3 _currentHoldPosition;
@@ -72,6 +73,7 @@ public class PlayerGrabbing : MonoBehaviour
             return null;
 
         _cameraFollowTarget.localPosition = _cameraFollowOriginalLocalPosition;
+        _overlayHintsSceneContainer.ToThrowTMP.gameObject.SetActive(false);
 
         var obj = (_heldObject as MonoBehaviour).gameObject;
 
@@ -187,6 +189,7 @@ public class PlayerGrabbing : MonoBehaviour
         _inputManager.PlayerGrabAction.performed -= OnGrabPerformed;
         SubscribeThrowNextFrame().Forget();
         Debug.Log($"[Grabbing] Grabbed: {_heldObject}");
+        _overlayHintsSceneContainer.ToThrowTMP.gameObject.SetActive(true);
     }
 
     private void Throw()
@@ -197,6 +200,7 @@ public class PlayerGrabbing : MonoBehaviour
         _heldObject = null;
         _inputManager.PlayerGrabAction.performed -= OnThrowPerformed;
         _inputManager.PlayerGrabAction.performed += OnGrabPerformed;
+        _overlayHintsSceneContainer.ToThrowTMP.gameObject.SetActive(false);
     }
     private async UniTaskVoid SubscribeThrowNextFrame()
     {

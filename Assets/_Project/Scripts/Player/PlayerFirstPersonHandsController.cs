@@ -129,6 +129,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
     public void On_MaskAnimationFinished()
     {
         _maskStateManager.ConfirmStateTransition();
+
         if (_maskStateManager.CurrentStateType == MaskStateType.NotWearing)
         {
             if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
@@ -137,7 +138,17 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
                 _animator.Play("Empty State", GAMING_LAYER_INDEX, 0f);
                 _animator.SetTrigger(DoStartGamingHash);
             }
-            _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
+            else
+            {
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
+            }
+        }
+        else
+        {
+            if (_playerStateManager.CurrentStateType != PlayerStateType.Gaming)
+            {
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
+            }
         }
     }
 
@@ -166,18 +177,20 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
     {
         switch (state)
         {
-            case MaskStateType.NotWearing:
-                _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f); 
-                _animator.SetTrigger(PutOffMaskHash);
-                break;
             case MaskStateType.Wearing:
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f); // always, not just in Gaming
                 if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
                 {
                     _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
-                    _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f);
                     _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0f);
                 }
                 _animator.SetTrigger(PutOnMaskHash);
+                break;
+
+            case MaskStateType.NotWearing:
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f); // zero out here too
+                _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
+                _animator.SetTrigger(PutOffMaskHash);
                 break;
         }
     }

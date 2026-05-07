@@ -20,6 +20,7 @@ public static class CoreModule
         container.BindInterfacesAndSelfTo<GameOptions>().AsSingle();
 
         container.Bind<InputManager>().AsSingle();
+        container.Bind<OverlayHintsSceneContainer>().FromComponentInHierarchy().AsSingle();
         container.Bind<LevelVariables>().FromInstance(config.LevelVariables).AsSingle();
         container.Bind<CinemachineManager>().AsSingle();
         container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();

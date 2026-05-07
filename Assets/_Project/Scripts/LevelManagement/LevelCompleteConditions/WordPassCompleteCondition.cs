@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class WordPassCompleteCondition : MonoBehaviour, ILevelCompleteCondition
 {
     [SerializeField] private LetterCubeSlotReceiver[] _letterCubeSlotReceivers;
     [SerializeField] private string _targetWord;
-
+    [Inject] private UnlockedLettersManager _unlockedLettersManager;
     public event Action OnConditionMet;
 
     private void Awake()
@@ -27,6 +28,11 @@ public class WordPassCompleteCondition : MonoBehaviour, ILevelCompleteCondition
         {
             if (_letterCubeSlotReceivers[i].CurrentLetter != _targetWord[i])
                 return;
+        }
+
+        for(int i = 0; i < _targetWord.Length; i++)
+        {
+            _unlockedLettersManager.UnlockLetter(_targetWord[i]);
         }
         OnConditionMet?.Invoke();
     }

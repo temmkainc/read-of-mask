@@ -16,6 +16,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
     [SerializeField] private bool _allowToOpenMoreThanOnce = true;
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.InOutQuad;
+    [SerializeField] private bool _withSfx = false;
 
     [Inject] private PlayerFirstPersonHandsController _handsController;
 
@@ -37,6 +38,9 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 
     public void Interact(Player player)
     {
+        if(player.Grabbing.IsHolding) 
+            return;
+
         if (_disabled || !_allowToOpenMoreThanOnce && _hasBeenOpened)
         {
             _handsController.PlayNotAllowedAnimation();
@@ -67,9 +71,14 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
 
             targetAngle = closedAngle + openAngle;
             _currentTargetAngle = targetAngle;
+
+            if (_withSfx)
+                AudioManager.Instance.PlaySFX(SfxClips.DoorOpen, volumeScale: 0.4f);
         }
         else
         {
+            if (_withSfx)
+                AudioManager.Instance.PlaySFX(SfxClips.DoorClose, volumeScale: 0.4f);
             targetAngle = closedAngle;
             _currentTargetAngle = closedAngle;
         }
@@ -115,6 +124,9 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
                 .OnComplete(() => tcs.SetResult(true));
 
             await tcs.Task;
+
+            if (_withSfx)
+                AudioManager.Instance.PlaySFX(SfxClips.DoorClose, volumeScale: 0.6f);
         }
     }
 

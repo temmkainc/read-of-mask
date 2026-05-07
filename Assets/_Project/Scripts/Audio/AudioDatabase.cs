@@ -51,6 +51,7 @@ public static class MusicTracks
     public const string Level01Music = "level01_music";
     public const string Level02Music = "level02_music";
     public const string Level04Music = "level04_music";
+    public const string Level05Music = "level05_music";
     public const string PongMusic = "pong_music";
     public const string TuftaMusic = "tufta_music";
 }
@@ -73,4 +74,8 @@ public static class SfxClips
     public const string SwitchOff = "switch_off";
     public const string FridgeBuzzLoop = "fridge_buzz_loop";
     public const string GlassBreak = "glass_break";
+    public const string DoorOpen = "door_open";
+    public const string DoorClose = "door_close";
+    public const string DoorOpenCreak = "door_open_creak";
+    public const string DoorCloseCreak = "door_close_creak";
 }

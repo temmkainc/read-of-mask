@@ -4,7 +4,7 @@ using UnityEngine;
 public class Level05 : LevelBase
 {
     [SerializeField] private LetterCubeSlotReceiver _receiver;
-    [SerializeField] private LetterCube _letterCube;
+    [SerializeField] private CubeToEndTheDEMO _letterCube;
     public override void Begin()
     {
         _receiver.ForceInsert(_letterCube);
@@ -14,7 +14,7 @@ public class Level05 : LevelBase
 
     private async UniTask PlayIntroSequence()
     {
-        // AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic);
+        AudioManager.Instance.PlayMusic(MusicTracks.Level05Music, fadeDuration: 0.5f);
         
     }
 

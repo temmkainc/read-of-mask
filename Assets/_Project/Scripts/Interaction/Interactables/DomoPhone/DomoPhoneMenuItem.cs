@@ -21,7 +21,7 @@ public class DomoPhoneMenuItem : InGameMenuItemBase
             AudioManager.Instance.PlaySFX(SfxClips.KeypadFocus, volumeScale: 0.2f);
         }
         if (focused){
-            transform.localScale = Vector3.one * 1.1f; 
+            transform.localScale = Vector3.one * 1.3f; 
         }
         else
         {

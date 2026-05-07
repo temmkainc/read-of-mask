@@ -7,6 +7,7 @@ public class PlayerInputToStateHandler : MonoBehaviour
 {
     [Inject] private InputManager _inputsManager;
     [Inject] private ICommandBus _commandBus;
+    [Inject] private LockableActionsManager _lockableActionsManager;
     [SerializeField] private FacelessCharacterMenu _menu;
 
 
@@ -28,6 +29,8 @@ public class PlayerInputToStateHandler : MonoBehaviour
 
     private void On_OpenDiaryRequested(InputAction.CallbackContext context)
     {
+        if (_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.OpenDiary))
+            return;
         _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.Diary)).Execute();
     }
 }

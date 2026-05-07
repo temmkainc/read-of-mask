@@ -6,7 +6,7 @@ public class Level04 : LevelBase
     [SerializeField] private AudioSource _fridgeBuzzSource;
     public override void Begin()
     {   
-        AudioManager.Instance.PlayMusic(MusicTracks.Level04Music);
+        AudioManager.Instance.PlayMusic(MusicTracks.Level04Music, fadeDuration: 0.5f);
         base.Begin();
         PlayIntroSequence().Forget();
     }

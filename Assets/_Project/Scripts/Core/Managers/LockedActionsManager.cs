@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class LockableActionsManager 
 {
+    [Inject] private OverlayHintsSceneContainer _overlayHintsSceneContainer;
     public enum LockableActionType
     {
         None,
@@ -28,5 +30,9 @@ public class LockableActionsManager
     public void UnlockAction(LockableActionType action)
     {
         _lockedActions[action] = false;
+        if(action == LockableActionType.ToggleMask)
+            _overlayHintsSceneContainer.ToToggleMaskTMP.gameObject.SetActive(true);
+        if(action == LockableActionType.OpenDiary)
+            _overlayHintsSceneContainer.ToOpenDiaryTMP.gameObject.SetActive(true);
     }
 }
