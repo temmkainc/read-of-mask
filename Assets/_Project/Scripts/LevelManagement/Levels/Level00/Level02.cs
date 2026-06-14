@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Level02 : LevelBase
 {
+    [SerializeField] private AudioSource _headmistressAudioSource;
     public override void Begin()
     {
         AudioManager.Instance.PlayMusic(MusicTracks.Level02Music, fadeDuration: 1f);
@@ -12,12 +13,12 @@ public class Level02 : LevelBase
 
     private async UniTask PlayIntroSequence()
     {
-        await UniTask.Delay(2000);
+        await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressHall, _headmistressAudioSource);
     }
 
     protected override async UniTask BeforeCompleteAsync()
     {
         await base.BeforeCompleteAsync();
-        Debug.Log("Level 01 deactivated!");
+        Debug.Log("Level 02 deactivated!");
     }
 }

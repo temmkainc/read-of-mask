@@ -12,6 +12,7 @@ public static class PlayerModule
         [field: SerializeField] public PlayerStateData InteractionState { get; private set; }
         [field: SerializeField] public PlayerStateData LookCloserState { get; private set; }
         [field: SerializeField] public PlayerLookTarget.Config LookTargetConfig { get; private set; }
+        [field: SerializeField] public PlayerFirstPersonHandsController HandsController { get; private set; }
 
     }
 
@@ -20,7 +21,7 @@ public static class PlayerModule
         container.Bind<IPlayerStateManager>().To<PlayerStateManager>().AsSingle()
             .WithArguments(config).NonLazy();
 
-        container.Bind<PlayerFirstPersonHandsController>().FromComponentInHierarchy().AsSingle();
+        container.Bind<PlayerFirstPersonHandsController>().FromInstance(config.HandsController).AsSingle();
         container.Bind<PlayerController>().FromComponentInHierarchy().AsSingle();
         container.Bind<PlayerGrabbing>().FromComponentInHierarchy().AsSingle();
         container.Bind<PlayerLookTarget>().AsSingle().WithArguments(config.LookTargetConfig).NonLazy();

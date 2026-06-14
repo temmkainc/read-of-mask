@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_TransitionToTheOffice
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_transition_to_the_office
+  AudioClip: {fileID: 8300000, guid: 5ed9fdbf3612d8d42a702ca0ff03c3c3, type: 3}
+  Subtitles:
+  - startTime: 0.18
+    endTime: 1.08
+    text: Though...
+  - startTime: 2.06
+    endTime: 4.11
+    text: What am I even saying?
+  - startTime: 4.89
+    endTime: 7.96
+    text: Your performance is falling into the galf
+  - startTime: 8.08
+    endTime: 10.11
+    text: just as fast as your ability
+  - startTime: 10.28
+    endTime: 12.76
+    text: to keep your back straight
+  - startTime: 13.9
+    endTime: 14.8
+    text: You are late!
+  - startTime: 15.9
+    endTime: 17.3
+    text: Again!
+  - startTime: 18.9
+    endTime: 21.376
+    text: Stand still and listen.
+  - startTime: 23.4
+    endTime: 25.606667
+    text: ' As long as I let you breathe,'
+  - startTime: 25.66
+    endTime: 28.817333
+    text: learn the basics of ORDER
+  - startTime: 30.630667
+    endTime: 32.828
+    text: 'The world ignores your riot '
+  - startTime: 33.364
+    endTime: 35.156
+    text: it demands results.
+  - startTime: 35.9
+    endTime: 39.157333
+    text: Look at those gaps by the door.
+  - startTime: 40.21
+    endTime: 43.367332
+    text: 'That is your chance to pull yourself together. '
+  - startTime: 44.817997
+    endTime: 47.747334
+    text: That is the true ORDER.
+  - startTime: 48.814
+    endTime: 53.934
+    text: You are just a smudge until you find some structure.
+  - startTime: 54.702
+    endTime: 57.219334
+    text: Or... at least the better posture...
+  - startTime: 58.158
+    endTime: 62.83
+    text: 'Find what you''ve lost and return it to the place. '
+  - startTime: 64.23
+    endTime: 66.555336
+    text: Establish an ORDER.
+  - startTime: 67.55801
+    endTime: 72.69934
+    text: 'And then, perhaps, I will allow you to leave this place... '
+  - startTime: 73.36
+    endTime: 77.41333
+    text: if, of course, you don't crumble along the way
+  - startTime: 77.41333
+    endTime: 80.05866
+    text: ' from your own helplessness. '

@@ -14,7 +14,6 @@ public class OverlayHintsSceneContainer : MonoBehaviour
     public void OnLookCloserStateEntered()
     {
         ToOpenDiaryTMP.gameObject.SetActive(false);
-        ToToggleMaskTMP.gameObject.SetActive(false);
         ToExitTMP.gameObject.SetActive(true);
     }
 
@@ -24,11 +23,7 @@ public class OverlayHintsSceneContainer : MonoBehaviour
         {
             ToOpenDiaryTMP.gameObject.SetActive(true);
         }
-
-        if(!_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.ToggleMask))
-        {
-            ToToggleMaskTMP.gameObject.SetActive(true);
-        }
+        
         ToExitTMP.gameObject.SetActive(false);
     }
 }

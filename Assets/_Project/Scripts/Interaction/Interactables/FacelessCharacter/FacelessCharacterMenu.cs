@@ -18,6 +18,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     [SerializeField] private ValueInGameMenuItem _masterVolumeMenuItem;
     [SerializeField] private ValueInGameMenuItem _musicVolumeMenuItem;
     [SerializeField] private CycleInGameMenuItem _fullScreenMenuItem;
+    [SerializeField] private CycleInGameMenuItem _motionBlurMenuItem;
     [SerializeField] private CycleInGameMenuItem _resolutionScreenMenuItem;
 
     [Inject] protected InputManager _inputManager;
@@ -31,7 +32,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     protected InGameMenu _optionsMenu;
 
     private bool _isInOptions = false;
-    private const int MAX_VISIBLE_ITEMS = 4;
+    private const int MAX_VISIBLE_ITEMS = 5;
 
     private void Awake()
     {
@@ -60,6 +61,12 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
 
         _musicVolumeMenuItem.Initialize(_options.MusicVolume,
             value => _options.MusicVolume = value);
+
+        _motionBlurMenuItem.Initialize(
+            new[] { "On", "Off" },
+            _options.MotionBlur ? "On" : "Off",
+            value => _options.MotionBlur = value == "On"
+        );
 
         _fullScreenMenuItem.Initialize(
             new[] { "On", "Off" },
@@ -148,13 +155,14 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
             if (_isInOptions)
             {
                 _optionsMenu.EnterMenu();
-            } else
+            }
+            else
             {
                 _menu.EnterMenu();
             }
         });
     }
-    
+
     private void ExitMenu()
     {
         transform.DOScaleY(0.05f, 0.2f)
@@ -191,7 +199,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     }
     protected override void On_PlayerStateChanged(PlayerStateType type)
     {
-        if(type != PlayerStateType.LookCloser)
+        if (type != PlayerStateType.LookCloser)
         {
             ExitMenu();
             return;

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_BookOnDeskReaction
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: book_desk_reaction
+  AudioClip: {fileID: 8300000, guid: dbf7f5b354bc8f34eaed483dd5718387, type: 3}
+  Subtitles:
+  - startTime: 0
+    endTime: 3.9893334
+    text: 'My desk is not a dumping ground for your scraps. '
+  - startTime: 4.66
+    endTime: 7.08
+    text: " You\u2019ve simply moved the problem "
+  - startTime: 7.146667
+    endTime: 10.133333
+    text: from the floor onto my surface.
+  - startTime: 10.96
+    endTime: 13.418667
+    text: That isn't a solution.

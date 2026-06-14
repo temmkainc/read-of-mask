@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_TakeOutTheLetter
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_take_out
+  AudioClip: {fileID: 8300000, guid: 35532071d4e45bb45b8af42b6ed1c219, type: 3}
+  Subtitles:
+  - startTime: 0
+    endTime: 1.8986666
+    text: Everything in life
+  - startTime: 1.8986666
+    endTime: 3.9466667
+    text: has a beginning
+  - startTime: 3.9466667
+    endTime: 6.208
+    text: ' and an end.'
+  - startTime: 7.082667
+    endTime: 10.432
+    text: ' True life is a perfect circle.'
+  - startTime: 11.37
+    endTime: 13.311334
+    text: ' A flawless shape,'
+  - startTime: 13.33
+    endTime: 16.447332
+    text: where the finale always brings
+  - startTime: 16.447332
+    endTime: 18.516665
+    text: ' you back to the source...'
+  - startTime: 20.308664
+    endTime: 23.167332
+    text: Take out the letter!

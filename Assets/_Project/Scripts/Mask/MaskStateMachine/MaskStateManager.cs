@@ -49,10 +49,10 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
     }
 
     private void On_MaskToggleRequested(InputAction.CallbackContext context)
-    {   
+    {
         if (_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.ToggleMask))
             return;
-            
+
         if (_isTransitioning)
             return;
 
@@ -81,11 +81,14 @@ public sealed class MaskStateManager : IMaskStateManager, IDisposable
 
     public void ChangeState(MaskStateType state)
     {
-        if(state == MaskStateType.Wearing)
+        if (state == MaskStateType.Wearing)
         {
-            if(CurrentStateType == MaskStateType.Wearing)
-                return;
-            On_MaskToggleRequested(new InputAction.CallbackContext());
+            if (CurrentStateType == MaskStateType.Wearing) return;
+            if (_isTransitioning) return;
+
+            _pendingState = MaskStateType.Wearing;
+            _isTransitioning = true;
+            OnStateChanged?.Invoke(MaskStateType.Wearing);
         }
     }
 }

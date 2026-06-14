@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_BookPickUpReaction
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: book_grab_reaction
+  AudioClip: {fileID: 8300000, guid: 25978879da28ef84681de1951a7b8306, type: 3}
+  Subtitles:
+  - startTime: 0.14933333
+    endTime: 3.2213333
+    text: A book on the floor is diagnosis
+  - startTime: 3.2213333
+    endTime: 5.3546667
+    text: of your upbringing...
+  - startTime: 5.47
+    endTime: 7.104
+    text: FIX IT

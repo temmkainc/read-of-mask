@@ -19,6 +19,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
 
     private bool _holdingMiddleFingerLastFrame = false;
     private bool _holdingPointingFingerLastFrame = false;
+    private bool _isLookCloserActive = false;
 
     private readonly int SpeedHash = Animator.StringToHash("Speed");
     private readonly int DoMiddleFingerHash = Animator.StringToHash("DoMiddleFinger");
@@ -37,6 +38,10 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
 
     private readonly int DoAngryHash = Animator.StringToHash("DoAngry");
     private readonly int DoNotAllowedHash = Animator.StringToHash("DoNotAllowed");
+
+    private readonly int MaskIdleHash = Animator.StringToHash("player_in_mask_idle");
+    private readonly int MaskPutOnHash = Animator.StringToHash("player_put_mask_on");
+    private readonly int MaskPutOffHash = Animator.StringToHash("player_put_mask_off");
 
     private const int MOVEMENT_LAYER_INDEX = 1;
     private const int GESTURES_LAYER_INDEX = 2;
@@ -62,6 +67,13 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
         _playerStateManager.OnStateChanged += On_PlayerStateChanged;
     }
 
+    private void Update()
+    {
+        _animator.SetFloat(SpeedHash, _playerController.MoveInput.magnitude);
+        if (_isLookCloserActive)
+            UpdateLookCloserHandsVisibility();
+    }
+
     private void OnDestroy()
     {
         _inputManager.ShowMiddleFingerAction.performed -= On_MiddleFingerPressed;
@@ -81,15 +93,19 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
     private void On_PlayerStateChanged(PlayerStateType type)
     {
         if (type == PlayerStateType.Gaming)
-        {
             On_EnterGamingState();
-        }
         else if (_previousPlayerStateType == PlayerStateType.Gaming)
-        {
             On_ExitGamingState();
-        }
 
-        _handsImage.gameObject.SetActive(type != PlayerStateType.LookCloser);
+        ResetBlockingAnimation();
+
+        _isLookCloserActive = type == PlayerStateType.LookCloser;
+
+        if (!_isLookCloserActive)
+            _handsImage.color = Color.white;
+        else
+            _handsImage.color = Color.clear; 
+
         _previousPlayerStateType = type;
     }
 
@@ -143,28 +159,33 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
                 _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
             }
         }
-        else
-        {
-            if (_playerStateManager.CurrentStateType != PlayerStateType.Gaming)
-            {
-                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
-            }
-        }
     }
 
     private void SetBlockingAnimation(int triggerHash)
     {
         if (_isBlockingAnimationPlaying) return;
 
+        _animator.SetLayerWeight(MASK_LAYER_INDEX, 0f);
+        _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0f);
+        _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, 0f);
         _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 1f);
+        _animator.ResetTrigger(triggerHash);
         _animator.SetTrigger(triggerHash);
         _isBlockingAnimationPlaying = true;
     }
-
     private void OnBlockingAnimationFinished(int triggerHash)
     {
-        _animator.ResetTrigger(triggerHash);
+        if (triggerHash != 0)
+            _animator.ResetTrigger(triggerHash);
         _isBlockingAnimationPlaying = false;
+
+        bool isGaming = _playerStateManager.CurrentStateType == PlayerStateType.Gaming;
+        bool isMasking = _maskStateManager.CurrentStateType == MaskStateType.Wearing;
+
+        _animator.SetLayerWeight(MOVEMENT_LAYER_INDEX, isGaming ? 0f : 1f);
+        _animator.SetLayerWeight(GESTURES_LAYER_INDEX, isGaming ? 0f : 1f);
+        _animator.SetLayerWeight(GAMING_LAYER_INDEX, isGaming && !isMasking ? 1f : 0f);
+        _animator.SetLayerWeight(MASK_LAYER_INDEX, 0f);
     }
 
     public void PlayAngryAnimation() => SetBlockingAnimation(DoAngryHash);
@@ -175,30 +196,32 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
 
     private void On_MaskStateChanged(MaskStateType state)
     {
+        _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
+        _animator.ResetTrigger(DoMiddleFingerHash);
+        _animator.ResetTrigger(DoPointingFingerHash);
+        _animator.SetBool(IsHoldingMiddleFingerHash, false);
+        _animator.SetBool(IsHoldingPointingFingerHash, false);
+        _holdingMiddleFingerLastFrame = false;
+        _holdingPointingFingerLastFrame = false;
+
         switch (state)
         {
             case MaskStateType.Wearing:
-                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f); // always, not just in Gaming
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f);
                 if (_playerStateManager.CurrentStateType == PlayerStateType.Gaming)
                 {
-                    _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
                     _animator.SetLayerWeight(GAMING_LAYER_INDEX, 0f);
                 }
                 _animator.SetTrigger(PutOnMaskHash);
                 break;
 
             case MaskStateType.NotWearing:
-                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f); // zero out here too
-                _animator.SetLayerWeight(MASK_LAYER_INDEX, 1f);
+                _animator.SetLayerWeight(GESTURES_LAYER_INDEX, 0f);
                 _animator.SetTrigger(PutOffMaskHash);
                 break;
         }
     }
 
-    private void Update()
-    {
-        _animator.SetFloat(SpeedHash, _playerController.MoveInput.magnitude);
-    }
 
     private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)
     {
@@ -237,4 +260,21 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
         _animator.SetBool(IsHoldingPointingFingerHash, false);
         _holdingPointingFingerLastFrame = false;
     }
+
+    private void UpdateLookCloserHandsVisibility()
+    {
+        if (_animator.GetLayerWeight(MASK_LAYER_INDEX) <= 0f)
+        {
+            _handsImage.color = Color.clear;
+            return;
+        }
+
+        var stateInfo = _animator.GetCurrentAnimatorStateInfo(MASK_LAYER_INDEX);
+        bool shouldShow = stateInfo.shortNameHash == MaskPutOnHash
+                       || stateInfo.shortNameHash == MaskIdleHash
+                       || stateInfo.shortNameHash == MaskPutOffHash;
+
+        _handsImage.color = shouldShow ? Color.white : Color.clear;
+    }
+
 }

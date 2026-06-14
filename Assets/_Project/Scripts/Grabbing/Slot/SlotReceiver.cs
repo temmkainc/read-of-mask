@@ -35,7 +35,7 @@ public abstract class SlotReceiver<T> : SlotReceiver
         if (!CanAccept(obj))
             return;
 
-        grabbing.ReleaseHeldObject();
+        grabbing.ReleaseHeldObject(isExternal: true);
 
         CurrentObject = obj;
         var rb = CurrentObject.GetComponent<Rigidbody>();

@@ -13,23 +13,56 @@ MonoBehaviour:
   m_Name: Headmistress_IntroSpeech
   m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
   Id: headmistress_intro_speech
-  AudioClip: {fileID: 8300000, guid: 6bce4d5f9dae2424fa616176122675a0, type: 3}
+  AudioClip: {fileID: 8300000, guid: aba471b5c01a7ef49a443d2f0021c95c, type: 3}
   Subtitles:
   - startTime: 0.75
     endTime: 1.8166667
     text: My Boy...
-  - startTime: 3.3953333
-    endTime: 4.91
+  - startTime: 4.16
+    endTime: 6.11
     text: Here you go again...
-  - startTime: 5.891333
-    endTime: 8.33
+  - startTime: 7.57
+    endTime: 10.23
     text: You know how I dislike the mess
-  - startTime: 8.34
-    endTime: 10.35
+  - startTime: 10.26
+    endTime: 12.73
     text: yet you have scattered your thoughts again
-  - startTime: 11.16
-    endTime: 11.88
+  - startTime: 14.3
+    endTime: 15.3
     text: Like...
-  - startTime: 12.93
-    endTime: 14.29
+  - startTime: 16.5
+    endTime: 17.9
     text: Like old toys....
+  - startTime: 19.822668
+    endTime: 23.726667
+    text: You are very dear to me... and you know that!
+  - startTime: 24.708
+    endTime: 28.804
+    text: But there must be an ORDER in everything.
+  - startTime: 29.77
+    endTime: 31.433332
+    text: Everything in life...
+  - startTime: 31.774666
+    endTime: 33.673332
+    text: has its place
+  - startTime: 34.505333
+    endTime: 35.465332
+    text: Even you...
+  - startTime: 36.48933
+    endTime: 39.070663
+    text: Pick up the letter.
+  - startTime: 40.7
+    endTime: 43.280666
+    text: Don't make me repeat myself
+  - startTime: 45.37
+    endTime: 48.697998
+    text: 'You know how I hate repeating myself.... '
+  - startTime: 50.150665
+    endTime: 53.414665
+    text: 'Return the letter to its place. '
+  - startTime: 54.097332
+    endTime: 56.41933
+    text: Keep an ORDER.
+  - startTime: 57.472
+    endTime: 61.61067
+    text: 'That is the only thing  that holds us together. '

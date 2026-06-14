@@ -38,9 +38,8 @@ public class Level00 : LevelBase
             await UniTask.WaitForSeconds(2f, cancellationToken: ct);
             _effectsContainer.EyeOpenEffect.Play().Forget();
         }
-        await UniTask.WaitForSeconds(2f, cancellationToken: ct);
+        await UniTask.WaitForSeconds(0.5f, cancellationToken: ct);
         await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressIntroSpeech, _headmistressAudioSource, ct);
-        await AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressYouAreDear, _headmistressAudioSource, ct);
     }
 
     protected override async UniTask BeforeCompleteAsync()

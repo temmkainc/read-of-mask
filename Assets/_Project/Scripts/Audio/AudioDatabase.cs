@@ -43,7 +43,25 @@ public static class Voicelines
 {
     public const string HeadmistressIntroSpeech = "headmistress_intro_speech";
     public const string HeadmistressTransitionToTheOffice = "headmistress_transition_to_the_office";
-    public const string HeadmistressYouAreDear = "headmistress_you_are_dear";
+    public const string HeadmistressPortraitInteraction = "headmistress_portrait_interaction";
+    public const string SchoolScheduleInteraction = "school_schedule_interaction";
+
+    public const string HeadmistressNo = "headmistress_no";
+    public const string HeadmistressHall = "headmistress_hall";
+    public const string HeadmistressTakeOut = "headmistress_take_out";
+    public const string HeadmistressGettingStarted = "headmistress_getting_started";
+
+    public const string BookGrabReaction = "book_grab_reaction";
+    public const string BookOnShelfReaction = "book_shelve_reaction";
+    public const string BookOnFloorReaction = "book_floor_reaction";
+    public const string BookOnDeskReaction = "book_desk_reaction";
+    public const string BookOnCoffeeTableReaction = "book_coffee_table_reaction";
+
+    public const string BlockOReaction = "o_placed_reaction";
+    public const string BlockDReaction = "d_placed_reaction";
+    public const string BlockEReaction = "e_placed_reaction";
+    public const string BlockRReaction = "r_placed_reaction";
+    public const string BlockRSecondReaction = "r_second_placed_reaction";
 }
 public static class MusicTracks
 {
@@ -78,4 +96,10 @@ public static class SfxClips
     public const string DoorClose = "door_close";
     public const string DoorOpenCreak = "door_open_creak";
     public const string DoorCloseCreak = "door_close_creak";
+    public const string ChaosCuckoo = "chaos_cuckoo";
+    public const string WrongCallDog = "wrong_call_dog_barkling";
+    public const string WrongCallChild = "wrong_call_child";
+    public const string WrongCallFootball = "wrong_call_football";
+    public const string FridgeBuzz = "fridge_buzz_loop";
+    public const string ImpactEndgame = "impact_endgame";
 }

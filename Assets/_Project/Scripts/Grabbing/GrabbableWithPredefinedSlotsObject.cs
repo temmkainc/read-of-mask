@@ -10,9 +10,9 @@ public class GrabbableWithPredefinedSlotsObject : GrabbableObject
         SetSlotsHighlighted(true);
     }
 
-    public override void Release(Vector3 throwForce)
+    public override void Release(Vector3 throwForce, bool isExternal = false)
     {
-        base.Release(throwForce);
+        base.Release(throwForce, isExternal);
         SetSlotsHighlighted(false);
     }
 

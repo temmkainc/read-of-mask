@@ -67,7 +67,7 @@ public class PlayerGrabbing : MonoBehaviour
         result = null;
         return false;
     }
-    public GameObject ReleaseHeldObject()
+    public GameObject ReleaseHeldObject(bool isExternal = false)
     {
         if (_heldObject == null)
             return null;
@@ -77,7 +77,7 @@ public class PlayerGrabbing : MonoBehaviour
 
         var obj = (_heldObject as MonoBehaviour).gameObject;
 
-        _heldObject.Release(Vector3.zero);
+        _heldObject.Release(Vector3.zero, isExternal);
 
         _heldObject = null;
 
@@ -86,6 +86,7 @@ public class PlayerGrabbing : MonoBehaviour
 
         return obj;
     }
+    
 
     private void UpdateHeldObjectPosition()
     {

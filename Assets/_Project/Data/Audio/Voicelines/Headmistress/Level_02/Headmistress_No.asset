@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_No
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_no
+  AudioClip: {fileID: 8300000, guid: 070d273550c5a304aa15d520837772e3, type: 3}
+  Subtitles:
+  - startTime: 0.27
+    endTime: 3.1
+    text: No, no, no!
+  - startTime: 3.5
+    endTime: 5.99
+    text: " It\u2019s looking at us!"
+  - startTime: 6.1
+    endTime: 8
+    text: Close your eyes!
+  - startTime: 8.08
+    endTime: 10.3
+    text: ' Clo-o-ose them...'
+  - startTime: 10.57
+    endTime: 12.6
+    text: " I\u2019m fading awa-a-ay..."
+  - startTime: 14.2
+    endTime: 16.037733
+    text: ' Run!'

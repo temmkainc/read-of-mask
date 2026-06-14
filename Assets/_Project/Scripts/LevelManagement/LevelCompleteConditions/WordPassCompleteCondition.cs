@@ -8,6 +8,7 @@ public class WordPassCompleteCondition : MonoBehaviour, ILevelCompleteCondition
     [SerializeField] private string _targetWord;
     [Inject] private UnlockedLettersManager _unlockedLettersManager;
     public event Action OnConditionMet;
+    public bool CanPlayVoiceline { get; private set; }
 
     private void Awake()
     {
@@ -24,16 +25,22 @@ public class WordPassCompleteCondition : MonoBehaviour, ILevelCompleteCondition
 
     private void CheckWordMatch()
     {
-        for(int i = 0; i < _letterCubeSlotReceivers.Length; i++)
+        int correctCount = 0;
+        for (int i = 0; i < _letterCubeSlotReceivers.Length; i++)
         {
-            if (_letterCubeSlotReceivers[i].CurrentLetter != _targetWord[i])
-                return;
+            if (_letterCubeSlotReceivers[i].CurrentLetter == _targetWord[i])
+                correctCount++;
         }
 
-        for(int i = 0; i < _targetWord.Length; i++)
+        CanPlayVoiceline = correctCount == _targetWord.Length - 1;
+
+        if (correctCount == _targetWord.Length)
         {
-            _unlockedLettersManager.UnlockLetter(_targetWord[i]);
+            for (int i = 0; i < _targetWord.Length; i++)
+            {
+                _unlockedLettersManager.UnlockLetter(_targetWord[i]);
+            }
+            OnConditionMet?.Invoke();
         }
-        OnConditionMet?.Invoke();
     }
 }

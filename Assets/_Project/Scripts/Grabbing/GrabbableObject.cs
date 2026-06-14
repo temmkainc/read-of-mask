@@ -49,7 +49,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
         }
     }
 
-    public virtual void Release(Vector3 throwForce)
+    public virtual void Release(Vector3 throwForce, bool isExternal = false)
     {
         IsGrabbed = false;
         transform.SetParent(null);

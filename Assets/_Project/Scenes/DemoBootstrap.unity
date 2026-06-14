@@ -1165,6 +1165,7 @@ GameObject:
   - component: {fileID: 343520216}
   - component: {fileID: 343520218}
   - component: {fileID: 343520217}
+  - component: {fileID: 343520219}
   m_Layer: 0
   m_Name: Hint_TMP
   m_TagString: Untagged
@@ -1291,6 +1292,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343520215}
   m_CullTransparentMesh: 1
+--- !u!114 &343520219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343520215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc3e75fecfb9ad47993010de5bd3df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeviceAdaptiveHint
+  _hintText: {fileID: 343520217}
+  _label: TO SUBMIT
+  _keyboardKey: SPACE
+  _xboxSpriteName: x_a
+  _playstationSpriteName: ps5_cross
+  _xboxSpriteAsset: {fileID: 11400000, guid: a561b8eb3c741884c82872498a1dc6bd, type: 2}
+  _playstationSpriteAsset: {fileID: 11400000, guid: 968a6a3839f3fe74ea5f019c453b694d, type: 2}
 --- !u!43 &391847278
 Mesh:
   m_ObjectHideFlags: 0
@@ -2434,6 +2454,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 330585546}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &980085262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 980085264}
+  - component: {fileID: 980085263}
+  m_Layer: 0
+  m_Name: InputDeviceTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &980085263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980085262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb0ebf1a89b8b3740821592286f6ee20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputDeviceTracker
+--- !u!4 &980085264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980085262}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 38.098, y: 2.10941, z: 8.97151}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1019560940
 GameObject:
   m_ObjectHideFlags: 0
@@ -3507,6 +3571,7 @@ MonoBehaviour:
       <Mask>k__BackingField:
         serializedVersion: 2
         m_Bits: 0
+    <HandsController>k__BackingField: {fileID: 0}
 --- !u!1 &1252947908
 GameObject:
   m_ObjectHideFlags: 0
@@ -4670,6 +4735,7 @@ GameObject:
   - component: {fileID: 1688884741}
   - component: {fileID: 1688884743}
   - component: {fileID: 1688884742}
+  - component: {fileID: 1688884744}
   m_Layer: 0
   m_Name: Hint_TMP
   m_TagString: Untagged
@@ -4796,6 +4862,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1688884740}
   m_CullTransparentMesh: 1
+--- !u!114 &1688884744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688884740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc3e75fecfb9ad47993010de5bd3df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeviceAdaptiveHint
+  _hintText: {fileID: 1688884742}
+  _label: TO NAVIGATE
+  _keyboardKey: UP/DOWN
+  _xboxSpriteName: x_up_down
+  _playstationSpriteName: ps5_up_down
+  _xboxSpriteAsset: {fileID: 11400000, guid: a561b8eb3c741884c82872498a1dc6bd, type: 2}
+  _playstationSpriteAsset: {fileID: 11400000, guid: 968a6a3839f3fe74ea5f019c453b694d, type: 2}
 --- !u!1 &1735304655
 GameObject:
   m_ObjectHideFlags: 0
@@ -6504,6 +6589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionLookPoint
   _maxVerticalAngle: 10
   _maxHorizontalAngle: 10
+  _gamepadMultiplier: 150
 --- !u!23 &1820104589207378452
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7611,6 +7697,7 @@ MonoBehaviour:
   _cameraRoot: {fileID: 3934009225719829276}
   _playerRoot: {fileID: 2346901440500162513}
   _maxLookAngle: 80
+  _gamepadMultiplier: 150
 --- !u!4 &6482150608437415053
 Transform:
   m_ObjectHideFlags: 0
@@ -8039,6 +8126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionLookPoint
   _maxVerticalAngle: 20
   _maxHorizontalAngle: 20
+  _gamepadMultiplier: 150
 --- !u!65 &8752291691290325266
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8293,3 +8381,4 @@ SceneRoots:
   - {fileID: 4900801752406105709}
   - {fileID: 1806815236}
   - {fileID: 191611333}
+  - {fileID: 980085264}

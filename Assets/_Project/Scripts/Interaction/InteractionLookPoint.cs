@@ -1,11 +1,12 @@
 using UnityEngine;
 using Zenject;
+using UnityEngine.InputSystem;
 
 public class InteractionLookPoint : MonoBehaviour
 {
     [SerializeField] private float _maxVerticalAngle = 30f;
     [SerializeField] private float _maxHorizontalAngle = 30f;
-
+    [SerializeField] private float _gamepadMultiplier = 150f;
     [Inject] private InputManager _input;
     [Inject] private GameOptions _gameOptions;
 
@@ -17,7 +18,7 @@ public class InteractionLookPoint : MonoBehaviour
     private Vector3 _externalPosition;
     private Vector3 _basePosition;
 
-    private const float SENSITIVITY_SCALE_FACTOR = 0.05f;
+    private const float SENSITIVITY_SCALE_FACTOR = 0.005f;
 
     private Quaternion _baseRotation;
 
@@ -43,7 +44,6 @@ public class InteractionLookPoint : MonoBehaviour
     private void Update()
     {
         if (!_isActive) return;
-
         if (_externalPositionOverride)
             transform.position = _externalPosition;
 
@@ -54,19 +54,21 @@ public class InteractionLookPoint : MonoBehaviour
             _ => null
         };
 
-        if(inputAction == null) 
-            return;
+        if (inputAction == null) return;
 
-        Vector2 look = inputAction.ReadValue<Vector2>() * _gameOptions.Sensitivity * SENSITIVITY_SCALE_FACTOR;
+        Vector2 lookInput = inputAction.ReadValue<Vector2>();
+        bool isGamepad = inputAction.activeControl?.device is Gamepad;
+
+        Vector2 look = isGamepad
+            ? lookInput * _gameOptions.Sensitivity * _gamepadMultiplier * Time.deltaTime
+            : lookInput * _gameOptions.Sensitivity * SENSITIVITY_SCALE_FACTOR;
 
         _xRotation -= look.y;
         _xRotation = Mathf.Clamp(_xRotation, -_maxVerticalAngle, _maxVerticalAngle);
-
         _yRotation += look.x;
         _yRotation = Mathf.Clamp(_yRotation, -_maxHorizontalAngle, _maxHorizontalAngle);
 
         Quaternion offset = Quaternion.Euler(_xRotation, _yRotation, 0f);
-
         transform.localRotation = _baseRotation * offset;
     }
     public void SetExternalPosition(Vector3 worldPosition)

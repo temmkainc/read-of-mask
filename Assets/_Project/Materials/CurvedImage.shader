@@ -43,7 +43,7 @@
     {
         Tags
         {
-            "Queue"="Transparent"
+            "Queue"="Transparent+100"
             "IgnoreProjector"="True"
             "RenderType"="Transparent"
             "PreviewType"="Plane"

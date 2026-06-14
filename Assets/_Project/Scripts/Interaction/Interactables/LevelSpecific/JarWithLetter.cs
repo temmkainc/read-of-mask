@@ -19,13 +19,15 @@ public class JarInteractable : MonoBehaviour, IInteractable, IHighlightable
     {
         if (_cubeToGrow != null)
         {
-            _cubeOriginalScale = _cubeToGrow.localScale;
-            _cubeToGrow.localScale = Vector3.zero;
-            _cubeToGrow.GetComponent<Rigidbody>().isKinematic = true;
-            _cubeToGrow.GetComponent<Collider>().enabled = false;
+            // _cubeOriginalScale = _cubeToGrow.localScale;
+            // _cubeToGrow.localScale = Vector3.zero;
+            // _cubeToGrow.GetComponent<Rigidbody>().isKinematic = true;
+            // _cubeToGrow.GetComponent<Collider>().enabled = false;
+            _cubeToGrow.gameObject.SetActive(false);
         }
     }
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding && !_broken;
+
     public void Interact(Player player = null)
     {
         if (_broken || player.Grabbing.IsHolding) return;
@@ -43,6 +45,7 @@ public class JarInteractable : MonoBehaviour, IInteractable, IHighlightable
             .DORotate(randomTilt, _fallDuration, RotateMode.FastBeyond360)
             .SetEase(Ease.InCubic);
     }
+
     private void Break()
     {
         AudioManager.Instance.PlaySFX(SfxClips.GlassBreak);
@@ -56,19 +59,20 @@ public class JarInteractable : MonoBehaviour, IInteractable, IHighlightable
                 rb.AddExplosionForce(_explosionForce, _dropPoint.position, _explosionRadius);
         }
 
-        GrowCube();
+        // GrowCube();
+        _cubeToGrow.gameObject.SetActive(true);
         Destroy(gameObject);
     }
 
-    private void GrowCube()
-    {
-        if (_cubeToGrow == null) return;
-        _cubeToGrow.SetParent(null);
-        _cubeToGrow.position = _dropPoint.position;
-        _cubeToGrow.GetComponent<Rigidbody>().isKinematic = false;
-        _cubeToGrow.GetComponent<Collider>().enabled = true;
-        _cubeToGrow
-            .DOScale(_cubeOriginalScale, _cubeGrowDuration)
-            .SetEase(_cubeGrowEase);
-    }
+    // private void GrowCube()
+    // {
+    //     if (_cubeToGrow == null) return;
+    //     _cubeToGrow.SetParent(null);
+    //     _cubeToGrow.position = _dropPoint.position;
+    //     _cubeToGrow.GetComponent<Rigidbody>().isKinematic = false;
+    //     _cubeToGrow.GetComponent<Collider>().enabled = true;
+    //     _cubeToGrow
+    //         .DOScale(_cubeOriginalScale, _cubeGrowDuration)
+    //         .SetEase(_cubeGrowEase);
+    // }
 }

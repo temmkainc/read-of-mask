@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-
+using UnityEngine.Rendering;
 public static class CoreModule 
 {
     [Serializable]
@@ -13,12 +13,13 @@ public static class CoreModule
         [field: SerializeField] public bool WithLevelsScenario { get; private set; } 
         [field: SerializeField] public EffectsContainer EffectsContainer { get; private set; }
         [field: SerializeField] public LevelVariables LevelVariables { get; private set; }
+        [field: SerializeField] public AudioManager AudioManager { get; private set; }
     }
 
     public static void Install(DiContainer container, ConfigData config)
     {
         container.BindInterfacesAndSelfTo<GameOptions>().AsSingle();
-
+        container.BindInterfacesAndSelfTo<Volume>().FromComponentInHierarchy().AsSingle().WhenInjectedInto<GameOptions>().NonLazy();
         container.Bind<InputManager>().AsSingle();
         container.Bind<OverlayHintsSceneContainer>().FromComponentInHierarchy().AsSingle();
         container.Bind<LevelVariables>().FromInstance(config.LevelVariables).AsSingle();
@@ -30,5 +31,6 @@ public static class CoreModule
         container.Bind<LockableActionsManager>().AsSingle();
         container.BindInstance(config.CameraEffects).AsSingle();
         container.BindInstance(config.EffectsContainer).AsSingle();
+        container.BindInstance(config.AudioManager).AsSingle();
     }
 }

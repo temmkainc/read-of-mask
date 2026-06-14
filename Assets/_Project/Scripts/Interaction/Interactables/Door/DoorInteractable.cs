@@ -36,6 +36,11 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
         _closedRotation = _transformToRotate.localEulerAngles;
     }
 
+    public void SetDisabled(bool disabled)
+    {
+        _disabled = disabled;
+    }
+
     public void Interact(Player player)
     {
         if(player.Grabbing.IsHolding) 

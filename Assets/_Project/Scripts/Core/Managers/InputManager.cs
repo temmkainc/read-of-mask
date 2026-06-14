@@ -19,6 +19,7 @@ public class InputManager : IDisposable
     [Header("Global Map Actions")]
     public InputAction ToggleMaskAction => _actions.Global.ToggleMask;
     [Header("Diary Map Actions")]
+    public InputAction DiaryDirectionAction => _actions.Diary.Input;
     public InputAction CloseDiaryAction => _actions.Diary.Close;
     [Header("Gaming Map Actions")]
     public InputAction StopGamingAction => _actions.Gaming.Stop;

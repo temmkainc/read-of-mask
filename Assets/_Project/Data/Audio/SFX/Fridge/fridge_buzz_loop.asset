@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: fridge_buzz_loop
   m_EditorClassIdentifier: Assembly-CSharp::SFXData
   Id: fridge_buzz_loop
-  AudioClip: {fileID: 8300000, guid: eafd6c7527a841a4eacf0b8c6cbd62ab, type: 3}
+  AudioClip: {fileID: 8300000, guid: cfaf3fdd97998a747b3403b779fe8a26, type: 3}

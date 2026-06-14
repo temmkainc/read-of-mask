@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_R_second_Reaction
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: r_second_placed_reaction
+  AudioClip: {fileID: 8300000, guid: 3d5be8ed79836784393a768612663b64, type: 3}
+  Subtitles:
+  - startTime: 0
+    endTime: 2.944
+    text: 'The Result is near. '
+  - startTime: 2.944
+    endTime: 8.042666
+    text: " You\u2019ve finally dug up the truth among my papers."

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c85a3737ee45045a8733c6aeacbd96, type: 3}
+  m_Name: Headmistress_Hall
+  m_EditorClassIdentifier: Assembly-CSharp::VoicelineData
+  Id: headmistress_hall
+  AudioClip: {fileID: 8300000, guid: bd9aa25df8b6977418bb392176fef740, type: 3}
+  Subtitles:
+  - startTime: 0
+    endTime: 3.6053336
+    text: Look at these walls, boy.
+  - startTime: 3.6053336
+    endTime: 6.25
+    text: 'Even the so-called ''artists'' '
+  - startTime: 6.25
+    endTime: 8.298
+    text: ' tried to put some structure '
+  - startTime: 8.298
+    endTime: 10.708667
+    text: ' into their internal filth.'
+  - startTime: 12.074
+    endTime: 13.15
+    text: 'Though... '
+  - startTime: 13.38
+    endTime: 15.876
+    text: ' their attempts were disgusting. '
+  - startTime: 17
+    endTime: 20.683334
+    text: Boy, Salvador Dali once said
+  - startTime: 20.71
+    endTime: 23.014
+    text: ' you shouldn''t fear perfection'
+  - startTime: 23.654
+    endTime: 25.446
+    text: ' because you''ll never reach it.'
+  - startTime: 26.299332
+    endTime: 28.347332
+    text: 'What a nonsense... '
+  - startTime: 29.243332
+    endTime: 32.23
+    text: I hope you're not a freak like him.
+  - startTime: 33.14733
+    endTime: 35.302
+    text: ' Perfection is the only thing'
+  - startTime: 35.302
+    endTime: 37.435333
+    text: worth breathing for.
+  - startTime: 38.59
+    endTime: 40.275333
+    text: 'And don''t worry... '
+  - startTime: 40.275333
+    endTime: 42.664665
+    text: I'm not done with you yet.
+  - startTime: 43.496666
+    endTime: 47.806
+    text: ' I will beat these childish things out of you, '
+  - startTime: 47.806
+    endTime: 50.259335
+    text: ' step by step...'

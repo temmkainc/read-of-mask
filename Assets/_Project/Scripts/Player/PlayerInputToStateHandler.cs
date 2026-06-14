@@ -13,8 +13,8 @@ public class PlayerInputToStateHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        _inputsManager.OpenDiaryAction.started += On_OpenDiaryRequested;
-        _inputsManager.PlayerOpenMenuAction.started += On_OpenMenuRequested;
+        _inputsManager.OpenDiaryAction.performed += On_OpenDiaryRequested;
+        _inputsManager.PlayerOpenMenuAction.performed += On_OpenMenuRequested;
     }
 
     private void On_OpenMenuRequested(InputAction.CallbackContext context)
@@ -24,7 +24,8 @@ public class PlayerInputToStateHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        _inputsManager.OpenDiaryAction.started -= On_OpenDiaryRequested;
+        _inputsManager.OpenDiaryAction.performed -= On_OpenDiaryRequested;
+        _inputsManager.PlayerOpenMenuAction.performed -= On_OpenMenuRequested;
     }
 
     private void On_OpenDiaryRequested(InputAction.CallbackContext context)

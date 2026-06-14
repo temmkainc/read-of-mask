@@ -24,6 +24,7 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     [Header("Feedback")]
     [SerializeField] private float _errorDisplayDuration = 0.8f;
+    [SerializeField] private SFXData[] _errorVoicelines;
 
     [Inject] private InputManager _inputManager;
     [Inject] private LevelVariables _levelVariables;
@@ -33,6 +34,9 @@ public class DomoPhoneMenuController : MonoBehaviour
     private string _enteredCode = string.Empty;
     private int _focusedIndex = 0;
     private bool _isLocked = false;
+
+    private int _wrongAttemptCount = 0;
+    private AudioSource _audioSource;
 
 
     private void Awake()
@@ -51,6 +55,7 @@ public class DomoPhoneMenuController : MonoBehaviour
             _menuItems[i].Controller = this;
 
         _codeLength = Mathf.Max(1, _codeLength);
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void Activate()
@@ -190,9 +195,17 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     private IEnumerator ShowError()
     {
-        AudioManager.Instance.PlaySFX(SfxClips.KeypadWrong, volumeScale: 0.5f);
         _isLocked = true;
         _display?.UpdateDisplay(_enteredCode, isError: true);
+
+        if(_wrongAttemptCount < _errorVoicelines.Length)
+        {
+            _audioSource.Stop();
+            AudioManager.Instance.PlaySFX(_errorVoicelines[_wrongAttemptCount].Id, source: _audioSource);
+            _wrongAttemptCount++;
+        }
+        
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadWrong, source: _audioSource, volumeScale: 0.5f);
 
         yield return new WaitForSeconds(_errorDisplayDuration);
 
