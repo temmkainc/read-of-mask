@@ -1,18 +1,33 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Drawer : MonoBehaviour, IInteractable, IHighlightable
+public class Drawer : MonoBehaviour, IInteractable, IHighlightable, IDynamicHintLabel
 {
     [SerializeField] private Vector3 _openDirection = new Vector3(0, 0, 1);
     [SerializeField] private float _duration = 0.4f;
+    
+    public string HintLabel => _isOpen ? "Close drawer" : "Open drawer";
+
+
+    [Header("Hint")]
+    [SerializeField] private float _hintXOffset = 0f;
+    [SerializeField] private float _hintYOffset = 0.5f;
+    [SerializeField] private float _hintZOffset = -0.1f;
 
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
+    public float HintYOffset => _hintYOffset;
+    public float HintXOffset => _hintXOffset;
+    public float HintZOffset => _hintZOffset;
+
 
     private Rigidbody _rb;
     private bool _isOpen;
     private Vector3 _closedPosition;
     private Vector3 _targetPosition;
     private float _speed;
+
+    public event Action OnHintChanged;
 
     private void Awake()
     {
@@ -28,6 +43,7 @@ public class Drawer : MonoBehaviour, IInteractable, IHighlightable
         if(player.Grabbing.IsHolding)
             return;
         _isOpen = !_isOpen;
+        OnHintChanged?.Invoke();
         _targetPosition = _isOpen ? _closedPosition + _openDirection : _closedPosition;
     }
 

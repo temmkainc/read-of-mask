@@ -1,42 +1,56 @@
-using UnityEngine;
-using Zenject;
+    using System;
+    using UnityEngine;
+    using Zenject;
 
-public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlightable
-{
-    [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
-
-    [Inject] protected ICommandBus _commandBus;
-    [Inject] protected IPlayerStateManager _playerStateManager;
-    [Inject] protected InteractionCinemachineCamera _interactionCamera;
-
-    protected PlayerStateType _previousPlayerStateType;
-
-    public bool IsEnabled { get; set; } = true;
-
-    public virtual bool CanHighlight(PlayerGrabbing grabbing) => IsEnabled && !grabbing.IsHolding && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
-
-    public virtual void Interact(Player player = null)
+    public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlightable
     {
-        if (!IsEnabled || player.Grabbing.IsHolding)
-            return;
+        [field: SerializeField] public InteractionLookPoint CameraSnapPoint { get; private set; }
 
-        _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
-        _playerStateManager.OnStateChanged += On_PlayerStateChanged;
-        CameraSnapPoint.SetActive(false);
-        _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.LookCloser)).Execute();
-    }
+        [Header("Hint")]
+        [SerializeField] private string _hintLabel   = "Look closer";
+        [SerializeField] private float  _hintXOffset = 0f;
+        [SerializeField] private float  _hintYOffset = 0.5f;
+        [SerializeField] private float  _hintZOffset = 0f;
 
-    protected virtual void On_PlayerStateChanged(PlayerStateType type)
-    {
-        var previous = _previousPlayerStateType;
-        _previousPlayerStateType = type;
-        if (type == PlayerStateType.LookCloser)
+        [Inject] protected ICommandBus _commandBus;
+        [Inject] protected IPlayerStateManager _playerStateManager;
+        [Inject] protected InteractionCinemachineCamera _interactionCamera;
+
+        protected PlayerStateType _previousPlayerStateType;
+
+        public bool IsEnabled { get; set; } = true;
+
+        public string HintLabel   => _hintLabel;
+        public float  HintXOffset => _hintXOffset;
+        public float  HintYOffset => _hintYOffset;
+        public float  HintZOffset => _hintZOffset;
+
+        public virtual bool CanHighlight(PlayerGrabbing grabbing)
+            => IsEnabled && !grabbing.IsHolding && _playerStateManager.CurrentStateType != PlayerStateType.LookCloser;
+
+        public virtual void Interact(Player player = null)
         {
-            CameraSnapPoint.SetActive(true);
+            if (!IsEnabled || player.Grabbing.IsHolding)
+                return;
+
+            _interactionCamera.CinemachineCamera.Follow = CameraSnapPoint.transform;
+            _playerStateManager.OnStateChanged += On_PlayerStateChanged;
+            CameraSnapPoint.SetActive(false);
+            _commandBus.Register(() => new PlayerStateChangeCommand(PlayerStateType.LookCloser)).Execute();
         }
-        else if (previous == PlayerStateType.LookCloser)
+
+        protected virtual void On_PlayerStateChanged(PlayerStateType type)
         {
-            _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
+            var previous = _previousPlayerStateType;
+            _previousPlayerStateType = type;
+
+            if (type == PlayerStateType.LookCloser)
+            {
+                CameraSnapPoint.SetActive(true);
+            }
+            else if (previous == PlayerStateType.LookCloser)
+            {
+                _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
+            }
         }
     }
-}

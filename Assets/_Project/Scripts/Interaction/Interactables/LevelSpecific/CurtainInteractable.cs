@@ -1,7 +1,8 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
-public class CurtainInteractable : MonoBehaviour, IInteractable, IHighlightable
+public class CurtainInteractable : MonoBehaviour, IInteractable, IHighlightable, IDynamicHintLabel
 {
     [SerializeField] private Transform _transformToMove;
     [SerializeField] private Transform _targetPoint;
@@ -11,6 +12,19 @@ public class CurtainInteractable : MonoBehaviour, IInteractable, IHighlightable
     private bool _isOpen = false;
     private Vector3 _originalPosition;
     private Vector3 _originalScale;
+
+    public event Action OnHintChanged;
+
+    [Header("Hint")]
+    [SerializeField] private float _hintXOffset = 0.3f;
+    [SerializeField] private float _hintYOffset = 0.5f;
+    [SerializeField] private float _hintZOffset = 0f;
+
+    public string HintLabel => _isOpen ? "Open Curtain" : "Close Curtain";
+
+    public float HintYOffset => _hintYOffset;
+    public float HintXOffset => _hintXOffset;
+    public float HintZOffset => _hintZOffset;
 
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
 
@@ -25,6 +39,7 @@ public class CurtainInteractable : MonoBehaviour, IInteractable, IHighlightable
         if (player.Grabbing.IsHolding) return;
 
         _isOpen = !_isOpen;
+        OnHintChanged?.Invoke();
 
         _transformToMove.DOKill();
 

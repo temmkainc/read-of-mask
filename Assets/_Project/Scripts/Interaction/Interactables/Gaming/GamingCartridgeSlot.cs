@@ -2,11 +2,14 @@ using System;
 using UnityEngine;
 using Zenject;
 
-public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
+public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable, IDynamicHintLabel
 {
     public GamingCartridgeData CurrentCartridge { get; private set; }
+    
+    public string HintLabel => _currentCartridgeItem != null ? "Eject cartridge" : "Insert cartridge";
+    public float HintYOffset => 0.5f;
 
-    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding || (_currentCartridgeItem == null && grabbing.TryGetHeld<GamingCartridgeItem>(out _));
+    public bool CanHighlight(PlayerGrabbing grabbing) => (!grabbing.IsHolding && _currentCartridgeItem != null) || (_currentCartridgeItem == null && grabbing.TryGetHeld<GamingCartridgeItem>(out _));
 
     [SerializeField] private Transform _ejectPoint;
 
@@ -14,6 +17,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
 
     public event Action<MinigameType> OnCartridgeInserted;
     public event Action OnCartridgeEjected;
+    public event Action OnHintChanged;
 
     [Inject] private MinigameManager _minigameManager;
 
@@ -33,6 +37,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
         player.Grabbing.ReleaseHeldObject();
 
         _currentCartridgeItem = cartridge;
+        OnHintChanged?.Invoke();
         cartridge.gameObject.SetActive(false);
 
         Insert(cartridge);
@@ -46,6 +51,7 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
         CurrentCartridge = item.CartridgeData;
         OnCartridgeInserted?.Invoke(CurrentCartridge.MinigameType);
         _minigameManager.OnMinigameExitedInternally += Eject;
+
 
         return true;
     }
@@ -81,5 +87,6 @@ public class GamingCartridgeSlot : MonoBehaviour, IInteractable, IHighlightable
         }
 
         _currentCartridgeItem = null;
+        OnHintChanged?.Invoke();
     }
 }

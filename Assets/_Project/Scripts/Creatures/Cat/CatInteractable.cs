@@ -18,6 +18,10 @@ public class CatInteractable : MonoBehaviour, IInteractable, IHighlightable
 
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
 
+    public string HintLabel => "Scare cat";
+
+    public float HintYOffset => 1f;
+
     public void Interact(Player player)
     {
         if(player.Grabbing.IsHolding)

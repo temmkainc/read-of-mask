@@ -15,6 +15,18 @@ public class JarInteractable : MonoBehaviour, IInteractable, IHighlightable
     [SerializeField] private Ease _cubeGrowEase = Ease.OutBack;
     private bool _broken = false;
     private Vector3 _cubeOriginalScale;
+
+    [Header("Hint")]
+    [SerializeField] private float _hintXOffset = 0.3f;
+    [SerializeField] private float _hintYOffset = 1.5f;
+    [SerializeField] private float _hintZOffset = 0f;
+
+    public string HintLabel => "Take";
+
+    public float HintYOffset => _hintYOffset;
+    public float HintXOffset => _hintXOffset;
+    public float HintZOffset => _hintZOffset;
+
     private void Awake()
     {
         if (_cubeToGrow != null)

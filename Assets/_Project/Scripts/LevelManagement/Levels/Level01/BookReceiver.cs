@@ -8,6 +8,15 @@ public class BookReceiver : SlotReceiver<Book>
     private bool _isActive;
     private bool _hasReceivedBookOnce;
 
+    [Header("Hint")]
+    [SerializeField] private float _hintXOffset = 0f;
+    [SerializeField] private float _hintYOffset = 0.5f; 
+    [SerializeField] private float _hintZOffset = -0.1f;
+
+    public override float HintXOffset => _hintXOffset;
+    public override float HintYOffset => _hintYOffset;
+    public override float HintZOffset => _hintZOffset;
+
     private void Awake()
     {
         Show(false);

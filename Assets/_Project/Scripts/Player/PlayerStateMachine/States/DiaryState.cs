@@ -23,8 +23,8 @@ public sealed class DiaryState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        _flipInProgress = false; // always reset on enter
-        _diary.gameObject.SetActive(true);
+        _flipInProgress = false;
+        _diary.Show();
         _inputsManager.CloseDiaryAction.performed += On_CloseDiaryRequestedHandler;
         _inputsManager.DiaryDirectionAction.performed += On_DiaryDirectionHandler;
     }
@@ -72,8 +72,8 @@ public sealed class DiaryState : PlayerState
     public override void Exit()
     {
         base.Exit();
-        _diary.StopAllCoroutines(); // prevent ResetFlipFlag from firing late
-        _diary.gameObject.SetActive(false);
+        _diary.StopAllCoroutines(); 
+        _diary.Hide();
         _inputsManager.CloseDiaryAction.performed -= On_CloseDiaryRequestedHandler;
         _inputsManager.DiaryDirectionAction.performed -= On_DiaryDirectionHandler;
     }

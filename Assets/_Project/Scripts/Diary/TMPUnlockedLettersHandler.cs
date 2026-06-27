@@ -7,13 +7,23 @@ using System;
 [RequireComponent(typeof(TMP_Text))]
 public class TMPUnlockedLettersHandler : MonoBehaviour
 {
-    [Inject] private UnlockedLettersManager _lettersManager;
+    // Compile once for all instances
+    private static readonly System.Text.RegularExpressions.Regex SizeTagRegex =
+        new System.Text.RegularExpressions.Regex(
+            @"^<size=(\d+(?:\.\d+)?)(%?)>$",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase |
+            System.Text.RegularExpressions.RegexOptions.Compiled);
 
+    [Inject] private UnlockedLettersManager _lettersManager;
     [SerializeField, TextArea] private string _originalText;
 
     private TMP_Text _tmp;
     private TMP_FontAsset _font;
     private TMP_FontAsset _lockedFont;
+    
+    // Cache built text — only rebuild when letters actually change
+    private string _cachedRichText;
+    private bool _isDirty = true;
 
     private void Awake()
     {
@@ -21,14 +31,21 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
         _font = _tmp.font;
         _lockedFont = _lettersManager.LockedLettersFontAsset;
         _originalText = _tmp.text;
-
-        InitializeText();
+        
+        // Pre-warm font atlas for all chars at startup, not on demand
+        PrewarmFontAtlas();
+        
+        _isDirty = true;
     }
 
     private void OnEnable()
     {
         _lettersManager.OnLetterUnlocked += HandleLetterUnlocked;
         _lettersManager.OnReset += HandleReset;
+        
+        // Only rebuild if something actually changed while disabled
+        if (_isDirty)
+            ApplyText();
     }
 
     private void OnDisable()
@@ -39,26 +56,47 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
 
     private void HandleReset()
     {
-        _tmp.text = BuildRichText(_originalText);
+        _isDirty = true;
+        if (gameObject.activeInHierarchy)
+            ApplyText();
     }
 
     private void HandleLetterUnlocked(char c)
     {
-        _tmp.text = BuildRichText(_originalText);
+        _isDirty = true;
+        if (gameObject.activeInHierarchy)
+            ApplyText();
     }
 
     public void InitializeText()
     {
-        _tmp.text = BuildRichText(_originalText);
+        _isDirty = true;
+        ApplyText();
+    }
+
+    private void ApplyText()
+    {
+        _cachedRichText = BuildRichText(_originalText);
+        _tmp.text = _cachedRichText;
+        _isDirty = false;
+    }
+
+    private void PrewarmFontAtlas()
+    {
+        // Add all chars from original text to both atlases NOW
+        // so TryAddCharacters never fires at runtime
+        if (_font != null)
+            _font.TryAddCharacters(_originalText);
+        if (_lockedFont != null)
+            _lockedFont.TryAddCharacters(_originalText);
     }
 
     private string BuildRichText(string input)
     {
-        var builder = new StringBuilder();
+        var builder = new StringBuilder(input.Length * 2);
         bool insideTag = false;
-        var tagBuffer = new StringBuilder();
-
-        var sizeStack = new System.Collections.Generic.Stack<float>();
+        var tagBuffer = new StringBuilder(32);
+        var sizeStack = new System.Collections.Generic.Stack<float>(4);
         float currentSize = 100f;
 
         foreach (var ch in input)
@@ -102,10 +140,12 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
                 float normalWidth = GetGlyphWidth(_font, ch);
                 float lockedWidth = GetGlyphWidth(_lockedFont, ch);
                 float scaleX = lockedWidth > 0 ? normalWidth / lockedWidth : 1f;
-
                 float finalSize = currentSize * scaleX;
 
-                builder.Append($"<font=\"{_lockedFont.name}\"><size={finalSize:F1}%>{ch}</size></font>");
+                builder.Append("<font=\"").Append(_lockedFont.name)
+                       .Append("\"><size=").Append(finalSize.ToString("F1"))
+                       .Append("%>").Append(ch)
+                       .Append("</size></font>");
             }
             else
             {
@@ -119,31 +159,20 @@ public class TMPUnlockedLettersHandler : MonoBehaviour
     private bool TryParseSizeTag(string tag, out float size)
     {
         size = 100f;
-        var match = System.Text.RegularExpressions.Regex.Match(
-            tag, @"^<size=(\d+(?:\.\d+)?)(%?)>$",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
+        var match = SizeTagRegex.Match(tag); // static compiled regex
         if (!match.Success) return false;
 
         size = float.Parse(match.Groups[1].Value,
             System.Globalization.CultureInfo.InvariantCulture);
-
         return true;
     }
 
     private float GetGlyphWidth(TMP_FontAsset fontAsset, char c)
     {
         if (fontAsset == null) return 0f;
-
         if (!fontAsset.characterLookupTable.TryGetValue(c, out TMP_Character character))
-        {
-            fontAsset.TryAddCharacters(c.ToString());
-            if (!fontAsset.characterLookupTable.TryGetValue(c, out character))
-                return 0f;
-        }
-
+            return 0f; // PrewarmFontAtlas handled missing chars at startup
         if (character.glyph == null) return 0f;
-
         return character.glyph.metrics.horizontalAdvance;
     }
 }

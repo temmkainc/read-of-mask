@@ -11,12 +11,19 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     [SerializeField] private float _holdDistance = 2f;
     [SerializeField] private Vector3 _grabRotationOffset = Vector3.zero;
 
+    [Header("Hint")]
+    [SerializeField] private string _hintLabel = "Grab";
+    [SerializeField] private float _hintXOffset = 0f;
+    [SerializeField] private float _hintYOffset = 0.5f;
+    [SerializeField] private float _hintZOffset = 0f;
+
+
     private Rigidbody _rb;
 
     private int _originalLayer;
     public bool IsGrabbed { get; private set; }
 
-    public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
+    public virtual bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
     public float WallOffset => _wallOffset;
     public float MinCameraDistance => _minCameraDistance;
     public float ThrowForce => _throwForce;
@@ -24,6 +31,12 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     public virtual Quaternion GrabRotationOffset => Quaternion.Euler(_grabRotationOffset);
 
     public SlotReceiver CurrentSlot { get; private set; }
+
+    public virtual string HintLabel => _hintLabel;
+    public float HintXOffset => _hintXOffset;
+    public float HintYOffset => _hintYOffset;
+    public float HintZOffset => _hintZOffset;
+
 
     public void SetCurrentSlot(SlotReceiver slot) => CurrentSlot = slot;
 

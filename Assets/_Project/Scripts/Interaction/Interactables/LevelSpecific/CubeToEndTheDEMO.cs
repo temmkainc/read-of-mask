@@ -3,8 +3,9 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using TMPro;
 using Cysharp.Threading.Tasks;
+using System;
 
-public class CubeToEndTheDEMO : LetterCube
+public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
 {
     [SerializeField] private AudioSource _headmistressAudioSource;
     [SerializeField] private CanvasGroup _showEndDemoCanvasGroup;
@@ -16,11 +17,16 @@ public class CubeToEndTheDEMO : LetterCube
     [SerializeField] private LookCloserInteractableBase _chair;
     private bool _hasBeenTriggered;
 
+    public override string HintLabel => !_hasBeenTriggered ? "Take out" : "Grab";
+    public override bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
+    public event Action OnHintChanged;
+
     public override void Grab(Player player, Transform holdPoint)
     {
         base.Grab(player, holdPoint);
         if (_hasBeenTriggered) return;
         _hasBeenTriggered = true;
+        OnHintChanged?.Invoke();
 
         foreach (var text in _texts)
             text.alpha = 0f;
@@ -61,5 +67,10 @@ public class CubeToEndTheDEMO : LetterCube
                         SceneManager.LoadScene(0);
                     }));
             });
+    }
+    public override void Release(Vector3 throwForce, bool isExternal = false)
+    {
+        base.Release(throwForce, isExternal);
+        OnHintChanged?.Invoke();
     }
 }

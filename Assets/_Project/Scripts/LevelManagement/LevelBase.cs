@@ -70,7 +70,7 @@ public class LevelBase : MonoBehaviour
         _conditionsMet++;
         if (_conditionsMet < _conditions.Count)
             return;
-        
+
         OnAllConditionsMet?.Invoke();
         BeforeCompleteAsync().Forget();
     }
@@ -78,8 +78,8 @@ public class LevelBase : MonoBehaviour
     protected virtual void Complete()
     {
         OnLevelComplete?.Invoke();
-        
-        if(_levelDoor == null)
+
+        if (_levelDoor == null)
             return;
 
         _levelDoor.Open();

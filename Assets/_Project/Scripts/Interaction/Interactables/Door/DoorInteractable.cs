@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Zenject;
 using System;
 
-public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
+public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, IDynamicHintLabel
 {
     public event Action OnDoorOpened;
+    public event Action OnHintChanged;
 
     [SerializeField] private Transform _transformToRotate;
     [SerializeField] private Axis _rotationAxis = Axis.Y;
@@ -17,6 +18,11 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.InOutQuad;
     [SerializeField] private bool _withSfx = false;
+
+    [Header("Hint")]
+    [SerializeField] private float _hintXOffset = 0f;
+    [SerializeField] private float _hintYOffset = 0.5f;
+    [SerializeField] private float _hintZOffset = 0f;
 
     [Inject] private PlayerFirstPersonHandsController _handsController;
 
@@ -30,6 +36,12 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
     private float _currentTargetAngle = 0f;
     private Vector3 _closedRotation;
     private bool _hasBeenOpened = false;
+
+    public string HintLabel => _isOpen ? "Close door" : "Open door";
+
+    public float HintXOffset => _hintXOffset;
+    public float HintYOffset => _hintYOffset;
+    public float HintZOffset => _hintZOffset;
 
     private void Awake()
     {
@@ -53,6 +65,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
         }
 
         _isOpen = !_isOpen;
+        OnHintChanged?.Invoke();
         _tween?.Kill();
 
         float closedAngle = GetAxis(_closedRotation);
@@ -109,6 +122,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable
         if (_isOpen)
         {
             _isOpen = false;
+            OnHintChanged?.Invoke();
 
             float closedAngle = GetAxis(_closedRotation);
             _currentTargetAngle = closedAngle;

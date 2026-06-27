@@ -954,7 +954,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -486, y: 64}
+  m_AnchoredPosition: {x: -486, y: 18}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &229102718
@@ -1182,14 +1182,14 @@ RectTransform:
   m_GameObject: {fileID: 343520215}
   m_LocalRotation: {x: 0.00000014238961, y: 0.000000059604616, z: -0.000000026197712, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 39}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2038919583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -94.99997, y: -217.99998}
+  m_AnchoredPosition: {x: -177, y: -233}
   m_SizeDelta: {x: -690.2, y: -542.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &343520217
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[SPACE] TO SUBMIT'
+  m_text: TO SUBMIT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
   m_sharedMaterial: {fileID: 7993879882883790996, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
@@ -1305,7 +1305,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeviceAdaptiveHint
   _hintText: {fileID: 343520217}
-  _label: TO SUBMIT
   _keyboardKey: SPACE
   _xboxSpriteName: x_a
   _playstationSpriteName: ps5_cross
@@ -3571,7 +3570,56 @@ MonoBehaviour:
       <Mask>k__BackingField:
         serializedVersion: 2
         m_Bits: 0
+      <AuxRayViewportRadius>k__BackingField: 0
+      <AuxRayCount>k__BackingField: 0
     <HandsController>k__BackingField: {fileID: 0}
+--- !u!1 &1227238606
+GameObject:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1227238608}
+  - component: {fileID: 1227238607}
+  m_Layer: 0
+  m_Name: Prefab Indexer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1227238607
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227238606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05a7c62fccbafd342991629222351294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityPlayModeSaver::Framework.Utils.UnityPlayModeSaverSceneUtils
+  _scenePrefabInstances:
+  - _gameObject: {fileID: 1743024905}
+    _prefab: Assets/Pandazole_Lowpoly_Asset_Bundle/Pandazole Home Interior/Prefabs/Prop_Table_18.prefab
+--- !u!4 &1227238608
+Transform:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227238606}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1252947908
 GameObject:
   m_ObjectHideFlags: 0
@@ -4751,15 +4799,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1688884740}
   m_LocalRotation: {x: 0.00000014238961, y: 0.000000059604616, z: -0.000000026197712, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 38.999805}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 39.00115}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2038919583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -94.99997, y: -264}
+  m_AnchoredPosition: {x: -169.99945, y: -204.99997}
   m_SizeDelta: {x: -690.2, y: -542.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1688884742
@@ -4782,7 +4830,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[UP][DOWN] TO NAVIGATE'
+  m_text: TO NAVIGATE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
   m_sharedMaterial: {fileID: 7993879882883790996, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
@@ -4875,7 +4923,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeviceAdaptiveHint
   _hintText: {fileID: 1688884742}
-  _label: TO NAVIGATE
   _keyboardKey: UP/DOWN
   _xboxSpriteName: x_up_down
   _playstationSpriteName: ps5_up_down
@@ -4918,6 +4965,11 @@ Transform:
   - {fileID: 2143750109}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1743024905 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7473420715790771806, guid: 10f630f606d05c44281a065fed56818a, type: 3}
+  m_PrefabInstance: {fileID: 8757659549698325383}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1778163684
 GameObject:
   m_ObjectHideFlags: 0
@@ -5531,7 +5583,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -94.99997, y: 212}
+  m_AnchoredPosition: {x: -94.99997, y: 180}
   m_SizeDelta: {x: -690.2, y: -542.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1898795164
@@ -5554,7 +5606,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[This is a Demo Version of the READ OF MASK for ZTGK 2026 by temmkainc]'
+  m_text: "<color=grey>[This is a Demo Version of </color> READ OF MASK \n<color=grey>for
+    the</color> STUDENTS GAME FESTIVAL\n<color=grey>by</color> temmkainc]"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
   m_sharedMaterial: {fileID: 7993879882883790996, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
@@ -5581,8 +5634,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.1
-  m_fontSizeBase: 28.1
+  m_fontSize: 24.1
+  m_fontSizeBase: 24.1
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5594,7 +5647,7 @@ MonoBehaviour:
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 51.8
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -8161,6 +8214,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DemoBootstrapMenu
   <CameraSnapPoint>k__BackingField: {fileID: 8721372563518223655}
+  _hintLabel: Look closer
+  _hintXOffset: 0
+  _hintYOffset: 0.5
+  _hintZOffset: 0
   _menuItems:
   - {fileID: 1330591558}
   - {fileID: 1332629464}
@@ -8382,3 +8439,4 @@ SceneRoots:
   - {fileID: 1806815236}
   - {fileID: 191611333}
   - {fileID: 980085264}
+  - {fileID: 1227238608}

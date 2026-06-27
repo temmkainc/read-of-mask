@@ -20,6 +20,13 @@ public class GamingScreen : LookCloserInteractableBase
 
     private CancellationTokenSource _loadingCts;
 
+    public override bool CanHighlight(PlayerGrabbing grabbing)
+    {
+        return base.CanHighlight(grabbing) && !_isScreenOn;
+    }
+
+    private bool _isScreenOn = false;
+
     private const float SFX_VOLUME_SCALE = 0.4f;
     private const float LOADING_DURATION = 0.5f;
     protected virtual void Awake()
@@ -61,11 +68,12 @@ public class GamingScreen : LookCloserInteractableBase
         if (type == PlayerStateType.Gaming)
         {
             CameraSnapPoint.SetActive(true);
-
+            _isScreenOn = true;
         }
         else if (_previousPlayerStateType == PlayerStateType.Gaming)
         {
             _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
+            _isScreenOn = false;
         }
 
         _previousPlayerStateType = type;

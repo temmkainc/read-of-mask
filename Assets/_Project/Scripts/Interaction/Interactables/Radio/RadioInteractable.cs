@@ -1,7 +1,8 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class RadioInteractable : MonoBehaviour, IInteractable, IHighlightable
+public class RadioInteractable : MonoBehaviour, IInteractable, IHighlightable, IDynamicHintLabel
 {
     [SerializeField] private AudioSource _audioSource;
 
@@ -9,6 +10,12 @@ public class RadioInteractable : MonoBehaviour, IInteractable, IHighlightable
 
     private bool _isPlaying = false;
     
+    public string HintLabel => _isPlaying ? "Stop radio" : "Play radio";
+
+    public float HintYOffset => 0.5f;
+
+    public event Action OnHintChanged;
+
     public bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
 
     public void Interact(Player player)
@@ -24,5 +31,6 @@ public class RadioInteractable : MonoBehaviour, IInteractable, IHighlightable
             AudioManager.Instance.PlayVoicelineAsync(_voicelines[0].Id, _audioSource).Forget();
         }
         _isPlaying = !_isPlaying;
+        OnHintChanged?.Invoke();
     }
 }

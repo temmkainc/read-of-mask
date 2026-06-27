@@ -4,6 +4,12 @@ using UnityEngine;
 
 public abstract class SlotReceiver : MonoBehaviour, IInteractable, IHighlightable
 {
+    public abstract string HintLabel { get; }
+
+    public abstract float HintYOffset { get; }
+    public abstract float HintXOffset { get; }
+    public abstract float HintZOffset { get; }
+
     public virtual bool CanHighlight(PlayerGrabbing grabbing) => true;
     public abstract void Interact(Player player);
     public abstract void Show(bool active);
@@ -23,7 +29,12 @@ public abstract class SlotReceiver<T> : SlotReceiver
 
 
     public override bool CanHighlight(PlayerGrabbing grabbing)
-        => !grabbing.IsHolding || grabbing.TryGetHeld<T>(out _);
+        => grabbing.TryGetHeld<T>(out _);
+
+    public override string HintLabel => IsOccupied ? "Take out" : "Insert";
+    public override float HintYOffset => 0.5f;
+    public override float HintXOffset => 0f;
+    public override float HintZOffset => -0.1f;
 
     public override void Interact(Player player)
     {
