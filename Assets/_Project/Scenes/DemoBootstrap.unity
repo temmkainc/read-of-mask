@@ -5607,7 +5607,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "<color=grey>[This is a Demo Version of </color> READ OF MASK \n<color=grey>for
-    the</color> STUDENTS GAME FESTIVAL\n<color=grey>by</color> temmkainc]"
+    </color>STEAM\n<color=grey>by</color> temmkainc]"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}
   m_sharedMaterial: {fileID: 7993879882883790996, guid: afa96d2d8728edf4fb084b5f261ca225, type: 2}

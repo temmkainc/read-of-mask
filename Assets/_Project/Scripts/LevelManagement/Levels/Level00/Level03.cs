@@ -5,13 +5,13 @@ public class Level03 : LevelBase
 {
     public override void Begin()
     {
+        AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic, fadeDuration: 1f);
         base.Begin();
         PlayIntroSequence().Forget();
     }
 
     private async UniTask PlayIntroSequence()
     {
-        // AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic);
         await UniTask.Delay(2000);
     }
 

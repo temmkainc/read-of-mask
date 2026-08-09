@@ -18,6 +18,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.InOutQuad;
     [SerializeField] private bool _withSfx = false;
+    [SerializeField] private SFXData _customSfxOpen = null;
+    [SerializeField] private SFXData _customSfxClose = null;
 
     [Header("Hint")]
     [SerializeField] private float _hintXOffset = 0f;
@@ -91,12 +93,12 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
             _currentTargetAngle = targetAngle;
 
             if (_withSfx)
-                AudioManager.Instance.PlaySFX(SfxClips.DoorOpen, volumeScale: 0.4f);
+                AudioManager.Instance.PlaySFX(_customSfxOpen?.Id ?? SfxClips.DoorOpen, volumeScale: 0.4f);
         }
         else
         {
             if (_withSfx)
-                AudioManager.Instance.PlaySFX(SfxClips.DoorClose, volumeScale: 0.4f);
+                AudioManager.Instance.PlaySFX(_customSfxClose?.Id ?? SfxClips.DoorClose, volumeScale: 0.4f);
             targetAngle = closedAngle;
             _currentTargetAngle = closedAngle;
         }
@@ -145,7 +147,7 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
             await tcs.Task;
 
             if (_withSfx)
-                AudioManager.Instance.PlaySFX(SfxClips.DoorClose, volumeScale: 0.6f);
+                AudioManager.Instance.PlaySFX(_customSfxClose?.Id ?? SfxClips.DoorClose, volumeScale: 0.6f);
         }
     }
 

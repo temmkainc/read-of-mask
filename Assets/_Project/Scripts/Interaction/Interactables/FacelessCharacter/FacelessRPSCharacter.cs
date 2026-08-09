@@ -16,7 +16,7 @@ public class FacelessRPSCharacter : FacelessCharacter
     private readonly int DoPaperHash = Animator.StringToHash("DoPaper");
     private readonly int DoScissorsHash = Animator.StringToHash("DoScissors");
     private const int RPSLayerIndex = 2;
-
+    private bool _hasWon = false;
     [Inject] private LevelVariables _levelVariables;
 
     private Coroutine _layerFadeCoroutine;
@@ -82,6 +82,7 @@ public class FacelessRPSCharacter : FacelessCharacter
     private IEnumerator PlayRound(RockPaperScissorsChoice playerChoice)
     {
         yield return new WaitForSeconds(_facelessThinkDuration);
+        AudioManager.Instance.PlaySFX(SfxClips.RockPaperScissors, volumeScale: 1.5f);
 
         RockPaperScissorsChoice facelessChoice = (RockPaperScissorsChoice)UnityEngine.Random.Range(0, 3);
         PlayFacelessAnimation(facelessChoice);
@@ -90,12 +91,15 @@ public class FacelessRPSCharacter : FacelessCharacter
         yield return new WaitForSeconds(_resultDisplayDuration);
 
         RPSResult result = Evaluate(playerChoice, facelessChoice);
-        if (result == RPSResult.Win)
+        if (result == RPSResult.Win && !_hasWon)
         {
+            _hasWon = true;
             _displayInfoText.gameObject.SetActive(true);
             _displayInfoText.text = _levelVariables.CorrectPassword;
-        }
 
+            _commandBus.GoToPreviousPlayerState();
+            yield break;
+        }
         ResetRPSAnimations();
         _rpsController.Unlock();
     }

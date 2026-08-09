@@ -2,6 +2,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
+using System;
 
 public class PlayerFirstPersonHandsController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
     private Animator _animator;
     private PlayerStateType _previousPlayerStateType;
 
+    private Action _catPatFinishedCallback;
 
     private bool _holdingMiddleFingerLastFrame = false;
     private bool _holdingPointingFingerLastFrame = false;
@@ -38,6 +40,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
 
     private readonly int DoAngryHash = Animator.StringToHash("DoAngry");
     private readonly int DoNotAllowedHash = Animator.StringToHash("DoNotAllowed");
+    private readonly int DoCatPatHash = Animator.StringToHash("DoCatPat");
 
     private readonly int MaskIdleHash = Animator.StringToHash("player_in_mask_idle");
     private readonly int MaskPutOnHash = Animator.StringToHash("player_put_mask_on");
@@ -104,7 +107,7 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
         if (!_isLookCloserActive)
             _handsImage.color = Color.white;
         else
-            _handsImage.color = Color.clear; 
+            _handsImage.color = Color.clear;
 
         _previousPlayerStateType = type;
     }
@@ -190,8 +193,19 @@ public class PlayerFirstPersonHandsController : MonoBehaviour
 
     public void PlayAngryAnimation() => SetBlockingAnimation(DoAngryHash);
     public void On_AngryAnimationFinished() => OnBlockingAnimationFinished(DoAngryHash);
+    public void PlayCatPatAnimation(Action onFinished = null)
+    {
+        SetBlockingAnimation(DoCatPatHash);
+        _catPatFinishedCallback = onFinished;
+    }
+    public void On_CatPatAnimationFinished()
+    {
+        OnBlockingAnimationFinished(DoCatPatHash);
+        _catPatFinishedCallback?.Invoke();
+        _catPatFinishedCallback = null;
+    }
 
-    public void PlayNotAllowedAnimation() => SetBlockingAnimation(DoNotAllowedHash);
+    public void PlayNotAllowedAnimation() { SetBlockingAnimation(DoNotAllowedHash); AudioManager.Instance.PlaySFX(SfxClips.NotAllowed, volumeScale: 1f); }
     public void On_NotAllowedAnimationFinished() => OnBlockingAnimationFinished(DoNotAllowedHash);
 
     private void On_MaskStateChanged(MaskStateType state)

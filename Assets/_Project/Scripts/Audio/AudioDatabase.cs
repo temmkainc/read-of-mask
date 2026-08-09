@@ -102,4 +102,18 @@ public static class SfxClips
     public const string WrongCallFootball = "wrong_call_football";
     public const string FridgeBuzz = "fridge_buzz_loop";
     public const string ImpactEndgame = "impact_endgame";
+    public const string DrawerOpen = "drawer_open";
+    public const string DrawerClose = "drawer_close";
+    public const string CabinetDoorOpen = "cabinet_door_open";
+    public const string CabinetDoorClose = "cabinet_door_close";
+    public const string RockPaperScissors = "rock_paper_scissors";
+    public const string SwingLooped = "swing_looped";
+    public const string ShowerCurtainOpen = "shower_curtain_open";
+    public const string ShowerCurtainClose = "shower_curtain_close";
+    public const string FridgeOpen = "fridge_open";
+    public const string FridgeClose = "fridge_close";
+    public const string PullupFirstStage = "pullup_0";
+    public const string PullupSecondStage = "pullup_1";
+    public const string PullupFinalStage = "pullup_2";
+    public const string NotAllowed = "not_allowed";
 }

@@ -8,6 +8,7 @@ public class RockPaperScissorsMenuItem : InGameMenuItemBase
     public override void OnFocus(bool isFocused, bool playSound = true)
     {
         base.OnFocus(isFocused, false);
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadFocus, SOUND_VOLUME_SCALE);        
         transform.localScale = isFocused ? Vector3.one * 1.2f : Vector3.one;
     }
 

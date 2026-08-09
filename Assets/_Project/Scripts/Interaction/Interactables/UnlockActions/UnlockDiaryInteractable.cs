@@ -12,6 +12,15 @@ public class UnlockDiaryInteractable : MonoBehaviour, IInteractable, IHighlighta
 
     public float HintYOffset => 0.5f;
 
+    private void Start()
+    {
+        // Diary was already unlocked in a previous session - don't spawn the pickup again.
+        if (!_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.OpenDiary))
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void Interact(Player player)
     {
         if(player.Grabbing.IsHolding) 

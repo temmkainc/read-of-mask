@@ -9,6 +9,7 @@ using Zenject;
 public class DomoPhoneMenuController : MonoBehaviour
 {
     public enum Password {None, LevelTwo}
+    public event Action OnCodeCorrect;
 
     [Header("Code settings")]
     [SerializeField] private Password _passwordType = Password.LevelTwo;
@@ -28,15 +29,15 @@ public class DomoPhoneMenuController : MonoBehaviour
 
     [Inject] private InputManager _inputManager;
     [Inject] private LevelVariables _levelVariables;
+    [Inject] private ICommandBus _commandBus;
 
-    public event Action OnCodeCorrect;
 
+    private AudioSource _audioSource;
     private string _enteredCode = string.Empty;
     private int _focusedIndex = 0;
     private bool _isLocked = false;
-
     private int _wrongAttemptCount = 0;
-    private AudioSource _audioSource;
+    private const float SOUND_VOLUME_SCALE = 0.5f;
 
 
     private void Awake()
@@ -154,6 +155,7 @@ public class DomoPhoneMenuController : MonoBehaviour
         if (_isLocked) return;
         if (_enteredCode.Length >= _codeLength) return;
 
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadEnter, volumeScale: SOUND_VOLUME_SCALE);
         _enteredCode += digit.ToString();
         _display?.UpdateDisplay(_enteredCode);
     }
@@ -162,6 +164,7 @@ public class DomoPhoneMenuController : MonoBehaviour
     {
         if (_isLocked || _enteredCode.Length == 0) return;
 
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadEnter, volumeScale: SOUND_VOLUME_SCALE);
         _enteredCode = _enteredCode[..^1];
         _display?.UpdateDisplay(_enteredCode);
     }
@@ -183,7 +186,8 @@ public class DomoPhoneMenuController : MonoBehaviour
     }
     private IEnumerator ShowSuccess()
     {
-        AudioManager.Instance.PlaySFX(SfxClips.KeypadSuccess, volumeScale: 0.5f);
+        _commandBus.GoToPreviousPlayerState();
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadSuccess, volumeScale: SOUND_VOLUME_SCALE);
         _isLocked = true;
         _display?.UpdateDisplay("OPEN");
 
@@ -205,7 +209,7 @@ public class DomoPhoneMenuController : MonoBehaviour
             _wrongAttemptCount++;
         }
         
-        AudioManager.Instance.PlaySFX(SfxClips.KeypadWrong, source: _audioSource, volumeScale: 0.5f);
+        AudioManager.Instance.PlaySFX(SfxClips.KeypadWrong, source: _audioSource, volumeScale: SOUND_VOLUME_SCALE);
 
         yield return new WaitForSeconds(_errorDisplayDuration);
 

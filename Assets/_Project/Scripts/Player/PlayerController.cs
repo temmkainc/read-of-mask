@@ -46,6 +46,24 @@ public class PlayerController : MonoBehaviour
 
     private void Update() => HandleMovement();
 
+    /// <summary>
+    /// Moves the player to a new position/rotation instantly (e.g. level spawn points),
+    /// bypassing CharacterController's collision resolution for the move itself.
+    /// </summary>
+    public void Teleport(Vector3 position, Quaternion rotation)
+    {
+        if (_cc == null)
+            _cc = GetComponent<CharacterController>();
+
+        bool wasEnabled = _cc.enabled;
+        _cc.enabled = false;
+
+        transform.SetPositionAndRotation(position, rotation);
+        _velocity = Vector3.zero;
+
+        _cc.enabled = wasEnabled;
+    }
+
     private void HandleMovement()
     {
         if (!_isCurrentMapPlayer)

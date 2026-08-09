@@ -22,7 +22,7 @@ public class PullUpController : MonoBehaviour
     [SerializeField] private float _windowShrinkPerRep = 0f;
 
     [SerializeField] private PullUpUI _pullUpUI;
-
+    [SerializeField] private SFXData[] _pullupStagesSFX;
     public int RepCount { get; private set; }
     public bool IsActive { get; private set; }
     public RhythmPressChallenge Challenge { get; } = new();
@@ -87,7 +87,7 @@ public class PullUpController : MonoBehaviour
     private void OnHit()
     {
         _pullUpUI.ShowHitFlash();
-
+        AudioManager.Instance.PlaySFX(_pullupStagesSFX[_currentStep].Id, volumeScale: 1f);
         int nextStep = _currentStep + 1;
 
         if (nextStep >= _waypoints.Count)

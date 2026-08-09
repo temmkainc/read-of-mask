@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class InGameMenuItemBase : MonoBehaviour, IInGameMenuItem
 {
-    private const float SOUND_VOLUME_SCALE = 0.5f;
+    protected const float SOUND_VOLUME_SCALE = 0.5f;
     public virtual void OnFocus(bool focused, bool playSound = true)
     {
         if (!focused || playSound == false)

@@ -27,8 +27,9 @@ public static class CoreModule
         container.Bind<InteractionCinemachineCamera>().FromComponentInHierarchy().AsSingle();
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();
+        container.BindInterfacesAndSelfTo<SaveService>().AsSingle();
         container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario);
-        container.Bind<LockableActionsManager>().AsSingle();
+        container.BindInterfacesAndSelfTo<LockableActionsManager>().AsSingle();
         container.BindInstance(config.CameraEffects).AsSingle();
         container.BindInstance(config.EffectsContainer).AsSingle();
         container.BindInstance(config.AudioManager).AsSingle();

@@ -6,6 +6,7 @@ public class Drawer : MonoBehaviour, IInteractable, IHighlightable, IDynamicHint
 {
     [SerializeField] private Vector3 _openDirection = new Vector3(0, 0, 1);
     [SerializeField] private float _duration = 0.4f;
+    [SerializeField] private AudioSource _audioSource;
     
     public string HintLabel => _isOpen ? "Close drawer" : "Open drawer";
 
@@ -32,6 +33,8 @@ public class Drawer : MonoBehaviour, IInteractable, IHighlightable, IDynamicHint
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        if(_audioSource == null)
+            _audioSource = GetComponent<AudioSource>();
         _rb.isKinematic = true;
         _closedPosition = transform.localPosition;
         _targetPosition = _closedPosition;
@@ -42,6 +45,8 @@ public class Drawer : MonoBehaviour, IInteractable, IHighlightable, IDynamicHint
     {
         if(player.Grabbing.IsHolding)
             return;
+
+        AudioManager.Instance.PlaySFX(_isOpen ? SfxClips.DrawerClose : SfxClips.DrawerOpen, volumeScale: 1f, source: _audioSource);
         _isOpen = !_isOpen;
         OnHintChanged?.Invoke();
         _targetPosition = _isOpen ? _closedPosition + _openDirection : _closedPosition;

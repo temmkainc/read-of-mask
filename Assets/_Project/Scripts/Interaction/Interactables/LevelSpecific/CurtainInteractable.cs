@@ -45,11 +45,13 @@ public class CurtainInteractable : MonoBehaviour, IInteractable, IHighlightable,
 
         if (_isOpen)
         {
+            AudioManager.Instance.PlaySFX(SfxClips.ShowerCurtainClose, volumeScale: 0.5f);
             _transformToMove.DOMove(_targetPoint.position, _duration).SetEase(_ease);
             _transformToMove.DOScale(_targetPoint.localScale, _duration).SetEase(_ease);
         }
         else
         {
+            AudioManager.Instance.PlaySFX(SfxClips.ShowerCurtainOpen, volumeScale: 0.5f);
             _transformToMove.DOMove(_originalPosition, _duration).SetEase(_ease);
             _transformToMove.DOScale(_originalScale, _duration).SetEase(_ease);
         }
