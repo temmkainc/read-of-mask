@@ -16,5 +16,6 @@ public class DemoBootstrapInstaller : MonoInstaller
         Container.BindInterfacesTo<CommandFactory>().AsSingle();
         Container.BindInterfacesAndSelfTo<GameOptions>().AsSingle();
         Container.Bind<InputManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SaveService>().AsSingle();
     }
 }

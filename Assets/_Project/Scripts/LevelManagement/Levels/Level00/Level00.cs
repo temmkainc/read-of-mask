@@ -16,6 +16,10 @@ public class Level00 : LevelBase
 
     private const float SECONDS_BEFORE_COMPLETE = 0.2f;
     private CancellationTokenSource _levelCts;
+
+    // This level already plays its own fade/eye-open intro below - don't also play the generic load fade.
+    public override bool HasCustomLoadTransition => true;
+
     public override void Begin()
     {
         _levelCts = new CancellationTokenSource();

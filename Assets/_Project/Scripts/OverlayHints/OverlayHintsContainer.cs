@@ -91,6 +91,8 @@ public class OverlayHintsSceneContainer : MonoBehaviour
     // ── state callbacks ───────────────────────────────────────────────────────
     public void OnLookCloserStateEntered()
     {
+        if (ToOpenDiaryTMP == null || ToExitTMP == null) return;
+
         ToOpenDiaryTMP.gameObject.SetActive(false);
         ToExitTMP.gameObject.SetActive(true);
         InteractWorldHint.Hide();
@@ -98,6 +100,8 @@ public class OverlayHintsSceneContainer : MonoBehaviour
 
     public void OnLookCloserStateExited()
     {
+        if (ToOpenDiaryTMP == null || ToExitTMP == null) return;
+
         if (!_lockableActionsManager.IsActionLocked(LockableActionsManager.LockableActionType.OpenDiary))
             ToOpenDiaryTMP.gameObject.SetActive(true);
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 public class FacelessCharacterMenu : LookCloserInteractableBase
@@ -139,7 +140,17 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
     }
     private void CloseGame()
     {
-        Application.Quit();
+        AudioManager.Instance.StopMusic();
+        SceneManager.LoadScene(0);
+    }
+
+    private void OnDestroy()
+    {
+        // Detach the menus from Input System actions whenever this object is destroyed for any
+        // reason (scene reload via CloseGame, a level being force-destroyed, etc.) - otherwise
+        // their input callbacks stay subscribed and fire later against destroyed menu items.
+        _menu?.Dispose();
+        _optionsMenu?.Dispose();
     }
     private void ContinueGame()
     {

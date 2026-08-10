@@ -43,12 +43,18 @@ public class FacelessCharacter : LookCloserInteractableBase
 
     private void On_MiddleFingerPressed(InputAction.CallbackContext ctx)
     {
+        // Guards against a rare timing race: the scene can start tearing down (destroying the
+        // Animator) a frame before OnDestroy() runs here to unsubscribe from this input event.
+        if (_animator == null) return;
+
         _animator.ResetTrigger(DoHideMiddleFingerHash);
         _animator.SetTrigger(DoShowMiddleFingerHash);
     }
 
     private void On_MiddleFingerReleased(InputAction.CallbackContext ctx)
     {
+        if (_animator == null) return;
+
         _animator.ResetTrigger(DoShowMiddleFingerHash);
         _animator.SetTrigger(DoHideMiddleFingerHash);
     }

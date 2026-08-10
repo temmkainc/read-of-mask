@@ -20,13 +20,13 @@ public sealed class LookCloserState : PlayerState
     {
         base.Exit();
         _overlayHintsSceneContainer?.OnLookCloserStateExited();
-        _inputsManager.StopLookCloserAction.started -= On_StopLookCloserRequestedHandler;
+        _inputsManager.StopLookCloserAction.performed -= On_StopLookCloserRequestedHandler;
     }
 
     private async UniTaskVoid SubscribeAfterFrame()
     {
         await UniTask.NextFrame();
-        _inputsManager.StopLookCloserAction.started += On_StopLookCloserRequestedHandler;
+        _inputsManager.StopLookCloserAction.performed += On_StopLookCloserRequestedHandler;
     }
 
     private void On_StopLookCloserRequestedHandler(InputAction.CallbackContext context)

@@ -40,6 +40,12 @@ public class LevelBase : MonoBehaviour
 
     public bool DestroyPreviousLevelOnEnter => _destroyPreviousLevelOnEnter;
 
+    /// <summary>
+    /// Override and return true if this level already plays its own screen transition on Begin()
+    /// (e.g. Level00's eye-open intro), so LevelManager doesn't also play the generic load fade on top of it.
+    /// </summary>
+    public virtual bool HasCustomLoadTransition => false;
+
 
     private void Awake()
     {
@@ -62,6 +68,22 @@ public class LevelBase : MonoBehaviour
             return;
 
         _playerController.Teleport(_spawnPoint.position, _spawnPoint.rotation);
+
+        // The teleport itself is a big instant jump - without this, any DeactivateTriggerLine
+        // in this level could mistake that jump for the player having walked across it.
+        // This only resyncs tracking, it does NOT disable the line - it still fires normally
+        // if the player genuinely walks across it later this session.
+        ResyncTriggerLines();
+    }
+
+    private void ResyncTriggerLines()
+    {
+        var triggerLines = GetComponentsInChildren<DeactivateTriggerLine>(true);
+        foreach (var line in triggerLines)
+        {
+            if (line != null)
+                line.ResyncPlayerPosition();
+        }
     }
 
     /// <summary>
@@ -96,9 +118,9 @@ public class LevelBase : MonoBehaviour
 
     /// <summary>
     /// Disables every DeactivateTriggerLine (and similar in-level destroy triggers) under this
-    /// level, so they can never fire. Used both for previously-completed levels being restored,
-    /// and for the level you're actually resuming into from a save - since you weren't there for
-    /// the walk-up to that trigger, it shouldn't fire the moment you spawn in.
+    /// level, so they can never fire. Only used for previously-completed levels being restored -
+    /// NOT for the level you're actively resuming into, since its trigger lines still need to
+    /// work normally for the rest of this session (see SpawnPlayerAtSpawnPoint/ResyncTriggerLines).
     /// </summary>
     public void DisableTriggerLines()
     {

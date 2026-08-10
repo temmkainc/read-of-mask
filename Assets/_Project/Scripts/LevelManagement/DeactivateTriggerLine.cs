@@ -21,6 +21,22 @@ public class DeactivateTriggerLine : MonoBehaviour
             _lastPlayerPosition = _player.transform.position;
     }
 
+    /// <summary>
+    /// Resets the tracked player position to where they are right now, without treating the
+    /// gap since the last check as movement. Call this after teleporting the player (e.g. on
+    /// level load / resuming a save) so the teleport jump itself isn't mistaken for the player
+    /// having walked across this line - while leaving the line fully able to fire later if the
+    /// player genuinely walks across it during this session.
+    /// </summary>
+    public void ResyncPlayerPosition()
+    {
+        if (_player == null)
+            _player = FindFirstObjectByType<Player>();
+
+        if (_player != null)
+            _lastPlayerPosition = _player.transform.position;
+    }
+
     private void Update()
     {
         if (_triggered || _player == null) return;

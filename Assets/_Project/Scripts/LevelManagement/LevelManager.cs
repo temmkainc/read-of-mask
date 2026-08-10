@@ -7,6 +7,7 @@ public class LevelManager : IInitializable, IDisposable
 {
     private readonly List<LevelBase> _levels;
     private readonly ISaveService _saveService;
+    private readonly EffectsContainer _effectsContainer;
     private int _currentIndex = -1;
     private LevelBase CurrentLevel => IsValidIndex(_currentIndex) ? _levels[_currentIndex] : null;
 
@@ -14,11 +15,12 @@ public class LevelManager : IInitializable, IDisposable
     
     private bool _initializeOnStart;
 
-    public LevelManager(List<LevelBase> levels, bool initializeOnStart, ISaveService saveService)
+    public LevelManager(List<LevelBase> levels, bool initializeOnStart, ISaveService saveService, EffectsContainer effectsContainer)
     {
         _levels = levels;
         _initializeOnStart = initializeOnStart;
         _saveService = saveService;
+        _effectsContainer = effectsContainer;
     }
 
     public void Dispose()
@@ -51,11 +53,15 @@ public class LevelManager : IInitializable, IDisposable
         TurnOffLevelsAfter(startIndex);
 
         // Only place the player on load (fresh start or resumed save) - never on normal progression.
+        // This also resyncs (not disables) any DeactivateTriggerLine in this level, so the
+        // teleport itself isn't mistaken for the player walking across it - the line still
+        // fires normally later if genuinely crossed during this session.
         CurrentLevel.SpawnPlayerAtSpawnPoint();
 
-        // We're spawning straight into this level, not walking into it - its own in-level
-        // destroy triggers (e.g. DeactivateTriggerLine) shouldn't fire just because we loaded here.
-        CurrentLevel.DisableTriggerLines();
+        // Smooth fade-in transition on load (e.g. coming from the menu), unless this level
+        // already plays its own screen transition (like Level00's eye-open intro).
+        if (!CurrentLevel.HasCustomLoadTransition)
+            _effectsContainer.FadeFromWhite();
     }
 
     public void GoToLevel(int targetIndex)

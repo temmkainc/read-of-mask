@@ -122,13 +122,16 @@ public class InGameMenu
         OnItemSubmitted?.Invoke(_focusedIndex);
     }
 
+    /// <summary>
+    /// Detaches from input only - safe to call even if the menu's GameObjects are already
+    /// destroyed or being destroyed (e.g. during a scene unload), since it never touches them.
+    /// Use this instead of ExitMenu() when cleaning up on destroy.
+    /// </summary>
     public void Dispose()
     {
-        ExitMenu();
-
         _directionInputAction.performed -= On_DirectionInputPerformed;
         _actionInputAction.performed -= On_ActionInputPerformed;
-
+        _isActive = false;
         OnItemSubmitted = null;
     }
 }
