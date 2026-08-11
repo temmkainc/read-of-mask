@@ -12,9 +12,11 @@ public interface ISaveService
     void Save();
     void ResetSave();
 
-    bool IsLevelCompleted(int levelIndex);
-    void MarkLevelCompleted(int levelIndex);
-    void SetCurrentLevel(int levelIndex);
+    bool IsLevelCompleted(string sceneName, int levelIndex);
+    void MarkLevelCompleted(string sceneName, int levelIndex);
+
+    /// <summary>Sets both the current scene and the local level index within it in one write.</summary>
+    void SetCurrentProgress(string sceneName, int levelIndex);
 
     bool IsActionUnlocked(LockableActionsManager.LockableActionType action);
     void SetActionUnlocked(LockableActionsManager.LockableActionType action, bool unlocked);

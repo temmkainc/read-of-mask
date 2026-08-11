@@ -1119,16 +1119,16 @@ MonoBehaviour:
     m_GlyphIndex: 37
     m_Scale: 1
   - m_ElementType: 1
+    m_Unicode: 39
+    m_GlyphIndex: 7
+    m_Scale: 1
+  - m_ElementType: 1
     m_Unicode: 84
     m_GlyphIndex: 32
     m_Scale: 1
   - m_ElementType: 1
     m_Unicode: 58
     m_GlyphIndex: 10
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 39
-    m_GlyphIndex: 7
     m_Scale: 1
   - m_ElementType: 1
     m_Unicode: 113

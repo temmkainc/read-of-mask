@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using DG.Tweening;
 using TMPro;
 using Cysharp.Threading.Tasks;
@@ -15,11 +14,17 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
     [SerializeField] private float _textFadeDelay = 0.3f;
     [SerializeField] private OverlayHintsSceneContainer _overlayHintsSceneContainer;
     [SerializeField] private LookCloserInteractableBase _chair;
+
     private bool _hasBeenTriggered;
 
     public override string HintLabel => !_hasBeenTriggered ? "Take out" : "Grab";
     public override bool CanHighlight(PlayerGrabbing grabbing) => !grabbing.IsHolding;
     public event Action OnHintChanged;
+
+    /// <summary>Fired once the ending text sequence (and its trailing delay) has fully finished.
+    /// Listened to by a level-complete condition on this level, so the normal LevelBase/LevelManager
+    /// flow (including handing off to the next chapter scene) runs from there.</summary>
+    public event Action OnEndSequenceComplete;
 
     public override void Grab(Player player, Transform holdPoint)
     {
@@ -29,7 +34,10 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
         OnHintChanged?.Invoke();
 
         foreach (var text in _texts)
-            text.alpha = 0f;
+        {
+            if (text != null)
+                text.alpha = 0f;
+        }
 
         AudioManager.Instance.PlayVoicelineAsync(Voicelines.HeadmistressGettingStarted, _headmistressAudioSource).Forget();
         _overlayHintsSceneContainer.gameObject.SetActive(false);
@@ -53,18 +61,24 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
                 Sequence seq = DOTween.Sequence();
 
                 foreach (var text in _texts)
+                {
+                    if (text == null) continue;
                     seq.Append(text.DOFade(1f, _textFadeDuration).SetEase(Ease.InOutQuad))
                        .AppendInterval(_textFadeDelay);
+                }
 
                 foreach (var text in _texts)
+                {
+                    if (text == null) continue;
                     seq.Append(text.DOFade(0f, _textFadeDuration).SetEase(Ease.InOutQuad))
                        .AppendInterval(_textFadeDelay);
+                }
 
                 seq.OnComplete(() =>
                     DOVirtual.DelayedCall(5f, () =>
                     {
                         AudioManager.Instance.StopMusic();
-                        SceneManager.LoadScene(0);
+                        OnEndSequenceComplete?.Invoke();
                     }));
             });
     }

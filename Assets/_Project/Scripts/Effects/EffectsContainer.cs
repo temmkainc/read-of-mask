@@ -14,7 +14,7 @@ public class EffectsContainer : MonoBehaviour
     /// Plays a fade from opaque white to transparent, for a smooth transition into a level
     /// (e.g. coming from the main menu, or resuming a save). No-ops if no fade image is assigned.
     /// </summary>
-    public void FadeFromWhite(float duration = 3f)
+    public void FadeFromWhite(float duration = 5f)
     {
         if (_fadeImage == null)
             return;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 public class LevelManager : IInitializable, IDisposable
@@ -8,6 +9,8 @@ public class LevelManager : IInitializable, IDisposable
     private readonly List<LevelBase> _levels;
     private readonly ISaveService _saveService;
     private readonly EffectsContainer _effectsContainer;
+    private readonly string _nextSceneName;
+    private string _thisSceneName;
     private int _currentIndex = -1;
     private LevelBase CurrentLevel => IsValidIndex(_currentIndex) ? _levels[_currentIndex] : null;
 
@@ -15,12 +18,13 @@ public class LevelManager : IInitializable, IDisposable
     
     private bool _initializeOnStart;
 
-    public LevelManager(List<LevelBase> levels, bool initializeOnStart, ISaveService saveService, EffectsContainer effectsContainer)
+    public LevelManager(List<LevelBase> levels, bool initializeOnStart, ISaveService saveService, EffectsContainer effectsContainer, string nextSceneName)
     {
         _levels = levels;
         _initializeOnStart = initializeOnStart;
         _saveService = saveService;
         _effectsContainer = effectsContainer;
+        _nextSceneName = nextSceneName;
     }
 
     public void Dispose()
@@ -36,10 +40,17 @@ public class LevelManager : IInitializable, IDisposable
        if(!_initializeOnStart)
            return;
 
+        _thisSceneName = SceneManager.GetActiveScene().name;
+
+        // Only trust the saved level index if the save actually points at THIS scene.
+        // An empty saved scene name covers both a brand new save and an old save from before
+        // multi-scene support - both are treated as "resume in whichever scene loads first".
+        bool resumingThisScene = string.IsNullOrEmpty(_saveService.Data.CurrentSceneName)
+            || _saveService.Data.CurrentSceneName == _thisSceneName;
+
         int startIndex = 0;
-        int savedIndex = _saveService.Data.CurrentLevelIndex;
-        if (IsValidIndex(savedIndex))
-            startIndex = savedIndex;
+        if (resumingThisScene && IsValidIndex(_saveService.Data.CurrentLevelIndex))
+            startIndex = _saveService.Data.CurrentLevelIndex;
 
         // Levels before the resume point are already done - restore their finished state
         // (kept objects on, destroyed objects gone) instead of just switching them off.
@@ -75,7 +86,7 @@ public class LevelManager : IInitializable, IDisposable
         CurrentLevel.Begin();
         CurrentLevel.OnLevelComplete += On_CurrentLevelComplete;
 
-        _saveService.SetCurrentLevel(targetIndex);
+        _saveService.SetCurrentProgress(_thisSceneName, targetIndex);
 
         if (CurrentLevel.DestroyPreviousLevelOnEnter)
             DestroyLevel(previousIndex);
@@ -83,19 +94,25 @@ public class LevelManager : IInitializable, IDisposable
 
     public void GoToNextLevel()
     {
-        if (_currentIndex >= _levels.Count - 1)
+        if (_currentIndex < _levels.Count - 1)
+        {
+            CurrentLevel.OnLevelComplete -= On_CurrentLevelComplete;
+            GoToLevel(_currentIndex + 1);
             return;
-        
-        CurrentLevel.OnLevelComplete -= On_CurrentLevelComplete;
+        }
 
-        GoToLevel(_currentIndex + 1);
+        if (string.IsNullOrEmpty(_nextSceneName))
+            return;
+
+        _saveService.SetCurrentProgress(_nextSceneName, 0);
+        SceneManager.LoadScene(_nextSceneName);
     }
 
-    public bool IsLevelCompleted(int index) => _saveService.IsLevelCompleted(index);
+    public bool IsLevelCompleted(int index) => _saveService.IsLevelCompleted(_thisSceneName, index);
 
     private void On_CurrentLevelComplete()
     {
-        _saveService.MarkLevelCompleted(_currentIndex);
+        _saveService.MarkLevelCompleted(_thisSceneName, _currentIndex);
         GoToNextLevel();
     }
 

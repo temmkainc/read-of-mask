@@ -4480,8 +4480,8 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_fontStyle: 16
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -4513,7 +4513,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -233.01645, y: 0, z: -313.97247, w: 0}
+  m_margin: {x: 132.28441, y: 0, z: -313.97247, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4632,7 +4632,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonInGameMenuItem
   _button: {fileID: 1330591556}
   _focusScale: 1.3
-  _label: {fileID: 0}
+  _label: {fileID: 1280930415}
 --- !u!1 &1332629463
 GameObject:
   m_ObjectHideFlags: 0
@@ -9021,13 +9021,16 @@ MonoBehaviour:
   - {fileID: 1491783686}
   - {fileID: 1332629464}
   _playButtonItem: {fileID: 1330591558}
+  _newGameButtonItem: {fileID: 1491783686}
   _confirmRoot: {fileID: 1273666283}
   _confirmItems:
   - {fileID: 326255150}
   - {fileID: 218978781}
   _fadeImage: {fileID: 155166304}
   _fadeDuration: 4
-  _sceneName: Playground
+  _sceneName:
+    sceneAsset: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
+    sceneName: Chapter_01
   _musicAudioSource: {fileID: 2508000564728932421}
 --- !u!1001 &8757659549698325383
 PrefabInstance:

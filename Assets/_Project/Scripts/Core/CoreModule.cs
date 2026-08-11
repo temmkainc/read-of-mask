@@ -14,6 +14,9 @@ public static class CoreModule
         [field: SerializeField] public EffectsContainer EffectsContainer { get; private set; }
         [field: SerializeField] public LevelVariables LevelVariables { get; private set; }
         [field: SerializeField] public AudioManager AudioManager { get; private set; }
+        [field: SerializeField]
+        [field: Tooltip("Scene to load once the last level in this scene's Levels list is completed. Drag the actual scene asset, not just its name, so renaming the scene later doesn't break this. Leave empty if this is the final scene in the game.")]
+        public SceneField NextSceneName { get; private set; }
     }
 
     public static void Install(DiContainer container, ConfigData config)
@@ -28,7 +31,7 @@ public static class CoreModule
         container.BindInterfacesTo<CommandBus>().AsSingle();
         container.BindInterfacesTo<CommandFactory>().AsSingle();
         container.BindInterfacesAndSelfTo<SaveService>().AsSingle();
-        container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario);
+        container.BindInterfacesTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario, (string)config.NextSceneName);
         container.BindInterfacesAndSelfTo<LockableActionsManager>().AsSingle();
         container.BindInstance(config.CameraEffects).AsSingle();
         container.BindInstance(config.EffectsContainer).AsSingle();

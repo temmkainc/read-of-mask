@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// Persists game progress (current/completed levels, unlocked systems like Diary/Mask,
-/// and any future checkpoint data) to a JSON file on disk so it survives application restarts.
+/// Persists game progress (current scene + level, completed levels, unlocked systems like
+/// Diary/Mask, and any future checkpoint data) to a JSON file on disk so it survives restarts.
 /// </summary>
 public class SaveService : ISaveService
 {
@@ -90,25 +90,31 @@ public class SaveService : ISaveService
         }
     }
 
-    public bool IsLevelCompleted(int levelIndex) => Data.CompletedLevelIndices.Contains(levelIndex);
+    private static string MakeLevelKey(string sceneName, int levelIndex) => $"{sceneName}:{levelIndex}";
 
-    public void MarkLevelCompleted(int levelIndex)
+    public bool IsLevelCompleted(string sceneName, int levelIndex) =>
+        Data.CompletedLevelKeys.Contains(MakeLevelKey(sceneName, levelIndex));
+
+    public void MarkLevelCompleted(string sceneName, int levelIndex)
     {
+        string key = MakeLevelKey(sceneName, levelIndex);
+
         // Idempotent: don't re-save/re-fire OnSaved if this was already recorded.
-        if (Data.CompletedLevelIndices.Contains(levelIndex))
+        if (Data.CompletedLevelKeys.Contains(key))
             return;
 
-        Data.CompletedLevelIndices.Add(levelIndex);
+        Data.CompletedLevelKeys.Add(key);
         Save();
     }
 
-    public void SetCurrentLevel(int levelIndex)
+    public void SetCurrentProgress(string sceneName, int levelIndex)
     {
         // Idempotent: e.g. resuming a save calls this with the value we just loaded -
         // that shouldn't count as a real save or show a "Saved" indicator.
-        if (Data.CurrentLevelIndex == levelIndex)
+        if (Data.CurrentSceneName == sceneName && Data.CurrentLevelIndex == levelIndex)
             return;
 
+        Data.CurrentSceneName = sceneName;
         Data.CurrentLevelIndex = levelIndex;
         Save();
     }
@@ -123,7 +129,6 @@ public class SaveService : ISaveService
     {
         var entry = Data.UnlockedActions.FirstOrDefault(e => e.ActionName == action.ToString());
 
-        // Idempotent: skip if this is already the recorded state.
         if (entry != null && entry.Unlocked == unlocked)
             return;
 

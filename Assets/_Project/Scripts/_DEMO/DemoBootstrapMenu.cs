@@ -15,6 +15,8 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
     [SerializeField] protected List<InGameMenuItemBase> _menuItems;
     [Tooltip("The Play button item - its label is set to Continue/Play automatically based on whether a save exists.")]
     [SerializeField] protected ButtonInGameMenuItem _playButtonItem;
+    [Tooltip("The New Game button item - hidden entirely when there's no save yet, since it has nothing to offer over Play in that case.")]
+    [SerializeField] protected ButtonInGameMenuItem _newGameButtonItem;
 
     [Header("New Game Confirmation")]
     [Tooltip("Root panel for the 'Are you sure?' confirmation shown before erasing the save. Leave empty to skip confirmation and start immediately.")]
@@ -27,7 +29,8 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
 
     [SerializeField] private Image _fadeImage;
     [SerializeField] private float _fadeDuration = 0.6f;
-    [SerializeField] private string _sceneName;
+    [Tooltip("The scene a brand new game starts in - drag the actual scene asset here, not just its name, so renaming the scene later doesn't break this.")]
+    [SerializeField] private SceneField _sceneName;
     [SerializeField] private AudioSource _musicAudioSource;
 
     protected InputAction _directionInputAction;
@@ -35,6 +38,7 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
 
     protected InGameMenu _menu;
     protected InGameMenu _confirmMenu;
+    private List<InGameMenuItemBase> _activeMenuItems;
 
     private const int MAX_VISIBLE_ITEMS = 4;
 
@@ -63,8 +67,25 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
 
     private void InitializeMenus()
     {
+        bool hasSave = _saveService.HasSaveFile;
+
+        _activeMenuItems = new List<InGameMenuItemBase>();
+        foreach (var item in _menuItems)
+        {
+            bool isNewGameButton = _newGameButtonItem != null && item == (InGameMenuItemBase)_newGameButtonItem;
+            if (isNewGameButton && !hasSave)
+            {
+                // Nothing to start over from yet on a fresh boot - hide it entirely rather than
+                // showing a redundant button that does the same thing as Play.
+                item.gameObject.SetActive(false);
+                continue;
+            }
+
+            _activeMenuItems.Add(item);
+        }
+
         _menu = new InGameMenu(
-            _menuItems.ConvertAll(x => (IInGameMenuItem)x),
+            _activeMenuItems.ConvertAll(x => (IInGameMenuItem)x),
             _directionInputAction,
             _actionInputAction,
             MAX_VISIBLE_ITEMS
@@ -88,12 +109,17 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
 
     private void OnMenuButtonSelected(int index)
     {
-        switch (index)
-        {
-            case 0: PlayGame(); break;
-            case 1: EnterNewGameConfirm(); break;
-            case 2: CloseGame(); break;
-        }
+        if (index < 0 || index >= _activeMenuItems.Count)
+            return;
+
+        var selected = _activeMenuItems[index];
+
+        if (selected == (InGameMenuItemBase)_playButtonItem)
+            PlayGame();
+        else if (_newGameButtonItem != null && selected == (InGameMenuItemBase)_newGameButtonItem)
+            EnterNewGameConfirm();
+        else
+            CloseGame();
     }
 
     private void OnConfirmButtonSelected(int index)
@@ -193,6 +219,13 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
 
         await fadeTween.AsyncWaitForCompletion();
 
-        SceneManager.LoadScene(_sceneName);
+        // Load whichever scene the save points to (a later chapter's scene), falling back to
+        // this menu's configured first/default scene for a brand new game or an old save
+        // saved before multi-scene support existed.
+        string targetScene = string.IsNullOrEmpty(_saveService.Data.CurrentSceneName)
+            ? _sceneName
+            : _saveService.Data.CurrentSceneName;
+
+        SceneManager.LoadScene(targetScene);
     }
 }
