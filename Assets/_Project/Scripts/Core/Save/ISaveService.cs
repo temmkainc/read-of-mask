@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public interface ISaveService
 {
@@ -20,6 +21,9 @@ public interface ISaveService
 
     bool IsActionUnlocked(LockableActionsManager.LockableActionType action);
     void SetActionUnlocked(LockableActionsManager.LockableActionType action, bool unlocked);
+
+    IReadOnlyCollection<char> GetUnlockedLetters();
+    void SetLetterUnlocked(char letter);
 
     string GetCustomValue(string key, string defaultValue = null);
     void SetCustomValue(string key, string value);

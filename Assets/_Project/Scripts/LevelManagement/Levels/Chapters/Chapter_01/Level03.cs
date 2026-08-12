@@ -5,7 +5,7 @@ public class Level03 : LevelBase
 {
     public override void Begin()
     {
-        AudioManager.Instance.PlayMusic(MusicTracks.TuftaMusic, fadeDuration: 1f);
+        AudioManager.Instance.PlayMusic(MusicTracks.Level02Music, fadeDuration: 1f);
         base.Begin();
         PlayIntroSequence().Forget();
     }

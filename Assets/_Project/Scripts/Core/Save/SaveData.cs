@@ -19,6 +19,11 @@ public class SaveData
     // Unlocked systems (Diary, Mask, ...) - global across the whole game, not scene-specific.
     public List<UnlockedActionEntry> UnlockedActions = new List<UnlockedActionEntry>();
 
+    // Unlocked diary letters - global across the whole game, not scene-specific. Stored as a
+    // plain string (each character an unlocked letter) rather than a char list, since JsonUtility
+    // doesn't serialize char cleanly.
+    public string UnlockedLetters = "";
+
     // Generic bag for future data (e.g. checkpoint position/id) without needing schema changes.
     public List<KeyValueEntry> CustomData = new List<KeyValueEntry>();
 }

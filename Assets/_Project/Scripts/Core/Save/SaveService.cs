@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Persists game progress (current scene + level, completed levels, unlocked systems like
-/// Diary/Mask, and any future checkpoint data) to a JSON file on disk so it survives restarts.
+/// Diary/Mask, unlocked diary letters, and any future checkpoint data) to a JSON file on disk
+/// so it survives restarts.
 /// </summary>
 public class SaveService : ISaveService
 {
@@ -99,7 +101,6 @@ public class SaveService : ISaveService
     {
         string key = MakeLevelKey(sceneName, levelIndex);
 
-        // Idempotent: don't re-save/re-fire OnSaved if this was already recorded.
         if (Data.CompletedLevelKeys.Contains(key))
             return;
 
@@ -109,8 +110,6 @@ public class SaveService : ISaveService
 
     public void SetCurrentProgress(string sceneName, int levelIndex)
     {
-        // Idempotent: e.g. resuming a save calls this with the value we just loaded -
-        // that shouldn't count as a real save or show a "Saved" indicator.
         if (Data.CurrentSceneName == sceneName && Data.CurrentLevelIndex == levelIndex)
             return;
 
@@ -142,6 +141,23 @@ public class SaveService : ISaveService
             entry.Unlocked = unlocked;
         }
 
+        Save();
+    }
+
+    public IReadOnlyCollection<char> GetUnlockedLetters()
+    {
+        return new HashSet<char>(Data.UnlockedLetters ?? string.Empty);
+    }
+
+    public void SetLetterUnlocked(char letter)
+    {
+        letter = char.ToUpperInvariant(letter);
+        string current = Data.UnlockedLetters ?? string.Empty;
+
+        if (current.IndexOf(letter) >= 0)
+            return;
+
+        Data.UnlockedLetters = current + letter;
         Save();
     }
 

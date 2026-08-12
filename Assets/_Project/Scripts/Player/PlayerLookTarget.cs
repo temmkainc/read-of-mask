@@ -49,6 +49,11 @@ public class PlayerLookTarget
     // Track the previously reported collider so we only fire OnTargetChanged
     // when something actually changes (not every frame).
     private Collider _lastReportedCollider;
+    // Tracked separately from the collider reference itself: if the reported collider gets
+    // destroyed while still being the current target, Unity's == treats it as equal to null,
+    // which would incorrectly suppress the transition to "nothing targeted" below. This flag
+    // makes that transition explicit regardless of what _lastReportedCollider compares as.
+    private bool _hasReportedTarget;
 
     public object Current { get; private set; }
     public PlayerGrabbing Grabbing => _playerGrabbing;
@@ -129,9 +134,27 @@ public class PlayerLookTarget
 
     private void ReportTargetCollider(Collider col)
     {
-        if (col == _lastReportedCollider) return;
-        _lastReportedCollider = col;
-        OnTargetChanged?.Invoke(col);
+        if (col != null)
+        {
+            // Only skip if it's the exact same still-alive collider we already reported.
+            if (_hasReportedTarget && col == _lastReportedCollider)
+                return;
+
+            _lastReportedCollider = col;
+            _hasReportedTarget = true;
+            OnTargetChanged?.Invoke(col);
+            return;
+        }
+
+        // Nothing currently targeted. Fire even if _lastReportedCollider now Unity-compares as
+        // null (e.g. it was destroyed) - what matters is whether we'd previously reported a
+        // target, not whether the stale reference happens to look null right now.
+        if (!_hasReportedTarget)
+            return;
+
+        _lastReportedCollider = null;
+        _hasReportedTarget = false;
+        OnTargetChanged?.Invoke(null);
     }
 
     private static object TargetFromHit(Collider col)

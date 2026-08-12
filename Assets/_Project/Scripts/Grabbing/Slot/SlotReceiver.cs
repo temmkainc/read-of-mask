@@ -83,20 +83,34 @@ public abstract class SlotReceiver<T> : SlotReceiver
     {
         Transform t = obj.transform;
 
-        Vector3 startPos = t.position;
-        Quaternion startRot = t.rotation;
+        // Reparent immediately (not after the tween) so the cube is safely owned by this slot
+        // from the very start. If a level transition interrupts the animation below, the cube
+        // will still be correctly destroyed/kept along with the slot instead of being left
+        // behind as an orphan at whatever position the tween happened to freeze on.
+        Vector3 worldStartPos = t.position;
+        Quaternion worldStartRot = t.rotation;
+
+        t.SetParent(transform);
+        t.position = worldStartPos;
+        t.rotation = worldStartRot;
+
+        Vector3 startLocalPos = t.localPosition;
+        Quaternion startLocalRot = t.localRotation;
         float elapsed = 0f;
 
         while (elapsed < _snapDuration)
         {
+            if (t == null) return; // object was destroyed mid-tween (e.g. level transition) - nothing left to animate
+
             float progress = Mathf.SmoothStep(0f, 1f, elapsed / _snapDuration);
-            t.position = Vector3.Lerp(startPos, transform.position, progress);
-            t.rotation = Quaternion.Slerp(startRot, transform.rotation, progress);
+            t.localPosition = Vector3.Lerp(startLocalPos, Vector3.zero, progress);
+            t.localRotation = Quaternion.Slerp(startLocalRot, Quaternion.identity, progress);
             elapsed += Time.deltaTime;
             await UniTask.Yield();
         }
 
-        t.SetParent(transform);
+        if (t == null) return;
+
         t.localPosition = Vector3.zero;
         t.localRotation = Quaternion.identity;
     }

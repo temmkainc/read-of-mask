@@ -23116,6 +23116,7 @@ MonoBehaviour:
   _levelDoorToClose: {fileID: 0}
   _destroyPreviousLevelOnEnter: 0
   _spawnPoint: {fileID: 404605092}
+  _bed: {fileID: 1342104230}
 --- !u!1 &245671724
 GameObject:
   m_ObjectHideFlags: 0
@@ -39361,7 +39362,7 @@ Transform:
   m_GameObject: {fileID: 404605091}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071061, z: -0, w: 0.70710754}
-  m_LocalPosition: {x: -14.249985, y: 2.75, z: -8.5000305}
+  m_LocalPosition: {x: -14.249987, y: 2.75, z: -7.7500305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -157530,6 +157531,7 @@ MonoBehaviour:
       <AuxRayViewportRadius>k__BackingField: 0.05
       <AuxRayCount>k__BackingField: 16
     <HandsController>k__BackingField: {fileID: 1956139404}
+    <Player>k__BackingField: {fileID: 5942317309686781889}
   _diaryModuleConfigData:
     <LockedLettersFontAsset>k__BackingField: {fileID: 11400000, guid: f1dd89439c762924a88d49bd8934e5e5, type: 2}
     <_book>k__BackingField: {fileID: 1799245295}
@@ -218036,7 +218038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: 0
-  m_CollectObjects: 2
+  m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
@@ -218052,7 +218054,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: c80049e9c8742fd4ea5f43a0c4bc7573, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 477cc0e271c5dc14da84f65e111fec0d, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1584555356
 GameObject:
@@ -381505,6 +381507,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1233033916}
   m_SourcePrefab: {fileID: 100100000, guid: f26cac74afbbb1f4fa7acecde2329b6e, type: 3}
+--- !u!114 &5942317309686781889 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4108241409391976129, guid: f26cac74afbbb1f4fa7acecde2329b6e, type: 3}
+  m_PrefabInstance: {fileID: 5942317309686781888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276201116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7b7d1d83df99c64995fab82eb60cf51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!23 &5946943190750338893
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -33,13 +33,32 @@ namespace ithappy.Animals_FREE
             m_Agent = GetComponent<NavMeshAgent>();
             m_Animator = GetComponent<CreatureAnimator>();
 
-            m_Agent.updatePosition = true;
-            m_Agent.updateRotation = true;
+            // Start disabled - the NavMeshAgent tries to place itself onto the NavMesh the
+            // moment it's enabled, and Unity doesn't guarantee this GameObject's Awake/OnEnable
+            // runs after the level's NavMeshSurface has registered its data. Enabling it
+            // ourselves after a short delay (see OnEnable) guarantees the surface is ready first.
+            m_Agent.enabled = false;
         }
 
         private void OnEnable()
         {
-            StartCoroutine(BehaviourLoop());
+            StartCoroutine(InitializeAgentThenRun());
+        }
+
+        private IEnumerator InitializeAgentThenRun()
+        {
+            // Give every other object in the scene (including the level's NavMeshSurface) a full
+            // chance to finish Awake/OnEnable/Start before this agent tries to place itself.
+            yield return new WaitForSeconds(0.3f);
+
+            if (m_Agent != null)
+            {
+                m_Agent.enabled = true;
+                m_Agent.updatePosition = true;
+                m_Agent.updateRotation = true;
+            }
+
+            yield return BehaviourLoop();
         }
 
         private void OnDisable()
@@ -49,6 +68,9 @@ namespace ithappy.Animals_FREE
 
         private void Update()
         {
+            if (m_Agent == null || !m_Agent.enabled || !m_Agent.isOnNavMesh)
+                return;
+
             bool isRunning = m_State == AIState.Flee || m_Agent.speed > m_WalkSpeed + 0.1f;
 
             m_Animator.UpdateAnimation(m_Agent.velocity, isRunning, Time.deltaTime);
@@ -139,6 +161,9 @@ namespace ithappy.Animals_FREE
 
         public void FleeTo(Vector3 position)
         {
+            if (m_Agent == null || !m_Agent.enabled || !m_Agent.isOnNavMesh)
+                return;
+
             // Stop previous flee if running
             if (m_FleeRoutine != null)
                 StopCoroutine(m_FleeRoutine);

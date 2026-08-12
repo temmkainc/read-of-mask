@@ -4,6 +4,7 @@ using TMPro;
 
 public class UnlockedLettersManager
 {
+    private readonly ISaveService _saveService;
     private readonly HashSet<char> _unlockedLetters = new HashSet<char>();
 
     public event Action<char> OnLetterUnlocked;
@@ -11,9 +12,15 @@ public class UnlockedLettersManager
 
     public TMP_FontAsset LockedLettersFontAsset { get; private set; }
 
-    public UnlockedLettersManager(TMP_FontAsset lockedLettersFontAsset)
+    public UnlockedLettersManager(TMP_FontAsset lockedLettersFontAsset, ISaveService saveService)
     {
         LockedLettersFontAsset = lockedLettersFontAsset;
+        _saveService = saveService;
+
+        // Restore letters unlocked in a previous scene/session - without this, every new scene
+        // (a fresh Zenject container, fresh instance of this class) would start back at zero.
+        foreach (var c in _saveService.GetUnlockedLetters())
+            _unlockedLetters.Add(c);
     }
 
     public void UnlockLetter(char c)
@@ -22,6 +29,7 @@ public class UnlockedLettersManager
         if (!_unlockedLetters.Contains(c))
         {
             _unlockedLetters.Add(c);
+            _saveService.SetLetterUnlocked(c);
             OnLetterUnlocked?.Invoke(c);
         }
     }
