@@ -35,10 +35,17 @@ public class LevelBase : MonoBehaviour
 
     [Inject] private PlayerController _playerController;
 
+    [Header("Obligatory Sequence")]
+    [Tooltip("Optional. If this level has a forced action-by-action routine (e.g. the wake-up morning sequence), assign its ObligatorySequence here. It starts automatically when this level begins.")]
+    [SerializeField] private ObligatorySequence _obligatorySequence;
+
     private List<ILevelCompleteCondition> _conditions = new();
     private int _conditionsMet;
 
     public bool DestroyPreviousLevelOnEnter => _destroyPreviousLevelOnEnter;
+
+    /// <summary>This level's obligatory sequence, if it has one. Null for most levels.</summary>
+    public ObligatorySequence ObligatorySequence => _obligatorySequence;
 
     /// <summary>
     /// Override and return true if this level already plays its own screen transition on Begin()
@@ -56,6 +63,20 @@ public class LevelBase : MonoBehaviour
     {
         gameObject.SetActive(true);
         SubscribeToConditions();
+
+        if (_obligatorySequence != null)
+            _obligatorySequence.StartSequence();
+    }
+
+    /// <summary>
+    /// Restarts this level in-place, without a scene reload - used e.g. when an ObligatorySequence
+    /// needs to reset the whole routine after a wrong action. Base behavior just teleports the
+    /// player back to the spawn point; override to also replay any level-specific intro/setup
+    /// (e.g. Level06 re-triggering its bed interaction).
+    /// </summary>
+    public virtual void RestartLevel()
+    {
+        SpawnPlayerAtSpawnPoint();
     }
 
     /// <summary>

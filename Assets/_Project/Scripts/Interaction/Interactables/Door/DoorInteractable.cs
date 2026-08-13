@@ -116,6 +116,21 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
             .SetEase(_ease);
     }
 
+    /// <summary>
+    /// Instantly resets this door back to its closed state - no animation, no SFX. Used when an
+    /// ObligatorySequence restarts the level, so a door opened earlier in this attempt doesn't
+    /// stay visually open across the reset.
+    /// </summary>
+    public void ResetToClosed()
+    {
+        _tween?.Kill();
+        _isOpen = false;
+        _hasBeenOpened = false;
+        _disabled = false;
+        _transformToRotate.localEulerAngles = _closedRotation;
+        OnHintChanged?.Invoke();
+    }
+
     public async Task CloseAndDisable()
     {
         _disabled = true;

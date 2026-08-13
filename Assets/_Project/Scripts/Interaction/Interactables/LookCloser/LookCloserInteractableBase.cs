@@ -18,6 +18,9 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
 
     protected PlayerStateType _previousPlayerStateType;
 
+    /// <summary>Fired specifically when the player exits LookCloser as a result of THIS interactable's own session (not any other LookCloser-based object, e.g. a chair or bench). Use this instead of the generic IPlayerStateManager.OnStateChanged when you need to know "did the player finish looking at this specific thing".</summary>
+    public event Action OnExitedLookCloser;
+
     public bool IsEnabled { get; set; } = true;
 
     public string HintLabel   => _hintLabel;
@@ -62,6 +65,7 @@ public class LookCloserInteractableBase : MonoBehaviour, IInteractable, IHighlig
         else if (previous == PlayerStateType.LookCloser)
         {
             _playerStateManager.OnStateChanged -= On_PlayerStateChanged;
+            OnExitedLookCloser?.Invoke();
         }
     }
 }

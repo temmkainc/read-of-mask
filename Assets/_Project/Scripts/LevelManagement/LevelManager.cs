@@ -15,6 +15,9 @@ public class LevelManager : IInitializable, IDisposable
     private LevelBase CurrentLevel => IsValidIndex(_currentIndex) ? _levels[_currentIndex] : null;
 
     public int CurrentLevelIndex => _currentIndex;
+
+    /// <summary>The obligatory sequence belonging to whichever level is currently active, or null if that level doesn't have one.</summary>
+    public ObligatorySequence CurrentObligatorySequence => CurrentLevel?.ObligatorySequence;
     
     private bool _initializeOnStart;
 
@@ -109,6 +112,12 @@ public class LevelManager : IInitializable, IDisposable
     }
 
     public bool IsLevelCompleted(int index) => _saveService.IsLevelCompleted(_thisSceneName, index);
+
+    /// <summary>Restarts the currently active level in-place (see LevelBase.RestartLevel), without a scene reload.</summary>
+    public void RestartCurrentLevel()
+    {
+        CurrentLevel?.RestartLevel();
+    }
 
     private void On_CurrentLevelComplete()
     {

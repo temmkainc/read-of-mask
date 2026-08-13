@@ -159,7 +159,14 @@ public class PlayerLookTarget
 
     private static object TargetFromHit(Collider col)
     {
-        if (col.TryGetComponent<IGrabbable>(out var g))     return g;
+        if (col.TryGetComponent<IGrabbable>(out var g)) return g;
+
+        // Prefer an ObligatoryStepGate over whatever interactable it wraps, if both are present
+        // on the same object - TryGetComponent<IInteractable> alone would return whichever one
+        // Unity happens to find first (effectively component add-order), which could silently
+        // bypass the gate entirely rather than routing through its correctness check.
+        if (col.TryGetComponent<ObligatoryStepGate>(out var gate)) return gate;
+
         if (col.TryGetComponent<IInteractable>(out var ia)) return ia;
         return null;
     }
