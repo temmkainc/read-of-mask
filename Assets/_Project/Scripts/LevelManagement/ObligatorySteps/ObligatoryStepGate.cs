@@ -51,6 +51,14 @@ public class ObligatoryStepGate : MonoBehaviour, IInteractable, IHighlightable
 
         if (!step.IsExpectedAction(_actionId))
         {
+            // Show "not allowed" feedback on the wrapped door (if it is one) instead of doing
+            // nothing - the door itself stays shut, matching the script's "wrong doors show a
+            // finger-wag and stay closed" behavior.
+            if (_wrappedInteractable is DoorInteractable door)
+                door.PlayNotAllowedFeedback();
+            else if (_wrappedInteractable is LockedDoorInteractable lockedDoor)
+                lockedDoor.Interact(player); // its own Interact() IS the not-allowed feedback - safe to call, never opens anything
+
             step.TriggerWrongAction();
             return;
         }

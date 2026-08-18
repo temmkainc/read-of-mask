@@ -21,6 +21,7 @@ public class ObligatoryStepTriggerGate : MonoBehaviour
     [SerializeField] private bool _completesStepWhenExpected = true;
 
     [Inject(Optional = true)] private LevelManager _levelManager;
+    [Inject(Optional = true)] private PlayerFirstPersonHandsController _handsController;
 
     private void Awake()
     {
@@ -38,6 +39,10 @@ public class ObligatoryStepTriggerGate : MonoBehaviour
 
         if (!step.IsExpectedAction(_actionId))
         {
+            // Same "not allowed" feedback as a wrong door, for consistency - there's no physical
+            // object to react here, but the player should still get the same visual cue.
+            _handsController?.PlayNotAllowedAnimation();
+
             step.TriggerWrongAction();
             return;
         }

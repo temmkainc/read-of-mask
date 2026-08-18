@@ -55,6 +55,17 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
         _disabled = disabled;
     }
 
+    /// <summary>
+    /// Plays the same "not allowed" hand gesture used when this door is disabled/locked, WITHOUT
+    /// touching its open/closed state. Used by ObligatoryStepGate for a wrong-action attempt on
+    /// this door - the door stays shut, but the player still gets visual feedback instead of
+    /// nothing happening.
+    /// </summary>
+    public void PlayNotAllowedFeedback()
+    {
+        _handsController.PlayNotAllowedAnimation();
+    }
+
     public void Interact(Player player)
     {
         if(player.Grabbing.IsHolding) 
