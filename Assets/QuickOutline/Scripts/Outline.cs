@@ -75,6 +75,11 @@ public class Outline : MonoBehaviour {
   [SerializeField, HideInInspector]
   private List<ListVector3> bakeValues = new List<ListVector3>();
 
+  // read-of-mask: precomputed normals live in shared OutlineSmoothNormals assets (one per mesh)
+  // instead of bakeKeys/bakeValues above, which are kept only so un-migrated objects still work.
+  [SerializeField, HideInInspector]
+  private List<OutlineSmoothNormals> sharedBakes = new List<OutlineSmoothNormals>();
+
   private Renderer[] renderers;
   private Material outlineMaskMaterial;
   private Material outlineFillMaterial;
@@ -119,15 +124,22 @@ public class Outline : MonoBehaviour {
     needsUpdate = true;
 
     // Clear cache when baking is disabled or corrupted
-    if (!precomputeOutline && bakeKeys.Count != 0 || bakeKeys.Count != bakeValues.Count) {
+    if (!precomputeOutline && (bakeKeys.Count != 0 || sharedBakes.Count != 0) || bakeKeys.Count != bakeValues.Count) {
       bakeKeys.Clear();
       bakeValues.Clear();
+      sharedBakes.Clear();
     }
 
-    // Generate smooth normals when baking is enabled
-    if (precomputeOutline && bakeKeys.Count == 0) {
-      Bake();
+#if UNITY_EDITOR
+    // Generate smooth normals when baking is enabled (asset creation isn't allowed inside OnValidate)
+    if (precomputeOutline && bakeKeys.Count == 0 && sharedBakes.Count == 0 && !Application.isPlaying) {
+      UnityEditor.EditorApplication.delayCall += () => {
+        if (this != null && precomputeOutline && sharedBakes.Count == 0) {
+          Bake();
+        }
+      };
     }
+#endif
   }
 
   void Update() {
@@ -161,42 +173,70 @@ public class Outline : MonoBehaviour {
     Destroy(outlineFillMaterial);
   }
 
-  void Bake() {
+#if UNITY_EDITOR
+  /// <summary>Points this Outline at shared smooth-normal assets for every mesh under it, replacing any inline data.</summary>
+  public void Bake(bool forceRebake = false) {
+    sharedBakes.Clear();
+    bakeKeys.Clear();
+    bakeValues.Clear();
 
     // Generate smooth normals for each mesh
     var bakedMeshes = new HashSet<Mesh>();
 
-    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
+    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>(true)) {
 
       // Skip duplicates
       if (!bakedMeshes.Add(meshFilter.sharedMesh)) {
         continue;
       }
 
-      // Serialize smooth normals
-      var smoothNormals = SmoothNormals(meshFilter.sharedMesh);
-
-      bakeKeys.Add(meshFilter.sharedMesh);
-      bakeValues.Add(new ListVector3() { data = smoothNormals });
+      // Meshes that aren't assets (e.g. scene-embedded ProBuilder meshes) are small and computed at runtime
+      var shared = OutlineSmoothNormals.GetOrCreate(meshFilter.sharedMesh, forceRebake);
+      if (shared != null) {
+        sharedBakes.Add(shared);
+      }
     }
+
+    UnityEditor.EditorUtility.SetDirty(this);
+    if (UnityEditor.PrefabUtility.IsPartOfPrefabInstance(this)) {
+      UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+    }
+  }
+
+  // Used by the migration tool to verify coverage.
+  public bool HasSharedBakeFor(Mesh mesh) => FindSharedBake(mesh) != null;
+  public bool HasInlineBakeData => bakeKeys.Count != 0 || bakeValues.Count != 0;
+  public bool PrecomputeOutline => precomputeOutline;
+#endif
+
+  OutlineSmoothNormals FindSharedBake(Mesh mesh) {
+    for (int i = 0; i < sharedBakes.Count; i++) {
+      if (sharedBakes[i] != null && sharedBakes[i].Matches(mesh)) {
+        return sharedBakes[i];
+      }
+    }
+    return null;
   }
 
   void LoadSmoothNormals() {
 
     // Retrieve or generate smooth normals
     foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
+      var mesh = meshFilter.sharedMesh;
 
       // Skip if smooth normals have already been adopted
-      if (!registeredMeshes.Add(meshFilter.sharedMesh)) {
+      if (mesh == null || !registeredMeshes.Add(mesh)) {
         continue;
       }
 
-      // Retrieve or generate smooth normals
-      var index = bakeKeys.IndexOf(meshFilter.sharedMesh);
-      var smoothNormals = (index >= 0) ? bakeValues[index].data : SmoothNormals(meshFilter.sharedMesh);
-
-      // Store smooth normals in UV3
-      meshFilter.sharedMesh.SetUVs(3, smoothNormals);
+      // Store smooth normals in UV3: shared precomputed data first, then legacy inline data, then compute
+      var shared = FindSharedBake(mesh);
+      if (shared != null) {
+        mesh.SetUVs(3, shared.Normals);
+      } else {
+        var index = bakeKeys.IndexOf(mesh);
+        mesh.SetUVs(3, (index >= 0) ? bakeValues[index].data : OutlineSmoothNormals.Compute(mesh));
+      }
 
       // Combine submeshes
       var renderer = meshFilter.GetComponent<Renderer>();
@@ -220,40 +260,6 @@ public class Outline : MonoBehaviour {
       // Combine submeshes
       CombineSubmeshes(skinnedMeshRenderer.sharedMesh, skinnedMeshRenderer.sharedMaterials);
     }
-  }
-
-  List<Vector3> SmoothNormals(Mesh mesh) {
-
-    // Group vertices by location
-    var groups = mesh.vertices.Select((vertex, index) => new KeyValuePair<Vector3, int>(vertex, index)).GroupBy(pair => pair.Key);
-
-    // Copy normals to a new list
-    var smoothNormals = new List<Vector3>(mesh.normals);
-
-    // Average normals for grouped vertices
-    foreach (var group in groups) {
-
-      // Skip single vertices
-      if (group.Count() == 1) {
-        continue;
-      }
-
-      // Calculate the average normal
-      var smoothNormal = Vector3.zero;
-
-      foreach (var pair in group) {
-        smoothNormal += smoothNormals[pair.Value];
-      }
-
-      smoothNormal.Normalize();
-
-      // Assign smooth normal to each vertex
-      foreach (var pair in group) {
-        smoothNormals[pair.Value] = smoothNormal;
-      }
-    }
-
-    return smoothNormals;
   }
 
   void CombineSubmeshes(Mesh mesh, Material[] materials) {

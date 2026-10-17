@@ -215,6 +215,7 @@ MonoBehaviour:
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -402,6 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionLookPoint
   _maxVerticalAngle: 0
   _maxHorizontalAngle: 0
+  _gamepadMultiplier: 150
 --- !u!1 &4993127604726529863
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,6 +649,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -916,9 +919,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorizontalBarInteractable
   <CameraSnapPoint>k__BackingField: {fileID: 4366453263861873045}
+  _hintLabel: Look closer
+  _hintXOffset: 0
+  _hintYOffset: 0.5
+  _hintZOffset: 0
   _pullUpController: {fileID: 3947998799206487460}
   _pullUpUI: {fileID: 8536061485623045932}
   _barSway: {fileID: 9098785307802714735}
+  _firstPersonHands: {fileID: 0}
 --- !u!114 &3947998799206487460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -944,6 +952,7 @@ MonoBehaviour:
   _maxWindowSize: 0.22
   _windowShrinkPerRep: 0.01
   _pullUpUI: {fileID: 8536061485623045932}
+  _pullupStagesSFX: []
 --- !u!114 &5522286507499830662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,9 +968,11 @@ MonoBehaviour:
   outlineMode: 4
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
   outlineWidth: 10
-  precomputeOutline: 0
+  precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
+  sharedBakes:
+  - {fileID: 11400000, guid: d081835bec121664aa04a56b5a82021a, type: 2}
 --- !u!64 &2091434835714019543
 MeshCollider:
   m_ObjectHideFlags: 0
