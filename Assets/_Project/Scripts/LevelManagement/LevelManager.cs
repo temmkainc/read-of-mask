@@ -71,6 +71,7 @@ public class LevelManager : IInitializable, IDisposable
         // teleport itself isn't mistaken for the player walking across it - the line still
         // fires normally later if genuinely crossed during this session.
         CurrentLevel.SpawnPlayerAtSpawnPoint();
+        CurrentLevel.OnStartedFromLoad();
 
         // Smooth fade-in transition on load (e.g. coming from the menu), unless this level
         // already plays its own screen transition (like Level00's eye-open intro).

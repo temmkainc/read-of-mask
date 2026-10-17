@@ -42926,6 +42926,7 @@ MonoBehaviour:
   _destroyPreviousLevelOnEnter: 0
   _spawnPoint: {fileID: 1335714979}
   _obligatorySequence: {fileID: 0}
+  _frontDoor: {fileID: 1791466811}
 --- !u!1001 &459228799
 PrefabInstance:
   m_ObjectHideFlags: 0

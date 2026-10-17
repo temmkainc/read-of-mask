@@ -80,6 +80,16 @@ public class LevelBase : MonoBehaviour
     }
 
     /// <summary>
+    /// Called when the game loads straight into this level (resuming a save, or a fresh start),
+    /// after the player has been placed at the spawn point - never on normal level-to-level
+    /// progression. Override to put things into the state they'd be in had the player played
+    /// up to here (e.g. Level07 locking the front door the player already walked out of).
+    /// </summary>
+    public virtual void OnStartedFromLoad()
+    {
+    }
+
+    /// <summary>
     /// Teleports the player to this level's spawn point. Call only when the game is loading
     /// (fresh start or resuming a save) - never on normal level-to-level progression.
     /// </summary>
