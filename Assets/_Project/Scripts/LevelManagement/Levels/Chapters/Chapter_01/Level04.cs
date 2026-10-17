@@ -48,4 +48,10 @@ public class Level04 : LevelBase
     {
         if (_fridgeLaughingSource) _fridgeLaughingSource.Stop();
     }
+
+    private void OnDestroy()
+    {
+        if (_maskStateManager != null)
+            _maskStateManager.OnStateChanged -= On_MaskStateChanged;
+    }
 }

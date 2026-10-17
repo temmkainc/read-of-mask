@@ -55,12 +55,14 @@ public class ObfuscatedText : MonoBehaviour
         _obfuscatedTween = _obfuscatedLabelCanvasGroup
             .DOFade(0f, _fadeDuration)
             .SetDelay(_fadeDelay)
-            .SetEase(_fadeEase);
+            .SetEase(_fadeEase)
+            .SetLink(_obfuscatedLabelCanvasGroup.gameObject);
 
         _translationTween = _translationLabelCanvasGroup
             .DOFade(1f, _fadeDuration)
             .SetDelay(_fadeDelay)
-            .SetEase(_fadeEase);
+            .SetEase(_fadeEase)
+            .SetLink(_translationLabelCanvasGroup.gameObject);
     }
 
     public void OnSightExit()
@@ -70,12 +72,14 @@ public class ObfuscatedText : MonoBehaviour
         _obfuscatedTween = _obfuscatedLabelCanvasGroup
             .DOFade(1f, _fadeDuration)
             .SetDelay(_fadeDelay)
-            .SetEase(_fadeEase);
+            .SetEase(_fadeEase)
+            .SetLink(_obfuscatedLabelCanvasGroup.gameObject);
 
         _translationTween = _translationLabelCanvasGroup
             .DOFade(0f, _fadeDuration)
             .SetDelay(_fadeDelay)
-            .SetEase(_fadeEase);
+            .SetEase(_fadeEase)
+            .SetLink(_translationLabelCanvasGroup.gameObject);
     }
 
     private void KillTweens()
@@ -87,5 +91,12 @@ public class ObfuscatedText : MonoBehaviour
     private void OnDisable()
     {
         KillTweens();
+    }
+
+    private void OnDestroy()
+    {
+        // The mask manager outlives this text (e.g. when a finished level is destroyed mid-scene)
+        if (_maskStateManager != null)
+            _maskStateManager.OnStateChanged -= On_MaskStateChanged;
     }
 }

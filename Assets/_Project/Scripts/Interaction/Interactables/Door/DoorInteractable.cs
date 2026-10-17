@@ -124,7 +124,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
 
         _tween = _transformToRotate
             .DOLocalRotate(WithAxis(_closedRotation, targetAngle), scaledDuration)
-            .SetEase(_ease);
+            .SetEase(_ease)
+            .SetLink(_transformToRotate.gameObject);
     }
 
     /// <summary>
@@ -168,7 +169,8 @@ public class DoorInteractable : MonoBehaviour, IInteractable, IHighlightable, ID
             _tween = _transformToRotate
                 .DOLocalRotate(_closedRotation, scaledDuration)
                 .SetEase(_ease)
-                .OnComplete(() => tcs.SetResult(true));
+                .OnComplete(() => tcs.SetResult(true))
+                .SetLink(_transformToRotate.gameObject);
 
             await tcs.Task;
 

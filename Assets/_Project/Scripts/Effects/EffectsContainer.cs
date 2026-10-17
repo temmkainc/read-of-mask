@@ -24,7 +24,8 @@ public class EffectsContainer : MonoBehaviour
         _fadeImage
             .DOFade(0f, duration)
             .SetEase(Ease.InOutQuad)
-            .OnComplete(() => _fadeImage.gameObject.SetActive(false));
+            .OnComplete(() => _fadeImage.gameObject.SetActive(false))
+            .SetLink(_fadeImage.gameObject);
     }
 
     /// <summary>
@@ -40,7 +41,7 @@ public class EffectsContainer : MonoBehaviour
         _fadeImage.gameObject.SetActive(true);
         _fadeImage.color = new Color(1f, 1f, 1f, 0f);
 
-        DG.Tweening.Sequence seq = DOTween.Sequence();
+        DG.Tweening.Sequence seq = DOTween.Sequence().SetLink(gameObject);
         seq.Append(_fadeImage.DOFade(1f, fadeInDuration).SetEase(Ease.OutQuad));
         seq.AppendInterval(holdDuration);
         seq.Append(_fadeImage.DOFade(0f, fadeOutDuration).SetEase(Ease.InQuad));

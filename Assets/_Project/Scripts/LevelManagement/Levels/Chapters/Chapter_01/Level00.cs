@@ -38,7 +38,8 @@ public class Level00 : LevelBase
             await UniTask.WaitForSeconds(0.5f, cancellationToken: ct);
             _fadeImage
                 .DOFade(0f, 4f)
-                .SetEase(Ease.InOutQuad);
+                .SetEase(Ease.InOutQuad)
+                .SetLink(_fadeImage.gameObject);
             await UniTask.WaitForSeconds(2f, cancellationToken: ct);
             _effectsContainer.EyeOpenEffect.Play().Forget();
         }

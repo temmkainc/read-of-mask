@@ -120,6 +120,7 @@ public class GamingScreen : LookCloserInteractableBase
         await _turnedOnScreenCanvasGroup
             .DOFade(0f, _turnOffDuration)
             .SetEase(Ease.Flash)
+            .SetLink(_turnedOnScreenCanvasGroup.gameObject)
             .AsyncWaitForCompletion();
     }
 
@@ -128,6 +129,7 @@ public class GamingScreen : LookCloserInteractableBase
         await _turnedOnScreenCanvasGroup
             .DOFade(1f, _turnOnDuration)
             .SetEase(Ease.Flash)
+            .SetLink(_turnedOnScreenCanvasGroup.gameObject)
             .AsyncWaitForCompletion();
     }
 

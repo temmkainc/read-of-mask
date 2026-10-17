@@ -51,6 +51,7 @@ public class FlowerWithCube : GrabbableObject
         CubeToThrow.transform.SetParent(null);
         CubeToThrow.transform.localScale = Vector3.zero;
         CubeToThrow.transform
-            .DOScale(_cubeOriginalScale, _growDuration);
+            .DOScale(_cubeOriginalScale, _growDuration)
+            .SetLink(CubeToThrow.gameObject);
     }
 }

@@ -47,7 +47,8 @@ public class UnlockMaskInteractable : MonoBehaviour, IInteractable, IHighlightab
         _fingerSequence
             .Append(_pointingFingerTransform.DOLocalMove(startPosition + _positionDelta, _animationDuration).SetEase(Ease.InOutSine))
             .Join(_pointingFingerTransform.DOLocalRotate(startRotation + _rotationDelta, _animationDuration).SetEase(Ease.InOutSine))
-            .SetLoops(-1, LoopType.Yoyo);
+            .SetLoops(-1, LoopType.Yoyo)
+            .SetLink(gameObject);
     }
 
     public void Interact(Player player)

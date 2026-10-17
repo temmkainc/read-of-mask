@@ -81,6 +81,7 @@ public class LockedGamingScreen : GamingScreen
 
         var targetColor = new Color(0xBC / 255f, 0xBC / 255f, 0xBC / 255f);
         _lockedScreen.GetComponent<Image>().DOColor(targetColor, _fadeDuration)
+            .SetLink(_lockedScreen.gameObject)
             .OnComplete(() =>
             {
                 var rb = _cubeToGrow.GetComponent<Rigidbody>();
@@ -89,7 +90,8 @@ public class LockedGamingScreen : GamingScreen
 
                 _cubeToGrow
                     .DOScale(_cubeOriginalScale, _cubeGrowDuration)
-                    .SetEase(_cubeGrowEase);
+                    .SetEase(_cubeGrowEase)
+                    .SetLink(_cubeToGrow.gameObject);
 
                 rb.AddForce(
                     _cubeGrowPoint.forward * _cubeThrowForce,

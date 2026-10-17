@@ -209,13 +209,16 @@ public class DemoBootstrapMenu : LookCloserInteractableBase
         float t = 0f;
 
         var fadeTween = DOTween.To(() => t, x => t = x, 1f, _fadeDuration)
-            .SetEase(Ease.InOutQuad);
+            .SetEase(Ease.InOutQuad)
+            .SetLink(gameObject);
 
         _fadeImage.DOFade(1f, _fadeDuration)
-            .SetEase(Ease.InOutQuad);
+            .SetEase(Ease.InOutQuad)
+            .SetLink(_fadeImage.gameObject);
 
         _musicAudioSource.DOFade(0f, _fadeDuration)
-            .SetEase(Ease.InOutQuad);
+            .SetEase(Ease.InOutQuad)
+            .SetLink(_musicAudioSource.gameObject);
 
         await fadeTween.AsyncWaitForCompletion();
 

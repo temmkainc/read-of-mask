@@ -47,6 +47,7 @@ public class SaveIndicatorUI : MonoBehaviour
         _sequence = DOTween.Sequence()
             .Append(_canvasGroup.DOFade(1f, _fadeDuration))
             .AppendInterval(_visibleDuration)
-            .Append(_canvasGroup.DOFade(0f, _fadeDuration));
+            .Append(_canvasGroup.DOFade(0f, _fadeDuration))
+            .SetLink(gameObject);
     }
 }

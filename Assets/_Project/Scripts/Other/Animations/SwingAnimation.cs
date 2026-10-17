@@ -24,9 +24,11 @@ public class SwingAnimation : MonoBehaviour
 
         transform.DOLocalRotate(to, _duration)
             .SetEase(_ease)
+            .SetLink(gameObject)
             .OnComplete(() =>
                 transform.DOLocalRotate(from, _duration)
                     .SetEase(_ease)
+                    .SetLink(gameObject)
                     .OnComplete(Swing));
     }
 

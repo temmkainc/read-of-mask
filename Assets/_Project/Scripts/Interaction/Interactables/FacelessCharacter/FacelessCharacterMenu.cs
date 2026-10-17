@@ -171,7 +171,7 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
             {
                 _menu.EnterMenu();
             }
-        });
+        }).SetLink(gameObject);
     }
 
     private void ExitMenu()
@@ -183,13 +183,14 @@ public class FacelessCharacterMenu : LookCloserInteractableBase
                 gameObject.SetActive(false);
                 _menu.ExitMenu(clearFocus: false);
                 _optionsMenu.ExitMenu(clearFocus: false);
-            });
+            })
+            .SetLink(gameObject);
     }
     private void PlayEnterAnimation()
     {
         transform.localScale = new Vector3(1f, 0.05f, 1f);
 
-        Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence().SetLink(gameObject);
 
         seq.AppendInterval(0.2f);
 

@@ -52,10 +52,12 @@ public class JarInteractable : MonoBehaviour, IInteractable, IHighlightable
         _transformToMove
             .DOMove(_dropPoint.position, _fallDuration)
             .SetEase(Ease.InQuad)
-            .OnComplete(Break);
+            .OnComplete(Break)
+            .SetLink(_transformToMove.gameObject);
         _transformToMove
             .DORotate(randomTilt, _fallDuration, RotateMode.FastBeyond360)
-            .SetEase(Ease.InCubic);
+            .SetEase(Ease.InCubic)
+            .SetLink(_transformToMove.gameObject);
     }
 
     private void Break()

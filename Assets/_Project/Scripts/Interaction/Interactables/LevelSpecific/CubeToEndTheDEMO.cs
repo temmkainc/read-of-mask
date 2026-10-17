@@ -57,7 +57,7 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
         _chair.IsEnabled = false;
 
         _showEndDemoCanvasGroup.alpha = 0f;
-        DOVirtual.DelayedCall(16.5f, () => PlayEndDemoSequence());
+        DOVirtual.DelayedCall(16.5f, () => PlayEndDemoSequence()).SetLink(gameObject);
 
     }
 
@@ -69,7 +69,7 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
             .SetEase(Ease.InOutQuad)
             .OnComplete(() =>
             {
-                Sequence seq = DOTween.Sequence();
+                Sequence seq = DOTween.Sequence().SetLink(gameObject);
 
                 foreach (var text in _texts)
                 {
@@ -97,8 +97,9 @@ public class CubeToEndTheDEMO : LetterCube, IDynamicHintLabel
                     {
                         AudioManager.Instance.StopMusic();
                         OnEndSequenceComplete?.Invoke();
-                    }));
-            });
+                    }).SetLink(gameObject));
+            })
+            .SetLink(gameObject);
     }
     public override void Release(Vector3 throwForce, bool isExternal = false)
     {

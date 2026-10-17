@@ -114,7 +114,8 @@ public class ClockWithMovingArrowsInteractable : LookCloserInteractableBase
             .OnComplete(() =>
             {
                 _isRotating = false;
-            });
+            })
+            .SetLink(arrow.gameObject);
     }
 
     private void CheckCorrectTime()
@@ -149,7 +150,7 @@ public class ClockWithMovingArrowsInteractable : LookCloserInteractableBase
         Vector3 backwardPosition =
             forwardPosition - Vector3.forward * _cuckooBackwardDistance;
 
-        Sequence sequence = DOTween.Sequence();
+        Sequence sequence = DOTween.Sequence().SetLink(gameObject);
 
         sequence.Append(
             _cuckooWithNote.DOLocalMove(forwardPosition, _cuckooMoveDuration)
