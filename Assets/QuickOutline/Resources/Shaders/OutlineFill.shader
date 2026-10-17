@@ -43,6 +43,7 @@ Shader "Custom/Outline Fill" {
       struct appdata {
         float4 vertex : POSITION;
         float3 normal : NORMAL;
+        float4 tangent : TANGENT;
         float3 smoothNormal : TEXCOORD3;
         UNITY_VERTEX_INPUT_INSTANCE_ID
       };
@@ -62,7 +63,9 @@ Shader "Custom/Outline Fill" {
         UNITY_SETUP_INSTANCE_ID(input);
         UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-        float3 normal = any(input.smoothNormal) ? input.smoothNormal : input.normal;
+        // Smooth normals: UV3 for static meshes; skinned meshes carry them in tangents marked w = 2 (read-of-mask)
+        float3 normal = any(input.smoothNormal) ? input.smoothNormal
+                      : (input.tangent.w > 1.5 ? input.tangent.xyz : input.normal);
         float3 viewPosition = UnityObjectToViewPos(input.vertex);
         float3 viewNormal = normalize(mul((float3x3)UNITY_MATRIX_IT_MV, normal));
 

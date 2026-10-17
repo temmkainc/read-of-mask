@@ -65,7 +65,15 @@ public static class OutlineSmoothNormalsMigration {
       report.Append($"{scene.name}: {outlines.Count} Outline, {changed} updated; ");
     }
 
-    AssetDatabase.SaveAssets();
+    // Save only our generated assets; a global SaveAssets would also write unrelated dirty assets
+    // (e.g. TMP dynamic font atlases populated during this session).
+    foreach (var guid in AssetDatabase.FindAssets("t:OutlineSmoothNormals", new[] { OutlineSmoothNormals.GeneratedFolder })) {
+      var asset = AssetDatabase.LoadAssetAtPath<OutlineSmoothNormals>(AssetDatabase.GUIDToAssetPath(guid));
+      if (asset != null) {
+        AssetDatabase.SaveAssetIfDirty(asset);
+      }
+    }
+
     if (setup.Length > 0) {
       EditorSceneManager.RestoreSceneManagerSetup(setup);
     }
@@ -94,6 +102,7 @@ public static class OutlineSmoothNormalsMigration {
 
       var meshes = outline.GetComponentsInChildren<MeshFilter>(true)
         .Select(mf => mf.sharedMesh)
+        .Concat(outline.GetComponentsInChildren<SkinnedMeshRenderer>(true).Select(smr => smr.sharedMesh))
         .Where(m => m != null)
         .Distinct()
         .ToList();

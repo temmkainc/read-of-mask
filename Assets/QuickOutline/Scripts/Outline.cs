@@ -197,6 +197,18 @@ public class Outline : MonoBehaviour {
       }
     }
 
+    // Skinned meshes too (their smooth normals go into tangents at runtime, see LoadSmoothNormals)
+    foreach (var skinnedMeshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>(true)) {
+      if (!bakedMeshes.Add(skinnedMeshRenderer.sharedMesh)) {
+        continue;
+      }
+
+      var shared = OutlineSmoothNormals.GetOrCreate(skinnedMeshRenderer.sharedMesh, forceRebake);
+      if (shared != null) {
+        sharedBakes.Add(shared);
+      }
+    }
+
     UnityEditor.EditorUtility.SetDirty(this);
     if (UnityEditor.PrefabUtility.IsPartOfPrefabInstance(this)) {
       UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
@@ -248,18 +260,41 @@ public class Outline : MonoBehaviour {
 
     // Clear UV3 on skinned mesh renderers
     foreach (var skinnedMeshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>()) {
+      var mesh = skinnedMeshRenderer.sharedMesh;
 
       // Skip if UV3 has already been reset
-      if (!registeredMeshes.Add(skinnedMeshRenderer.sharedMesh)) {
+      if (mesh == null || !registeredMeshes.Add(mesh)) {
         continue;
       }
 
-      // Clear UV3
-      skinnedMeshRenderer.sharedMesh.uv4 = new Vector2[skinnedMeshRenderer.sharedMesh.vertexCount];
+      // Clear UV3 (UVs aren't skinned, so they can't carry smooth normals on an animated mesh)
+      mesh.uv4 = new Vector2[mesh.vertexCount];
+
+      // read-of-mask: tangents are skinned, so carry the smooth normals there instead. The fill
+      // shader uses tangents marked with w = 2. Skipped when a material needs real tangents.
+      if (!UsesNormalMap(skinnedMeshRenderer.sharedMaterials)) {
+        var shared = FindSharedBake(mesh);
+        var smoothNormals = shared != null ? (IList<Vector3>)shared.Normals : OutlineSmoothNormals.Compute(mesh);
+        var tangents = new Vector4[smoothNormals.Count];
+        for (int i = 0; i < tangents.Length; i++) {
+          var n = smoothNormals[i];
+          tangents[i] = new Vector4(n.x, n.y, n.z, 2f);
+        }
+        mesh.tangents = tangents;
+      }
 
       // Combine submeshes
-      CombineSubmeshes(skinnedMeshRenderer.sharedMesh, skinnedMeshRenderer.sharedMaterials);
+      CombineSubmeshes(mesh, skinnedMeshRenderer.sharedMaterials);
     }
+  }
+
+  static bool UsesNormalMap(Material[] materials) {
+    foreach (var material in materials) {
+      if (material != null && material.HasProperty("_BumpMap") && material.GetTexture("_BumpMap") != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void CombineSubmeshes(Mesh mesh, Material[] materials) {

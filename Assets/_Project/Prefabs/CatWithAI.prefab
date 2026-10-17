@@ -1077,7 +1077,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 5ebd04363b190f043826afa1ddd79250, type: 2}
 --- !u!135 &2188928296797713377
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -10141,7 +10141,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 15be8827fd439194e8beac7249a9c89d, type: 2}
 --- !u!64 &120909103
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -17316,7 +17317,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 0e065446fafda3e4a91464051482c579, type: 2}
 --- !u!64 &222447713
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -23079,7 +23081,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 15be8827fd439194e8beac7249a9c89d, type: 2}
 --- !u!64 &276759894
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -82897,7 +82900,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 15be8827fd439194e8beac7249a9c89d, type: 2}
 --- !u!64 &927094348
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -89507,7 +89511,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 0e065446fafda3e4a91464051482c579, type: 2}
 --- !u!64 &973987209
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -122515,7 +122520,8 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
-  sharedBakes: []
+  sharedBakes:
+  - {fileID: 11400000, guid: 15be8827fd439194e8beac7249a9c89d, type: 2}
 --- !u!64 &1328773359
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -213952,6 +213958,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e8ce6f73dc507b144bf9c391f04eb0d1, type: 2}
   - {fileID: 11400000, guid: 2917e9f80030a824cbd8a0e59d8d0e6e, type: 2}
   - {fileID: 11400000, guid: 9e87dac95754e2947839b54e277bba65, type: 2}
+  - {fileID: 11400000, guid: 0318cb9b876f48a4cbd5c0f14bf3f15a, type: 2}
 --- !u!114 &5508228237459103370
 MonoBehaviour:
   m_ObjectHideFlags: 0
