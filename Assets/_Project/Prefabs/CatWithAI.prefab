@@ -79,6 +79,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
@@ -1055,7 +1056,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a88001a3b20b5d94090d87c147df37be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CatInteractable
+  _interactionType: 0
   _hideSpot: {fileID: 0}
+  _isMoving: 1
 --- !u!114 &7050856911392854323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1074,6 +1077,7 @@ MonoBehaviour:
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
+  sharedBakes: []
 --- !u!135 &2188928296797713377
 SphereCollider:
   m_ObjectHideFlags: 0
