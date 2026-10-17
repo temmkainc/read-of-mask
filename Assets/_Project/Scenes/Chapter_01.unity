@@ -67658,7 +67658,8 @@ MonoBehaviour:
   _cubeGrowPoint: {fileID: 1381643463}
   _lockedScreen: {fileID: 1085533582}
   _turnedOffScreen: {fileID: 140114223}
-  _cubeThrowForce: 5
+  _cubeThrowForce: 1.5
+  _cubeScreenClearance: 0.05
 --- !u!1 &540239897 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5310329695600108768, guid: da31803eeee04a6439edc36a95f4378e, type: 3}

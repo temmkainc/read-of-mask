@@ -49,8 +49,7 @@ public abstract class SlotReceiver<T> : SlotReceiver
         grabbing.ReleaseHeldObject(isExternal: true);
 
         CurrentObject = obj;
-        var rb = CurrentObject.GetComponent<Rigidbody>();
-        rb.isKinematic = true;
+        CurrentObject.PinForSlot();
 
         SnapIntoPlace(CurrentObject).Forget();
         OnObjectInserted(CurrentObject);
@@ -62,8 +61,7 @@ public abstract class SlotReceiver<T> : SlotReceiver
             Clear();
 
         CurrentObject = obj;
-        var rb = CurrentObject.GetComponent<Rigidbody>();
-        rb.isKinematic = true;
+        CurrentObject.PinForSlot();
 
         SnapIntoPlace(CurrentObject).Forget();
         OnObjectInserted(CurrentObject);
@@ -101,6 +99,7 @@ public abstract class SlotReceiver<T> : SlotReceiver
         while (elapsed < _snapDuration)
         {
             if (t == null) return; // object was destroyed mid-tween (e.g. level transition) - nothing left to animate
+            if (!IsStillSnapping(obj)) return; // taken back out mid-snap - the player's hand owns it now
 
             float progress = Mathf.SmoothStep(0f, 1f, elapsed / _snapDuration);
             t.localPosition = Vector3.Lerp(startLocalPos, Vector3.zero, progress);
@@ -109,11 +108,14 @@ public abstract class SlotReceiver<T> : SlotReceiver
             await UniTask.Yield();
         }
 
-        if (t == null) return;
+        if (t == null || !IsStillSnapping(obj)) return;
 
         t.localPosition = Vector3.zero;
         t.localRotation = Quaternion.identity;
     }
+
+    private bool IsStillSnapping(T obj)
+        => CurrentObject == obj && !obj.IsGrabbed && obj.transform.parent == transform;
 
     public override void Clear()
     {

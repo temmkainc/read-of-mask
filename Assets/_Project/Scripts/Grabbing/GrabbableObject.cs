@@ -19,6 +19,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
 
 
     private Rigidbody _rb;
+    private RigidbodyInterpolation _interpolation;
 
     private int _originalLayer;
     public bool IsGrabbed { get; private set; }
@@ -43,12 +44,26 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
     protected virtual void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _interpolation = _rb.interpolation;
+    }
+
+    /// <summary>
+    /// Freezes the object so a script can move it into a slot by hand. Interpolation is turned off
+    /// while it sits there: with it on, the physics system can write its own stale pose back over
+    /// the transform after a frame hitch (e.g. a level transition), leaving the object frozen
+    /// half-way into the slot. Grab/Release turn interpolation back on.
+    /// </summary>
+    public void PinForSlot()
+    {
+        _rb.isKinematic = true;
+        _rb.interpolation = RigidbodyInterpolation.None;
     }
 
     public virtual void Grab(Player player, Transform holdPoint)
     {
         IsGrabbed = true;
         _rb.isKinematic = true;
+        _rb.interpolation = _interpolation;
 
         _originalLayer = gameObject.layer;
         gameObject.layer = LayerMaskToLayer(_grabbedLayer);
@@ -71,6 +86,7 @@ public class GrabbableObject : MonoBehaviour, IGrabbable, IHighlightable
         gameObject.layer = _originalLayer;
 
         _rb.isKinematic = false;
+        _rb.interpolation = _interpolation;
         _rb.linearVelocity = throwForce * _throwForceMultiplier;
     }
 
