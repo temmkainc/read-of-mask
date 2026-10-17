@@ -10870,6 +10870,74 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1782631611}
   m_SourcePrefab: {fileID: 100100000, guid: 3da88826da2e4fe42bc1535943126dc2, type: 3}
+--- !u!1 &143469128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 143469129}
+  - component: {fileID: 143469131}
+  - component: {fileID: 143469130}
+  m_Layer: 0
+  m_Name: BedroomZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &143469129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 143469128}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -11.156641, y: 4.3525143, z: -8.48999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1209634251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &143469130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 143469128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21f04dde76da0e4db9a204ff2ba8b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObligatoryStepTriggerGate
+  _actionId: BedroomZone
+  _completesStepWhenExpected: 0
+--- !u!65 &143469131
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 143469128}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.7, y: 5.5, z: 6.3}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &144117243
 GameObject:
   m_ObjectHideFlags: 0
@@ -13397,7 +13465,8 @@ MonoBehaviour:
   _narratorAudioSource: {fileID: 0}
   _restartAfterStalling: 1
   _stallRestartDelay: 2
-  _expectedActionIds: []
+  _expectedActionIds:
+  - BedroomZone
   _correctionVoiceline: {fileID: 0}
   _correctionDebugText: 
   _correctionDelay: 2
@@ -24717,6 +24786,7 @@ MonoBehaviour:
   _stallRestartDelay: 20
   _expectedActionIds:
   - BedroomDoor
+  - BedroomZone
   _correctionVoiceline: {fileID: 0}
   _correctionDebugText: "\u0422\u0438 \u043F\u043E\u0432\u0438\u043D\u0435\u043D
     \u0432\u0438\u0439\u0442\u0438 \u0437 \u043A\u0456\u043C\u043D\u0430\u0442\u0438."
@@ -111713,6 +111783,7 @@ Transform:
   m_Children:
   - {fileID: 382518854}
   - {fileID: 232627626}
+  - {fileID: 143469129}
   m_Father: {fileID: 625772244}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1209759606
@@ -221528,6 +221599,10 @@ PrefabInstance:
     - target: {fileID: 5453228775791135457, guid: 685ecb040bd88ca488fd848ea7960b52, type: 3}
       propertyPath: m_Name
       value: ObjectiveHud
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679067607270358531, guid: 685ecb040bd88ca488fd848ea7960b52, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
