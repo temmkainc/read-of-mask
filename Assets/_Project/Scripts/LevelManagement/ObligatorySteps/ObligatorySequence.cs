@@ -13,6 +13,10 @@ using Zenject;
 /// without an actual scene reload - then restarts the sequence from its first step. Each level
 /// defines what "restarting" means for itself (e.g. Level06 re-triggers its bed interaction),
 /// so this sequence doesn't need to track/restore arbitrary object state itself.
+///
+/// The restart is played as a cinematic rollback (see EffectsContainer): tension builds while the
+/// correction line plays, then a hit and white-out, and the level resets while the screen is white.
+/// The active step's objective text is published to the ObjectiveTracker for on-screen display.
 /// </summary>
 public class ObligatorySequence : MonoBehaviour
 {
@@ -20,6 +24,7 @@ public class ObligatorySequence : MonoBehaviour
 
     [Inject] private LevelManager _levelManager;
     [Inject] private EffectsContainer _effectsContainer;
+    [InjectOptional] private ObjectiveTracker _objectives;
 
     private int _currentIndex = -1;
 
@@ -43,19 +48,28 @@ public class ObligatorySequence : MonoBehaviour
 
         if (_currentIndex >= _steps.Count)
         {
+            _objectives?.Clear();
             OnSequenceComplete?.Invoke();
             return;
         }
 
         var step = _steps[_currentIndex];
         step.OnStepCompleted += HandleStepCompleted;
+        step.OnWrongActionStarted += HandleWrongActionStarted;
         step.OnWrongAction += HandleWrongAction;
+        _objectives?.Set(step.ObjectiveText);
         step.Activate();
     }
 
     private void HandleStepCompleted()
     {
         AdvanceToNextStep();
+    }
+
+    private void HandleWrongActionStarted()
+    {
+        if (_effectsContainer != null && CurrentStep != null)
+            _effectsContainer.BeginRollbackTension(CurrentStep.CorrectionDelay);
     }
 
     private void HandleWrongAction()
@@ -69,7 +83,18 @@ public class ObligatorySequence : MonoBehaviour
         UnsubscribeFromCurrent();
         CurrentStep?.ResetState();
 
-        _effectsContainer?.FlashWhite();
+        if (_effectsContainer != null)
+            _effectsContainer.PlayRollback(ResetLevelAndRestart);
+        else
+            ResetLevelAndRestart();
+    }
+
+    // Runs at full white during the rollback, so the reset itself is never seen.
+    private void ResetLevelAndRestart()
+    {
+        if (this == null)
+            return;
+
         ResetAllGatedDoors();
         _levelManager?.RestartCurrentLevel();
 
@@ -100,6 +125,7 @@ public class ObligatorySequence : MonoBehaviour
             return;
 
         CurrentStep.OnStepCompleted -= HandleStepCompleted;
+        CurrentStep.OnWrongActionStarted -= HandleWrongActionStarted;
         CurrentStep.OnWrongAction -= HandleWrongAction;
     }
 

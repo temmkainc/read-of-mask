@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -109,6 +110,36 @@ public class AudioManager : MonoBehaviour
     private void UntrackSource(AudioSource source)
     {
         if (source != null) _trackedSources.Remove(source);
+    }
+
+    // -------------------------------------------------------------------------
+    // Ducking
+    // -------------------------------------------------------------------------
+
+    private Tween _duckTween;
+    private AudioSource _duckedSource;
+    private float _duckRestoreVolume;
+
+    /// <summary>
+    /// Temporarily lowers the current music to <paramref name="factor"/> of its volume (e.g. under a
+    /// dramatic effect), holds, then brings it back. Doesn't change the music volume setting.
+    /// </summary>
+    public void DuckMusic(float factor, float fadeDown, float hold, float fadeUp)
+    {
+        var source = _currentMusicSource;
+        if (source == null || !source.isPlaying) return;
+
+        // A new duck while one is running restores from the original level, not the ducked one
+        if (_duckTween == null || !_duckTween.IsActive() || _duckedSource != source)
+            _duckRestoreVolume = source.volume;
+        _duckTween?.Kill();
+        _duckedSource = source;
+
+        _duckTween = DOTween.Sequence()
+            .Append(source.DOFade(_duckRestoreVolume * factor, fadeDown))
+            .AppendInterval(hold)
+            .Append(source.DOFade(_duckRestoreVolume, fadeUp))
+            .SetLink(source.gameObject);
     }
 
     // -------------------------------------------------------------------------

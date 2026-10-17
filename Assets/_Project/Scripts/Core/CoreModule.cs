@@ -22,7 +22,7 @@ public static class CoreModule
     public static void Install(DiContainer container, ConfigData config)
     {
         container.BindInterfacesAndSelfTo<GameOptions>().AsSingle();
-        container.BindInterfacesAndSelfTo<Volume>().FromComponentInHierarchy().AsSingle().WhenInjectedInto<GameOptions>().NonLazy();
+        container.BindInterfacesAndSelfTo<Volume>().FromMethod(_ => FindBaseGlobalVolume()).AsSingle().WhenInjectedInto<GameOptions>().NonLazy();
         container.Bind<InputManager>().AsSingle();
         container.Bind<OverlayHintsSceneContainer>().FromComponentInHierarchy().AsSingle();
         container.Bind<LevelVariables>().FromInstance(config.LevelVariables).AsSingle();
@@ -33,8 +33,22 @@ public static class CoreModule
         container.BindInterfacesAndSelfTo<SaveService>().AsSingle();
         container.BindInterfacesAndSelfTo<LevelManager>().AsSingle().WithArguments(config.Levels, config.WithLevelsScenario, (string)config.NextSceneName);
         container.BindInterfacesAndSelfTo<LockableActionsManager>().AsSingle();
+        container.Bind<ObjectiveTracker>().AsSingle();
         container.BindInstance(config.CameraEffects).AsSingle();
         container.BindInstance(config.EffectsContainer).AsSingle();
         container.BindInstance(config.AudioManager).AsSingle();
+    }
+
+    // The scene's base look. Effect volumes (e.g. the obligatory-sequence rollback) are global too,
+    // but sit at a higher priority, so the lowest-priority global volume is the one options adjust.
+    private static Volume FindBaseGlobalVolume()
+    {
+        Volume best = null;
+        foreach (var volume in UnityEngine.Object.FindObjectsByType<Volume>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (volume.isGlobal && (best == null || volume.priority < best.priority))
+                best = volume;
+        }
+        return best;
     }
 }

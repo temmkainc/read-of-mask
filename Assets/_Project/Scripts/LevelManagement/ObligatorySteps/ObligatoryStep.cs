@@ -24,6 +24,10 @@ public class NagEntry
 /// </summary>
 public class ObligatoryStep : MonoBehaviour
 {
+    [Header("Objective")]
+    [Tooltip("Shown on screen as the current objective while this step is active (e.g. 'Go to the kitchen'). Leave empty to show nothing.")]
+    [SerializeField, TextArea] private string _objectiveText;
+
     [Header("Nagging")]
     [Tooltip("Escalating lines that play while this step sits incomplete, in order.")]
     [SerializeField] private List<NagEntry> _nagEntries = new();
@@ -52,10 +56,15 @@ public class ObligatoryStep : MonoBehaviour
     private bool _isCompleted;
 
     public event Action OnStepCompleted;
+    /// <summary>Fired the moment a wrong action is reported, as the correction line starts (before the correction delay).</summary>
+    public event Action OnWrongActionStarted;
     /// <summary>Fired (after the correction delay) when a wrong action is reported for this step. The owning ObligatorySequence restarts the level.</summary>
     public event Action OnWrongAction;
 
     public bool IsActive => _isActive;
+    public string ObjectiveText => _objectiveText;
+    /// <summary>Seconds between a wrong action and the restart, while the correction line plays.</summary>
+    public float CorrectionDelay => _correctionDelay;
 
     /// <summary>True if this actionId is the correct one for this step right now.</summary>
     public bool IsExpectedAction(string actionId)
@@ -117,6 +126,7 @@ public class ObligatoryStep : MonoBehaviour
     private async UniTaskVoid TriggerWrongActionAsync(CancellationToken ct)
     {
         PlayCorrectionLine();
+        OnWrongActionStarted?.Invoke();
 
         await UniTask.Delay(TimeSpan.FromSeconds(_correctionDelay), cancellationToken: ct).SuppressCancellationThrow();
         if (ct.IsCancellationRequested)
