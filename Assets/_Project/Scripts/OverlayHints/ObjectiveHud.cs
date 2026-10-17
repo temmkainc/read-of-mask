@@ -12,6 +12,8 @@ public class ObjectiveHud : MonoBehaviour
 {
     [SerializeField] private TMP_Text _label;
     [SerializeField] private CanvasGroup _canvasGroup;
+    [Tooltip("Optional quest icon next to the text; it gives a small pop when a new objective appears.")]
+    [SerializeField] private RectTransform _icon;
     [SerializeField] private float _fadeOutDuration = 0.25f;
     [SerializeField] private float _fadeInDuration = 0.5f;
 
@@ -47,7 +49,14 @@ public class ObjectiveHud : MonoBehaviour
 
         _sequence.AppendCallback(() => _label.text = text);
 
-        if (!string.IsNullOrEmpty(text))
-            _sequence.Append(_canvasGroup.DOFade(1f, _fadeInDuration));
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        _sequence.Append(_canvasGroup.DOFade(1f, _fadeInDuration));
+        if (_icon != null)
+        {
+            _icon.localScale = Vector3.one;
+            _sequence.Join(_icon.DOPunchScale(Vector3.one * 0.25f, 0.45f, 6, 0.6f));
+        }
     }
 }
