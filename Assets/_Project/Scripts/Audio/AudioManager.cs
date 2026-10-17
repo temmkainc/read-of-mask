@@ -44,6 +44,10 @@ public class AudioManager : MonoBehaviour
     // Lifecycle
     // -------------------------------------------------------------------------
 
+    // Enter Play Mode runs without a domain reload, so statics survive between sessions.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }

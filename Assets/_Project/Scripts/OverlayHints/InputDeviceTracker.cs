@@ -8,6 +8,15 @@ public class InputDeviceTracker : MonoBehaviour
 
     public static InputDevice LastUsedDevice { get; private set; }
 
+    // Enter Play Mode runs without a domain reload, so statics survive between sessions.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        Instance = null;
+        OnDeviceChanged = null;
+        LastUsedDevice = null;
+    }
+
     private void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }

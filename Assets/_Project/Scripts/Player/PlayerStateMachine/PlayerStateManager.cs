@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using Zenject;
-using Zenject.Asteroids;
 
 public enum PlayerStateType
 {
