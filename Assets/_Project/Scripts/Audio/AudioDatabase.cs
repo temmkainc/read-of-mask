@@ -72,6 +72,7 @@ public static class MusicTracks
     public const string Level05Music = "level05_music";
     public const string PongMusic = "pong_music";
     public const string TuftaMusic = "tufta_music";
+    public const string FacelessGuitarist = "faceless_guitarist_loop";
 }
 public static class SfxClips
 {

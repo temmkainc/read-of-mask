@@ -179,9 +179,14 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayMusicForSource(string id, AudioSource source, bool loop = true, float volumeScale = 1f)
+        => PlayMusicForSource(_db.GetMusic(id), source, loop, volumeScale);
+
+    /// <summary>
+    /// Same as the id-based overload, for components that reference their MusicData asset directly.
+    /// </summary>
+    public void PlayMusicForSource(MusicData data, AudioSource source, bool loop = true, float volumeScale = 1f)
     {
         if (source == null) return;
-        var data = _db.GetMusic(id);
         if (data == null || data.AudioClip == null) return;
 
         TrackSource(source, AudioSourceType.Music, volumeScale);

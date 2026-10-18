@@ -41,6 +41,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 39401c58d24164d49a0a7ac01f2e51cd, type: 2}
   - {fileID: 11400000, guid: 586dd4c765e81984690eb20caaff849e, type: 2}
   - {fileID: 11400000, guid: 2e706da09d0293c4da2b75301581bb24, type: 2}
+  - {fileID: 11400000, guid: fbd109d330ac7b748a54c6d2a7ee4e06, type: 2}
   _sfx:
   - {fileID: 11400000, guid: d728623d3bd6e904da4975f47a4019c5, type: 2}
   - {fileID: 11400000, guid: 346520d30340fb34a879030184ea019b, type: 2}
