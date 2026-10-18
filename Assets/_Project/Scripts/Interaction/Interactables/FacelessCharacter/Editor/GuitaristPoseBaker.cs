@@ -59,7 +59,7 @@ public static class GuitaristPoseBaker
     public static Vector3 StrumPalmDirection = new Vector3(0f, -0.5f, -0.85f);
 
     // Timing: one down-up strum per beat, one chord per bar of four beats.
-    public static float BeatLength = 0.875f;
+    public static float BeatLength = 0.5f;
     public static float ClipLength = 14f;
     public static float ArmSampleRate = 15f;
     public static float BodySampleRate = 30f;
