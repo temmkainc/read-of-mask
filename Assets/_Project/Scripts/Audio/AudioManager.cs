@@ -36,6 +36,7 @@ public class AudioManager : MonoBehaviour
     private Coroutine _musicFadeRoutine;
     private CancellationTokenSource _voiceCts;
     private AudioSource _currentMusicSource;
+    private float _defaultMusicScale = 1f;   // per-track level of whatever plays on the default music source
     private AudioSource _currentVoiceSource;
     private bool _voicelineInProgress;
 
@@ -73,7 +74,7 @@ public class AudioManager : MonoBehaviour
     private void ApplyVolumes()
     {
         // Default sources
-        if (_defaultMusicSource) _defaultMusicSource.volume = _masterVolume * _musicVolume;
+        if (_defaultMusicSource) _defaultMusicSource.volume = _masterVolume * _musicVolume * _defaultMusicScale;
         if (_sfxSource)          _sfxSource.volume          = _masterVolume * _sfxVolume;
         if (_defaultVoiceSource) _defaultVoiceSource.volume = _masterVolume * _voiceVolume;
 
@@ -146,13 +147,15 @@ public class AudioManager : MonoBehaviour
     // Music
     // -------------------------------------------------------------------------
 
-    public void PlayMusic(string id, float fadeDuration = 0, AudioSource source = null, bool loop = true)
+    /// <param name="volumeScale">This track's level relative to the music volume setting (1 = as set).</param>
+    public void PlayMusic(string id, float fadeDuration = 0, AudioSource source = null, bool loop = true, float volumeScale = 1f)
     {
         var data = _db.GetMusic(id);
         if (data == null || data.AudioClip == null) return;
 
         var sourceToPlay = source ?? _defaultMusicSource;
-        TrackSource(sourceToPlay, AudioSourceType.Music);
+        if (sourceToPlay == _defaultMusicSource) _defaultMusicScale = volumeScale;
+        TrackSource(sourceToPlay, AudioSourceType.Music, volumeScale);
 
         if (_musicFadeRoutine != null)
             StopCoroutine(_musicFadeRoutine);
@@ -219,7 +222,7 @@ public class AudioManager : MonoBehaviour
 
         if (fadeDuration <= 0)
         {
-            source.volume     = _masterVolume * _musicVolume;
+            source.volume     = MusicVolumeFor(source);
             source.timeSamples = 0;
             source.Play();
             return;
@@ -230,9 +233,17 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeInMusic(fadeDuration, source));
     }
 
+    // Music level for a source: the volume settings times that track's own scale.
+    private float MusicVolumeFor(AudioSource source)
+    {
+        float scale = source == _defaultMusicSource ? _defaultMusicScale
+            : _trackedSources.TryGetValue(source, out var tracked) ? tracked.scale : 1f;
+        return _masterVolume * _musicVolume * scale;
+    }
+
     private IEnumerator FadeInMusic(float duration, AudioSource source)
     {
-        float targetVol = _masterVolume * _musicVolume;
+        float targetVol = MusicVolumeFor(source);
         float elapsed   = 0f;
         while (elapsed < duration)
         {
@@ -245,7 +256,7 @@ public class AudioManager : MonoBehaviour
 
     private IEnumerator CrossfadeMusic(AudioSource oldSource, AudioSource newSource, AudioClip newClip, float duration)
     {
-        float targetVol = _masterVolume * _musicVolume;
+        float targetVol = newSource != null ? MusicVolumeFor(newSource) : 0f;
         float startVol  = oldSource.volume;
         float elapsed   = 0f;
 
