@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 188747171591069101}
   - component: {fileID: 3944925694363087962}
+  - component: {fileID: 7902883960272274860}
+  - component: {fileID: 3165629378800844609}
   m_Layer: 0
   m_Name: GuitarAudio
   m_TagString: Untagged
@@ -53,10 +55,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 3
-  MaxDistance: 30
+  MinDistance: 1.5
+  MaxDistance: 14
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -68,7 +70,43 @@ AudioSource:
       value: 1
       inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 137
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.107
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 137
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.25
+      value: 0.55
+      inSlope: -2.2291021
+      outSlope: -2.2291021
+      tangentMode: 137
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.43
+      value: 0.28
+      inSlope: -0.97826093
+      outSlope: -0.97826093
+      tangentMode: 137
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.71
+      value: 0.1
+      inSlope: -0.49122807
+      outSlope: -0.49122807
+      tangentMode: 137
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
@@ -77,7 +115,7 @@ AudioSource:
       value: 0
       inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 137
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
@@ -129,6 +167,53 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!169 &7902883960272274860
+AudioLowPassFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3003210027057049028}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_LowpassResonanceQ: 1
+  lowpassLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &3165629378800844609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3003210027057049028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f18940adc86e7746a6300caba171988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioOcclusion
+  _occluders:
+    serializedVersion: 2
+    m_Bits: 65
+  _ignoreCollidersUnder: {fileID: 8568844799595121765}
+  _clearCutoff: 22000
+  _occludedCutoff: 900
+  _occludedVolume: 0.35
+  _maxWalls: 3
+  _checkInterval: 0.1
+  _smoothing: 0.25
 --- !u!1001 &669155406583563848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1149,7 +1234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuitarPlayerController
   _track: {fileID: 11400000, guid: fbd109d330ac7b748a54c6d2a7ee4e06, type: 2}
   _audioSource: {fileID: 3944925694363087962}
-  _volumeScale: 1
+  _volumeScale: 0.9
   _animator: {fileID: 6451873369311415701}
   _syncAnimationToTrack: 1
   _beatMap: {fileID: 11400000, guid: 1556a63b992c8af408812f23da473e5e, type: 2}
@@ -1158,5 +1243,10 @@ MonoBehaviour:
 --- !u!95 &6451873369311415701 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5093115594236174832, guid: 55d73a69401d171408c3f3fd0fcc34eb, type: 3}
+  m_PrefabInstance: {fileID: 2244983955531967589}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8568844799595121765 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7623872826507599872, guid: 55d73a69401d171408c3f3fd0fcc34eb, type: 3}
   m_PrefabInstance: {fileID: 2244983955531967589}
   m_PrefabAsset: {fileID: 0}
