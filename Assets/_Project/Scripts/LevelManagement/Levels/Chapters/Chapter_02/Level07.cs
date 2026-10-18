@@ -6,7 +6,7 @@ public class Level07 : LevelBase
     [SerializeField] private DoorInteractable _frontDoor;
 
     [Tooltip("Level of this level's music relative to the music volume setting.")]
-    [SerializeField][Range(0f, 1f)] private float _musicVolume = 0.5f;
+    [SerializeField][Range(0f, 1f)] private float _musicVolume = 0.2f;
 
     public override void Begin()
     {
