@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 3944925694363087962}
   - component: {fileID: 7902883960272274860}
   - component: {fileID: 3165629378800844609}
+  - component: {fileID: 7957436482377496303}
+  - component: {fileID: 4764446385087207195}
   m_Layer: 0
   m_Name: GuitarAudio
   m_TagString: Untagged
@@ -214,6 +216,44 @@ MonoBehaviour:
   _maxWalls: 3
   _checkInterval: 0.1
   _smoothing: 0.25
+--- !u!164 &7957436482377496303
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3003210027057049028}
+  m_Enabled: 0
+  m_DryLevel: 0
+  m_Room: 0
+  m_RoomHF: 0
+  m_DecayTime: 1
+  m_DecayHFRatio: 0.5
+  m_ReflectionsLevel: -10000
+  m_ReverbLevel: 0
+  m_ReverbDelay: 0.04
+  m_Diffusion: 100
+  m_Density: 100
+  m_HFReference: 5000
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 27
+--- !u!114 &4764446385087207195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3003210027057049028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef4cc21f637019347b40b58819b6c467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioRoomReverb
+  _reverbOn: 0
+  _room: 3
+  _amount: 0.5
 --- !u!1001 &669155406583563848
 PrefabInstance:
   m_ObjectHideFlags: 0
