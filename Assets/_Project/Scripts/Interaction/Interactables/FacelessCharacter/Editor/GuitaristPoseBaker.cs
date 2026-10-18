@@ -32,11 +32,21 @@ public static class GuitaristPoseBaker
     // Hand (wrist) targets and finger directions in the guitar's own space
     // (+X towards the headstock, -Y towards the bass strings / player's head, +Z out of the soundboard).
     public static float[] ChordFretX = { 0.60f, 0.62f, 0.57f, 0.55f };
-    public static Vector3 FretHandOffset = new Vector3(0f, 0.085f, -0.05f);
-    public static Vector3 FretFingerDirection = new Vector3(0f, -0.75f, 0.66f);
+    // Fretting hand: upright under the neck with the palm towards the player, fingers rising past the
+    // treble edge and curling back onto the fretboard; the thumb is tucked so it never pokes through the neck.
+    public static Vector3 FretHandOffset = new Vector3(0f, 0.12f, 0f);
+    public static Vector3 FretFingerDirection = new Vector3(0f, -1f, 0.15f);
+    public static Vector3 FretPalmDirection = new Vector3(0f, 0.1f, -1f);
+    // Where the middle finger's last joint and the thumb tip should end up.
+    public static Vector3 FretFingertipOffset = new Vector3(0f, -0.005f, 0.03f);
+    public static Vector3 FretThumbOffset = new Vector3(0.02f, -0.02f, -0.05f);
+    // How strongly the solver chases each fretting target (wrist, fingertip, thumb).
+    public static float FretWristWeight = 100f, FretFingertipWeight = 400f, FretThumbWeight = 0f;
+    // Strumming hand: hanging over the strings, fingers pointing down, palm towards the soundboard.
     public static Vector3 StrumUp = new Vector3(-0.03f, -0.15f, 0.10f);
     public static Vector3 StrumDown = new Vector3(-0.03f, -0.05f, 0.10f);
     public static Vector3 StrumFingerDirection = new Vector3(0f, 0.85f, -0.5f);
+    public static Vector3 StrumPalmDirection = new Vector3(0f, -0.5f, -0.85f);
 
     // Timing: one down-up strum per beat, one chord per bar of four beats.
     public static float BeatLength = 0.875f;
@@ -45,8 +55,11 @@ public static class GuitaristPoseBaker
     public static float BodySampleRate = 30f;
 
     // Finger muscles: thumb 1, thumb spread, thumb 2, thumb 3, then index/middle/ring/little (1, spread, 2, 3).
-    public static float[] LeftFingers = { 0.3f, 0.4f, 0.1f, 0.1f, -0.2f, 0f, -0.6f, -0.5f, -0.3f, 0f, -0.6f, -0.5f, -0.35f, 0f, -0.6f, -0.5f, -0.4f, 0f, -0.6f, -0.5f };
-    public static float[] RightFingers = { 0.1f, 0.2f, 0.1f, 0f, -0.55f, 0f, -0.7f, -0.5f, -0.5f, 0f, -0.6f, -0.5f, -0.5f, 0f, -0.6f, -0.5f, -0.5f, 0f, -0.6f, -0.5f };
+    // Negative "Stretched" values curl a finger towards the palm.
+    // Fretting: fingers arched over the fretboard, thumb curled in.
+    public static float[] LeftFingers = { -0.3f, -0.6f, -0.4f, -0.3f, -0.3f, 0f, -0.8f, -0.4f, -0.35f, 0f, -0.8f, -0.4f, -0.4f, 0f, -0.8f, -0.4f, -0.45f, 0f, -0.8f, -0.4f };
+    // Loose fist with the thumb resting on the curled index, as if holding a pick.
+    public static float[] RightFingers = { -0.2f, -0.3f, -0.3f, -0.2f, -0.6f, 0f, -0.8f, -0.6f, -0.55f, 0f, -0.7f, -0.6f, -0.55f, 0f, -0.7f, -0.6f, -0.55f, 0f, -0.7f, -0.6f };
 
     private const int LeftArmFirst = 37, RightArmFirst = 46, ArmMuscleCount = 9;
     private const int LeftFingerFirst = 55, RightFingerFirst = 75, FingerMuscleCount = 20;
@@ -217,6 +230,7 @@ public static class GuitaristPoseBaker
         private readonly AnimationClipPlayable _playable;
         private readonly HumanPoseHandler _handler;
         private HumanPose _pose;
+        private Vector3 _fretTip, _fretThumb;
 
         public Rig()
         {
@@ -270,13 +284,18 @@ public static class GuitaristPoseBaker
             Vector3 rightTarget = Guitar.TransformPoint(Vector3.Lerp(StrumUp, StrumDown, StrumAmount(t)));
             Vector3 leftDir = Guitar.TransformDirection(FretFingerDirection).normalized;
             Vector3 rightDir = Guitar.TransformDirection(StrumFingerDirection).normalized;
-            Solve(true, leftTarget, leftDir, baseMuscles, rounds);
-            Solve(false, rightTarget, rightDir, baseMuscles, rounds);
+            Vector3 leftPalm = Guitar.TransformDirection(FretPalmDirection).normalized;
+            Vector3 rightPalm = Guitar.TransformDirection(StrumPalmDirection).normalized;
+            _fretTip = Guitar.TransformPoint(new Vector3(FretX(t), 0f, 0f) + FretFingertipOffset);
+            _fretThumb = Guitar.TransformPoint(new Vector3(FretX(t), 0f, 0f) + FretThumbOffset);
+            Solve(true, leftTarget, leftDir, leftPalm, baseMuscles, rounds);
+            Solve(false, rightTarget, rightDir, rightPalm, baseMuscles, rounds);
             _handler.SetHumanPose(ref _pose);
 
             LastLeftError = (Animator.GetBoneTransform(HumanBodyBones.LeftHand).position - leftTarget).magnitude;
             LastRightError = (Animator.GetBoneTransform(HumanBodyBones.RightHand).position - rightTarget).magnitude;
-            info = $"t={t:F2} left {LastLeftError * 100f:F1}cm dir {FingerDot(true, leftDir):F2}, right {LastRightError * 100f:F1}cm dir {FingerDot(false, rightDir):F2}";
+            info = $"t={t:F2} left {LastLeftError * 100f:F1}cm fingers {FingerDot(true, leftDir):F2} palm {Vector3.Dot(PalmNormal(true), leftPalm):F2}, " +
+                   $"right {LastRightError * 100f:F1}cm fingers {FingerDot(false, rightDir):F2} palm {Vector3.Dot(PalmNormal(false), rightPalm):F2}";
             return (float[])_pose.muscles.Clone();
         }
 
@@ -287,12 +306,57 @@ public static class GuitaristPoseBaker
             return Vector3.Dot((middle.position - hand.position).normalized, dir);
         }
 
-        private float Cost(bool left, Vector3 target, Vector3 dir, float[] baseMuscles)
+        private static readonly HumanBodyBones[] NeckCheckedBones =
+        {
+            HumanBodyBones.LeftThumbIntermediate, HumanBodyBones.LeftThumbDistal,
+            HumanBodyBones.LeftIndexDistal, HumanBodyBones.LeftMiddleDistal, HumanBodyBones.LeftRingDistal, HumanBodyBones.LeftLittleDistal,
+        };
+
+        // How deep (guitar units) a point is inside the neck, padded by roughly a finger's thickness; 0 when outside.
+        private float NeckPenetration(Vector3 world)
+        {
+            Vector3 p = Guitar.InverseTransformPoint(world);
+            if (p.x < 0.11f || p.x > 0.72f) return 0f;
+            float depth = Mathf.Min(0.035f - Mathf.Abs(p.y), Mathf.Min(p.z + 0.035f, 0.025f - p.z));
+            return Mathf.Max(0f, depth);
+        }
+
+        // Direction the palm faces (in the T-pose both palms face down).
+        private Vector3 PalmNormal(bool left)
+        {
+            var hand = Animator.GetBoneTransform(left ? HumanBodyBones.LeftHand : HumanBodyBones.RightHand).position;
+            var index = Animator.GetBoneTransform(left ? HumanBodyBones.LeftIndexProximal : HumanBodyBones.RightIndexProximal).position;
+            var little = Animator.GetBoneTransform(left ? HumanBodyBones.LeftLittleProximal : HumanBodyBones.RightLittleProximal).position;
+            Vector3 n = Vector3.Cross(index - hand, little - hand).normalized;
+            return left ? n : -n;
+        }
+
+        private float Cost(bool left, Vector3 target, Vector3 dir, Vector3 palm, float[] baseMuscles)
         {
             _handler.SetHumanPose(ref _pose);
             var hand = Animator.GetBoneTransform(left ? HumanBodyBones.LeftHand : HumanBodyBones.RightHand);
-            float cost = (hand.position - target).sqrMagnitude * 400f;
-            cost += (1f - FingerDot(left, dir)) * 0.6f;
+            float cost;
+            if (left)
+            {
+                // The fretting hand is placed by where the fingers land; the wrist target is only a guide.
+                cost = (hand.position - target).sqrMagnitude * FretWristWeight;
+                cost += (Animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal).position - _fretTip).sqrMagnitude * FretFingertipWeight;
+                cost += (Animator.GetBoneTransform(HumanBodyBones.LeftThumbDistal).position - _fretThumb).sqrMagnitude * FretThumbWeight;
+                cost += (1f - FingerDot(true, dir)) * 0.2f;
+                cost += (1f - Vector3.Dot(PalmNormal(true), palm)) * 0.3f;
+                // Nothing may sink into the neck.
+                foreach (var bone in NeckCheckedBones)
+                {
+                    float depth = NeckPenetration(Animator.GetBoneTransform(bone).position);
+                    cost += depth * depth * 20000f;
+                }
+            }
+            else
+            {
+                cost = (hand.position - target).sqrMagnitude * 400f;
+                cost += (1f - FingerDot(false, dir)) * 0.6f;
+                cost += (1f - Vector3.Dot(PalmNormal(false), palm)) * 0.6f;
+            }
             int first = left ? LeftArmFirst : RightArmFirst;
             for (int i = first; i < first + ArmMuscleCount; i++)
                 cost += 0.002f * (_pose.muscles[i] - baseMuscles[i]) * (_pose.muscles[i] - baseMuscles[i]);
@@ -300,11 +364,11 @@ public static class GuitaristPoseBaker
         }
 
         // Coordinate descent over the arm's nine muscles, kept inside their natural [-1, 1] range.
-        private void Solve(bool left, Vector3 target, Vector3 dir, float[] baseMuscles, int rounds)
+        private void Solve(bool left, Vector3 target, Vector3 dir, Vector3 palm, float[] baseMuscles, int rounds)
         {
             int first = left ? LeftArmFirst : RightArmFirst;
             float step = rounds > 30 ? 0.3f : 0.08f;
-            float best = Cost(left, target, dir, baseMuscles);
+            float best = Cost(left, target, dir, palm, baseMuscles);
             for (int r = 0; r < rounds && step > 0.003f; r++)
             {
                 bool improved = false;
@@ -314,7 +378,7 @@ public static class GuitaristPoseBaker
                     {
                         float old = _pose.muscles[i];
                         _pose.muscles[i] = Mathf.Clamp(old + delta, -1f, 1f);
-                        float cost = Cost(left, target, dir, baseMuscles);
+                        float cost = Cost(left, target, dir, palm, baseMuscles);
                         if (cost < best - 1e-6f) { best = cost; improved = true; break; }
                         _pose.muscles[i] = old;
                     }
