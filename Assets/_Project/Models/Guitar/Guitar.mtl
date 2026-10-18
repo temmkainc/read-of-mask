@@ -1,0 +1,11 @@
+# Placeholder colours only - the Guitar prefab uses the project's White and DarkGray 4 materials.
+newmtl Body
+Kd 1 1 1
+newmtl DarkWood
+Kd 0.04 0.04 0.04
+newmtl SoundHole
+Kd 0.04 0.04 0.04
+newmtl Hardware
+Kd 1 1 1
+newmtl Strings
+Kd 0.04 0.04 0.04
