@@ -22,8 +22,8 @@ public static class GuitaristPoseBaker
     public const string OutClipPath = "Assets/_Project/Animations/Faceless/Faceless_GuitarPlaying.anim";
 
     // Guitar placement at the first frame of Sitting_Idle, in the character's root space.
-    public static Vector3 GuitarPosition = new Vector3(0.16f, 1.10f, 0.13f);
-    public static Vector3 NeckDirection = new Vector3(-0.92f, 0.36f, 0.16f);
+    public static Vector3 GuitarPosition = new Vector3(0.16f, 1.10f, 0.21f);
+    public static Vector3 NeckDirection = new Vector3(-0.92f, 0.36f, -0.05f);
     public static Vector3 SoundboardDirection = new Vector3(0f, 0.18f, 1f);
     public static float GuitarScale = 1.2f;
     // How much of the upper body's sway the guitar rides along with (0 = fixed to the hips, 1 = fixed
@@ -34,10 +34,12 @@ public static class GuitaristPoseBaker
     // torso further than a seated player would, pulling the fretting hand off the neck). The head and
     // neck keep their full motion.
     public static float TorsoMotion = 0.7f;
+    // Gap (guitar units) kept between the body and the guitar's back / lower edge.
+    public static float BodyClearance = 0.025f;
 
     // Hand (wrist) targets and finger directions in the guitar's own space
     // (+X towards the headstock, -Y towards the bass strings / player's head, +Z out of the soundboard).
-    public static float[] ChordFretX = { 0.60f, 0.62f, 0.57f, 0.55f };
+    public static float[] ChordFretX = { 0.52f, 0.54f, 0.50f, 0.48f };
     // Fretting hand: upright under the neck with the palm towards the player, fingers rising past the
     // treble edge and curling back onto the fretboard; the thumb is tucked so it never pokes through the neck.
     public static Vector3 FretHandOffset = new Vector3(0f, 0.12f, 0f);
@@ -47,9 +49,9 @@ public static class GuitaristPoseBaker
     public static Vector3 FretFingertipOffset = new Vector3(0f, -0.005f, 0.03f);
     public static Vector3 FretThumbOffset = new Vector3(0.02f, -0.02f, -0.05f);
     // How strongly the solver chases each fretting target (wrist, fingertip, thumb).
-    public static float FretWristWeight = 100f, FretFingertipWeight = 400f, FretThumbWeight = 0f;
+    public static float FretWristWeight = 300f, FretFingertipWeight = 600f, FretThumbWeight = 0f;
     // Solver passes per frame (warm-started from the previous frame); more keeps up with faster body motion.
-    public static int SolverRoundsPerFrame = 20;
+    public static int SolverRoundsPerFrame = 45;
     // Strumming hand: hanging over the strings, fingers pointing down, palm towards the soundboard.
     public static Vector3 StrumUp = new Vector3(-0.03f, -0.15f, 0.10f);
     public static Vector3 StrumDown = new Vector3(-0.03f, -0.05f, 0.10f);
@@ -250,6 +252,16 @@ public static class GuitaristPoseBaker
 
     private static Quaternion Negate(Quaternion q) => new Quaternion(-q.x, -q.y, -q.z, -q.w);
 
+    // Guitar.obj's body outline: half its width at a point along the neck axis (two bouts, see the mesh).
+    private const float GuitarBodyMinX = -0.31f, GuitarBodyMaxX = 0.265f, GuitarBodyBackZ = -0.095f;
+    private static float GuitarBodyHalfWidth(float x)
+    {
+        const float lowerCentre = -0.12f, lowerRadius = 0.19f, upperCentre = 0.13f, upperRadius = 0.135f;
+        float lower = Mathf.Abs(x - lowerCentre) < lowerRadius ? Mathf.Sqrt(lowerRadius * lowerRadius - (x - lowerCentre) * (x - lowerCentre)) : 0f;
+        float upper = Mathf.Abs(x - upperCentre) < upperRadius ? Mathf.Sqrt(upperRadius * upperRadius - (x - upperCentre) * (x - upperCentre)) : 0f;
+        return Mathf.Max(lower, upper);
+    }
+
     // Spine, Chest and UpperChest muscles (the first nine humanoid muscles).
     private const int TorsoMuscleCount = 9;
     private static bool IsTorsoMuscle(string name)
@@ -308,6 +320,9 @@ public static class GuitaristPoseBaker
         private Vector3 _guitarRestLocalPos, _guitarPos0, _chestPos0;
         private Quaternion _guitarRestLocalRot, _guitarRot0, _chestRot0;
         private readonly float[] _torsoMean = new float[TorsoMuscleCount];
+        private readonly SkinnedMeshRenderer _body;
+        private readonly bool[] _vertexOnTorso, _vertexOnThigh;
+        private readonly UnityEngine.Mesh _bakedBody = new UnityEngine.Mesh();
 
         private Transform Chest
         {
@@ -333,6 +348,21 @@ public static class GuitaristPoseBaker
             _baseClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(BaseClipPath);
             _handler = new HumanPoseHandler(Animator.avatar, character.transform);
             _pose = new HumanPose();
+
+            // Which body vertices belong to the torso and the thighs, by their strongest bone.
+            foreach (var renderer in character.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                if (_body == null || renderer.sharedMesh.vertexCount > _body.sharedMesh.vertexCount) _body = renderer;
+            var torsoBones = new[] { HumanBodyBones.Hips, HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.UpperChest };
+            var thighBones = new[] { HumanBodyBones.LeftUpperLeg, HumanBodyBones.RightUpperLeg };
+            var boneWeights = _body.sharedMesh.boneWeights;
+            _vertexOnTorso = new bool[boneWeights.Length];
+            _vertexOnThigh = new bool[boneWeights.Length];
+            for (int i = 0; i < boneWeights.Length; i++)
+            {
+                var bone = _body.bones[boneWeights[i].boneIndex0];
+                foreach (var b in torsoBones) if (bone == Animator.GetBoneTransform(b)) _vertexOnTorso[i] = true;
+                foreach (var b in thighBones) if (bone == Animator.GetBoneTransform(b)) _vertexOnThigh[i] = true;
+            }
 
             var baseClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(BaseClipPath);
             foreach (var binding in AnimationUtility.GetCurveBindings(baseClip))
@@ -377,6 +407,35 @@ public static class GuitaristPoseBaker
             Quaternion rotation = Quaternion.Slerp(restRot, followRot, GuitarFollowsChest);
             float rock = (StrumAmount(t) - 0.5f) * 2f * StrumRockDegrees; // rolls about the neck with the strum
             Guitar.SetPositionAndRotation(position, rotation * Quaternion.AngleAxis(rock, Vector3.right));
+            KeepGuitarOutOfBody();
+        }
+
+        // Pushes the guitar forward until the belly/chest no longer sink into its back, and up until it
+        // rests on the thigh instead of sinking into it.
+        private void KeepGuitarOutOfBody()
+        {
+            for (int pass = 0; pass < 3; pass++)
+            {
+                _body.BakeMesh(_bakedBody, true);
+                var vertices = _bakedBody.vertices;
+                Matrix4x4 toGuitar = Guitar.worldToLocalMatrix * _body.transform.localToWorldMatrix;
+                float pushForward = 0f, pushUp = 0f;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    if (!_vertexOnTorso[i] && !_vertexOnThigh[i]) continue;
+                    Vector3 p = toGuitar.MultiplyPoint3x4(vertices[i]);
+                    if (p.x < GuitarBodyMinX || p.x > GuitarBodyMaxX) continue;
+                    float halfWidth = GuitarBodyHalfWidth(p.x);
+                    if (Mathf.Abs(p.y) > halfWidth + BodyClearance) continue;
+                    if (p.z < GuitarBodyBackZ - BodyClearance || p.z > 0.03f) continue;
+                    if (_vertexOnTorso[i])
+                        pushForward = Mathf.Max(pushForward, p.z - GuitarBodyBackZ + BodyClearance);
+                    else if (p.y > 0f) // thigh under the lower edge (+Y points towards the floor)
+                        pushUp = Mathf.Max(pushUp, Mathf.Min(0.05f, halfWidth + BodyClearance - p.y));
+                }
+                if (pushForward <= 0.0005f && pushUp <= 0.0005f) break;
+                Guitar.position += Guitar.TransformVector(new Vector3(0f, -pushUp, pushForward));
+            }
         }
 
         // Same torso damping the baked clip gets (see TorsoMotion).
