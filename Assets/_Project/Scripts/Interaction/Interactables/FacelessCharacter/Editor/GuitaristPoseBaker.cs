@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -28,6 +26,14 @@ public static class GuitaristPoseBaker
     public static Vector3 NeckDirection = new Vector3(-0.92f, 0.36f, 0.16f);
     public static Vector3 SoundboardDirection = new Vector3(0f, 0.18f, 1f);
     public static float GuitarScale = 1.2f;
+    // How much of the upper body's sway the guitar rides along with (0 = fixed to the hips, 1 = fixed
+    // to the chest), and how far it rocks with each strum.
+    public static float GuitarFollowsChest = 0.7f;
+    public static float StrumRockDegrees = 1.5f;
+    // How much of Sitting_Idle's spine/chest sway to keep (it's a "looking around" idle that twists the
+    // torso further than a seated player would, pulling the fretting hand off the neck). The head and
+    // neck keep their full motion.
+    public static float TorsoMotion = 0.7f;
 
     // Hand (wrist) targets and finger directions in the guitar's own space
     // (+X towards the headstock, -Y towards the bass strings / player's head, +Z out of the soundboard).
@@ -42,6 +48,8 @@ public static class GuitaristPoseBaker
     public static Vector3 FretThumbOffset = new Vector3(0.02f, -0.02f, -0.05f);
     // How strongly the solver chases each fretting target (wrist, fingertip, thumb).
     public static float FretWristWeight = 100f, FretFingertipWeight = 400f, FretThumbWeight = 0f;
+    // Solver passes per frame (warm-started from the previous frame); more keeps up with faster body motion.
+    public static int SolverRoundsPerFrame = 20;
     // Strumming hand: hanging over the strings, fingers pointing down, palm towards the soundboard.
     public static Vector3 StrumUp = new Vector3(-0.03f, -0.15f, 0.10f);
     public static Vector3 StrumDown = new Vector3(-0.03f, -0.05f, 0.10f);
@@ -95,13 +103,22 @@ public static class GuitaristPoseBaker
         int armSamples = Mathf.RoundToInt(ClipLength * ArmSampleRate);
         var armCurves = new AnimationCurve[ArmMuscleCount * 2];
         for (int i = 0; i < armCurves.Length; i++) armCurves[i] = new AnimationCurve();
+        // The guitar moves with the body too (see Rig.PlaceGuitar): local position xyz + rotation xyzw.
+        var guitarCurves = new AnimationCurve[7];
+        for (int i = 0; i < guitarCurves.Length; i++) guitarCurves[i] = new AnimationCurve();
         float[] previous = null, first = null;
-        float worstLeft = 0f, worstRight = 0f;
+        Vector3 firstGuitarPos = Vector3.zero, firstGuitarWorld = Vector3.zero;
+        Quaternion firstGuitarRot = Quaternion.identity, lastGuitarRot = Quaternion.identity;
+        float worstLeft = 0f, worstRight = 0f, guitarTravel = 0f;
+        // Run through the loop once without recording, so the recorded pass starts warm from where the
+        // loop ends - otherwise the cold first frame can settle on a different arm pose and the hands
+        // jump at the loop seam.
+        for (int s = 0; s < armSamples; s++)
+            previous = rig.SolveAt(s / ArmSampleRate, previous, out _);
         for (int s = 0; s < armSamples; s++)
         {
             float t = s / ArmSampleRate;
             previous = rig.SolveAt(t, previous, out _);
-            if (first == null) first = previous;
             worstLeft = Mathf.Max(worstLeft, rig.LastLeftError);
             worstRight = Mathf.Max(worstRight, rig.LastRightError);
             for (int i = 0; i < ArmMuscleCount; i++)
@@ -109,6 +126,21 @@ public static class GuitaristPoseBaker
                 armCurves[i].AddKey(t, previous[LeftArmFirst + i]);
                 armCurves[ArmMuscleCount + i].AddKey(t, previous[RightArmFirst + i]);
             }
+
+            Vector3 guitarPos = rig.Guitar.localPosition;
+            Quaternion guitarRot = rig.Guitar.localRotation;
+            if (first == null)
+            {
+                first = previous;
+                firstGuitarPos = guitarPos;
+                firstGuitarWorld = rig.Guitar.position;
+                firstGuitarRot = lastGuitarRot = guitarRot;
+            }
+            // q and -q are the same rotation; keep the sign consistent so the curves don't flip.
+            if (Quaternion.Dot(guitarRot, lastGuitarRot) < 0f) guitarRot = Negate(guitarRot);
+            lastGuitarRot = guitarRot;
+            guitarTravel = Mathf.Max(guitarTravel, (rig.Guitar.position - firstGuitarWorld).magnitude);
+            AddGuitarKeys(guitarCurves, t, guitarPos, guitarRot);
         }
         // Close the loop on the first frame's pose.
         for (int i = 0; i < ArmMuscleCount; i++)
@@ -116,6 +148,8 @@ public static class GuitaristPoseBaker
             armCurves[i].AddKey(ClipLength, first[LeftArmFirst + i]);
             armCurves[ArmMuscleCount + i].AddKey(ClipLength, first[RightArmFirst + i]);
         }
+        AddGuitarKeys(guitarCurves, ClipLength, firstGuitarPos,
+            Quaternion.Dot(firstGuitarRot, lastGuitarRot) < 0f ? Negate(firstGuitarRot) : firstGuitarRot);
 
         var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(OutClipPath);
         bool isNew = clip == null;
@@ -143,11 +177,14 @@ public static class GuitaristPoseBaker
             if (skipped.Contains(name) || name.StartsWith("LeftHandT") || name.StartsWith("LeftHandQ") || name.StartsWith("RightHandT") || name.StartsWith("RightHandQ"))
                 continue;
             var source = AnimationUtility.GetEditorCurve(baseClip, binding);
+            bool torso = IsTorsoMuscle(name);
+            float mean = torso ? CurveMean(source, baseLength) : 0f;
             var curve = new AnimationCurve();
             for (int s = 0; s <= bodySamples; s++)
             {
                 float t = s / BodySampleRate;
-                curve.AddKey(t, source.Evaluate(t % baseLength));
+                float v = source.Evaluate(t % baseLength);
+                curve.AddKey(t, torso ? mean + (v - mean) * TorsoMotion : v);
             }
             SetCurve(clip, name, curve);
         }
@@ -162,6 +199,10 @@ public static class GuitaristPoseBaker
             SetCurve(clip, FingerCurveName(LeftFingerFirst + i), AnimationCurve.Constant(0f, ClipLength, LeftFingers[i]));
             SetCurve(clip, FingerCurveName(RightFingerFirst + i), AnimationCurve.Constant(0f, ClipLength, RightFingers[i]));
         }
+        string guitarPath = AnimationUtility.CalculateTransformPath(rig.Guitar, rig.Animator.transform);
+        string[] guitarProps = { "m_LocalPosition.x", "m_LocalPosition.y", "m_LocalPosition.z", "m_LocalRotation.x", "m_LocalRotation.y", "m_LocalRotation.z", "m_LocalRotation.w" };
+        for (int i = 0; i < guitarProps.Length; i++)
+            SetCurve(clip, EditorCurveBinding.FloatCurve(guitarPath, typeof(Transform), guitarProps[i]), guitarCurves[i]);
 
         var settings = AnimationUtility.GetAnimationClipSettings(baseClip);
         settings.loopTime = true;
@@ -171,7 +212,7 @@ public static class GuitaristPoseBaker
         if (isNew) AssetDatabase.CreateAsset(clip, OutClipPath);
         else EditorUtility.SetDirty(clip);
         AssetDatabase.SaveAssets();
-        return $"Baked {OutClipPath}: {clip.length:F2}s, worst wrist error left {worstLeft * 100f:F1} cm, right {worstRight * 100f:F1} cm";
+        return $"Baked {OutClipPath}: {clip.length:F2}s, worst wrist error left {worstLeft * 100f:F1} cm, right {worstRight * 100f:F1} cm, guitar sways up to {guitarTravel * 100f:F1} cm";
     }
 
     /// <summary>The guitar's pose relative to the Hips bone, for placing it in the prefab.</summary>
@@ -184,13 +225,46 @@ public static class GuitaristPoseBaker
     }
 
     private static void SetCurve(AnimationClip clip, string property, AnimationCurve curve)
+        => SetCurve(clip, EditorCurveBinding.FloatCurve("", typeof(Animator), property), curve);
+
+    private static void SetCurve(AnimationClip clip, EditorCurveBinding binding, AnimationCurve curve)
     {
         for (int k = 0; k < curve.length; k++)
         {
             AnimationUtility.SetKeyLeftTangentMode(curve, k, AnimationUtility.TangentMode.ClampedAuto);
             AnimationUtility.SetKeyRightTangentMode(curve, k, AnimationUtility.TangentMode.ClampedAuto);
         }
-        AnimationUtility.SetEditorCurve(clip, EditorCurveBinding.FloatCurve("", typeof(Animator), property), curve);
+        AnimationUtility.SetEditorCurve(clip, binding, curve);
+    }
+
+    private static void AddGuitarKeys(AnimationCurve[] curves, float t, Vector3 position, Quaternion rotation)
+    {
+        curves[0].AddKey(t, position.x);
+        curves[1].AddKey(t, position.y);
+        curves[2].AddKey(t, position.z);
+        curves[3].AddKey(t, rotation.x);
+        curves[4].AddKey(t, rotation.y);
+        curves[5].AddKey(t, rotation.z);
+        curves[6].AddKey(t, rotation.w);
+    }
+
+    private static Quaternion Negate(Quaternion q) => new Quaternion(-q.x, -q.y, -q.z, -q.w);
+
+    // Spine, Chest and UpperChest muscles (the first nine humanoid muscles).
+    private const int TorsoMuscleCount = 9;
+    private static bool IsTorsoMuscle(string name)
+    {
+        for (int i = 0; i < TorsoMuscleCount; i++)
+            if (HumanTrait.MuscleName[i] == name) return true;
+        return false;
+    }
+
+    private static float CurveMean(AnimationCurve curve, float length)
+    {
+        const int samples = 200;
+        float sum = 0f;
+        for (int i = 0; i < samples; i++) sum += curve.Evaluate(length * i / samples);
+        return sum / samples;
     }
 
     // "Left Index 1 Stretched" -> "LeftHand.Index.1 Stretched", "Left Index Spread" -> "LeftHand.Index.Spread"
@@ -226,11 +300,23 @@ public static class GuitaristPoseBaker
         public float LastLeftError, LastRightError;
 
         private readonly Scene _scene;
-        private PlayableGraph _graph;
-        private readonly AnimationClipPlayable _playable;
+        private readonly GameObject _character;
+        private readonly AnimationClip _baseClip;
         private readonly HumanPoseHandler _handler;
         private HumanPose _pose;
         private Vector3 _fretTip, _fretThumb;
+        private Vector3 _guitarRestLocalPos, _guitarPos0, _chestPos0;
+        private Quaternion _guitarRestLocalRot, _guitarRot0, _chestRot0;
+        private readonly float[] _torsoMean = new float[TorsoMuscleCount];
+
+        private Transform Chest
+        {
+            get
+            {
+                var upper = Animator.GetBoneTransform(HumanBodyBones.UpperChest);
+                return upper != null ? upper : Animator.GetBoneTransform(HumanBodyBones.Chest);
+            }
+        }
 
         public Rig()
         {
@@ -243,12 +329,16 @@ public static class GuitaristPoseBaker
                 if (t.name == "Controller_1 (3)") t.gameObject.SetActive(false); // the gamepad
 
             Animator = character.GetComponent<Animator>();
-            _graph = PlayableGraph.Create("GuitaristPoseBaker");
-            var output = AnimationPlayableOutput.Create(_graph, "Output", Animator);
-            _playable = AnimationClipPlayable.Create(_graph, AssetDatabase.LoadAssetAtPath<AnimationClip>(BaseClipPath));
-            output.SetSourcePlayable(_playable);
+            _character = character;
+            _baseClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(BaseClipPath);
             _handler = new HumanPoseHandler(Animator.avatar, character.transform);
             _pose = new HumanPose();
+
+            var baseClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(BaseClipPath);
+            foreach (var binding in AnimationUtility.GetCurveBindings(baseClip))
+                for (int i = 0; i < TorsoMuscleCount; i++)
+                    if (binding.propertyName == HumanTrait.MuscleName[i])
+                        _torsoMean[i] = CurveMean(AnimationUtility.GetEditorCurve(baseClip, binding), baseClip.length);
 
             EvaluateBase(0f);
             var guitar = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(GuitarPrefabPath), _scene);
@@ -258,18 +348,57 @@ public static class GuitaristPoseBaker
             Vector3 z = Vector3.ProjectOnPlane(SoundboardDirection, x).normalized;
             Guitar.SetPositionAndRotation(GuitarPosition, Quaternion.LookRotation(z, Vector3.Cross(z, x)));
             Guitar.SetParent(Animator.GetBoneTransform(HumanBodyBones.Hips), true);
+            _guitarRestLocalPos = Guitar.localPosition;
+            _guitarRestLocalRot = Guitar.localRotation;
+
+            // Chest and guitar at the first frame: PlaceGuitar measures the body's sway from here.
+            _handler.GetHumanPose(ref _pose);
+            DampTorso();
+            _handler.SetHumanPose(ref _pose);
+            _chestPos0 = Chest.position;
+            _chestRot0 = Chest.rotation;
+            _guitarPos0 = Guitar.position;
+            _guitarRot0 = Guitar.rotation;
+        }
+
+        // The guitar rests on the thigh but rides along with most of the upper body's sway and rocks a
+        // little with each strum, so it never looks bolted in place while the body moves around it.
+        private void PlaceGuitar(float t)
+        {
+            var hips = Animator.GetBoneTransform(HumanBodyBones.Hips);
+            Vector3 restPos = hips.TransformPoint(_guitarRestLocalPos);
+            Quaternion restRot = hips.rotation * _guitarRestLocalRot;
+
+            Quaternion chestDelta = Chest.rotation * Quaternion.Inverse(_chestRot0);
+            Vector3 followPos = Chest.position + chestDelta * (_guitarPos0 - _chestPos0);
+            Quaternion followRot = chestDelta * _guitarRot0;
+
+            Vector3 position = Vector3.Lerp(restPos, followPos, GuitarFollowsChest);
+            Quaternion rotation = Quaternion.Slerp(restRot, followRot, GuitarFollowsChest);
+            float rock = (StrumAmount(t) - 0.5f) * 2f * StrumRockDegrees; // rolls about the neck with the strum
+            Guitar.SetPositionAndRotation(position, rotation * Quaternion.AngleAxis(rock, Vector3.right));
+        }
+
+        // Same torso damping the baked clip gets (see TorsoMotion).
+        private void DampTorso()
+        {
+            for (int i = 0; i < TorsoMuscleCount; i++)
+                _pose.muscles[i] = _torsoMean[i] + (_pose.muscles[i] - _torsoMean[i]) * TorsoMotion;
         }
 
         private void EvaluateBase(float t)
         {
-            _playable.SetTime(t);
-            _graph.Evaluate(0f);
+            // SampleAnimation writes the pose straight away; a PlayableGraph's writes lag a frame, which
+            // left the solver working against the previous frame's body.
+            _baseClip.SampleAnimation(_character, t);
+            _character.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
 
         public float[] SolveAt(float t, float[] warmStart, out string info)
         {
             EvaluateBase(t);
             _handler.GetHumanPose(ref _pose);
+            DampTorso();
             float[] baseMuscles = (float[])_pose.muscles.Clone();
             if (warmStart != null)
                 for (int i = LeftArmFirst; i < RightArmFirst + ArmMuscleCount; i++) _pose.muscles[i] = warmStart[i];
@@ -278,8 +407,10 @@ public static class GuitaristPoseBaker
                 _pose.muscles[LeftFingerFirst + i] = LeftFingers[i];
                 _pose.muscles[RightFingerFirst + i] = RightFingers[i];
             }
+            _handler.SetHumanPose(ref _pose);
+            PlaceGuitar(t);
 
-            int rounds = warmStart == null ? 80 : 20;
+            int rounds = warmStart == null ? 80 : SolverRoundsPerFrame;
             Vector3 leftTarget = Guitar.TransformPoint(new Vector3(FretX(t), 0f, 0f) + FretHandOffset);
             Vector3 rightTarget = Guitar.TransformPoint(Vector3.Lerp(StrumUp, StrumDown, StrumAmount(t)));
             Vector3 leftDir = Guitar.TransformDirection(FretFingerDirection).normalized;
@@ -425,7 +556,6 @@ public static class GuitaristPoseBaker
 
         public void Dispose()
         {
-            if (_graph.IsValid()) _graph.Destroy();
             _handler?.Dispose();
             EditorSceneManager.ClosePreviewScene(_scene);
         }
