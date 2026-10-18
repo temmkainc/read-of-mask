@@ -53,8 +53,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1.5
-  MaxDistance: 20
+  MinDistance: 3
+  MaxDistance: 30
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuitarPlayerController
   _track: {fileID: 11400000, guid: fbd109d330ac7b748a54c6d2a7ee4e06, type: 2}
   _audioSource: {fileID: 3944925694363087962}
-  _volumeScale: 0.5
+  _volumeScale: 1
   _animator: {fileID: 6451873369311415701}
   _syncAnimationToTrack: 1
   _beatMap: {fileID: 11400000, guid: 1556a63b992c8af408812f23da473e5e, type: 2}
