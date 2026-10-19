@@ -44,6 +44,9 @@ public class LevelBase : MonoBehaviour
 
     public bool DestroyPreviousLevelOnEnter => _destroyPreviousLevelOnEnter;
 
+    /// <summary>True from Begin() until this level completes - i.e. while it's the level being played.</summary>
+    public bool IsRunning { get; private set; }
+
     /// <summary>This level's obligatory sequence, if it has one. Null for most levels.</summary>
     public ObligatorySequence ObligatorySequence => _obligatorySequence;
 
@@ -62,6 +65,7 @@ public class LevelBase : MonoBehaviour
     public virtual void Begin()
     {
         gameObject.SetActive(true);
+        IsRunning = true;
         SubscribeToConditions();
 
         if (_obligatorySequence != null)
@@ -215,6 +219,7 @@ public class LevelBase : MonoBehaviour
 
     protected virtual void Complete()
     {
+        IsRunning = false;
         OnLevelComplete?.Invoke();
 
         if (_levelDoor == null)
