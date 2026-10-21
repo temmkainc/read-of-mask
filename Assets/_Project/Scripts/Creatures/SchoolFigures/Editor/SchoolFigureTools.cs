@@ -2,8 +2,9 @@
 // The faceless kids of Level 09: the mannequin body (the same one under the TV-headed characters),
 // all white, each wearing a drawn copy of the player's own mask (SchoolMaskArt, DrawnMask) with one
 // of a few mouths. About the player's height, stocky, with a
-// slightly big head. They stand about the entrance hall and the corridor and sit at the dining room
-// tables, each doing one idle thing on the spot, and all of them watch the player.
+// slightly big head. They stand about the entrance hall and the corridor, sit on its benches and at
+// the canteen tables (one in the watchman's chair), each doing one idle thing on the spot, and all
+// of them watch the player. Their spots fit round SchoolFurnisher's furniture.
 //
 // "Place In School" rebuilds Level_09/Figures from the list below, so move anything you add by
 // hand out of there (or stop using the tool) before running it again.
@@ -263,6 +264,19 @@ public static class SchoolFigureTools
         };
     }
 
+    // Kid on a seat whose back is to the west or east (the hall's bench, the watchman's chair): seatX is
+    // the seat's centre, facing +1 = towards +x.
+    private static Spot SitterX(string name, Activity activity, float seatX, float z, float facing, float height = 2.75f)
+    {
+        float scale = height / ModelHeight;
+        return new Spot
+        {
+            Name = name, Activity = activity, Height = height,
+            Position = new Vector3(seatX + facing * SitSeatBack * scale, BenchTop - SitSeatHeight * scale, z),
+            Yaw = facing > 0f ? 90f : -90f,
+        };
+    }
+
     // Kids around a point, facing in towards it.
     private static Spot[] Circle(string name, float x, float z, float radius, float startAngle, params Activity[] activities)
     {
@@ -285,12 +299,21 @@ public static class SchoolFigureTools
         {
             Kid("Kid_Hall_Waiting", Activity.Stand, 32f, -36.5f, 180f, 2.8f),
             Kid("Kid_Hall_Reach", Activity.Reach, 35.6f, -41.2f, 210f),
-            Kid("Kid_Hall_Entrance_Shiver", Activity.Shiver, 27.9f, -43.4f, 30f, 2.65f),
-            Kid("Kid_Hall_Huddle", Activity.Huddle, 23.6f, -43.3f, 50f),
-            Kid("Kid_Hall_Think", Activity.Think, 24.2f, -40.2f, 80f, 2.7f),
-            Kid("Kid_Hall_Search", Activity.Search, 40.3f, -43f, -35f),
-            Kid("Kid_Hall_RubHands", Activity.RubHands, 39.4f, -39.4f, -110f, 2.7f),
-            Kid("Kid_Hall_LookAround", Activity.LookAround, 36.4f, -33.6f, 220f, 2.8f),
+            Kid("Kid_Hall_Entrance_Shiver", Activity.Shiver, 28.6f, -43.9f, 30f, 2.65f),
+            Kid("Kid_Hall_Huddle", Activity.Huddle, 24.5f, -37.9f, 70f),
+            Kid("Kid_Hall_Think", Activity.Think, 35.2f, -29.2f, 200f, 2.7f),
+            // in the cloakroom, between the counter and the coats
+            Kid("Kid_Hall_Cloakroom", Activity.Search, 39.8f, -42.6f, -90f),
+            Kid("Kid_Hall_RubHands", Activity.RubHands, 34.3f, -38.8f, 230f, 2.7f),
+            // in the hall seats either side of the runner
+            Sitter("Kid_Hall_Seats_1", Activity.Sit, 27.1f, -35.37f, 1f),
+            Sitter("Kid_Hall_Seats_2", Activity.SitPlay, 28.7f, -36.23f, -1f, 2.65f),
+            Sitter("Kid_Hall_Seats_3", Activity.Sit, 37.3f, -36.23f, -1f, 2.75f),
+            // waiting on the bench, and the one in the watchman's chair
+            SitterX("Kid_Hall_Bench_1", Activity.Sit, 22.58f, -42.6f, 1f),
+            SitterX("Kid_Hall_Bench_2", Activity.SitPlay, 22.58f, -40.5f, 1f, 2.65f),
+            SitterX("Kid_Hall_Watchman", Activity.Sit, 26.05f, -42.6f, 1f, 2.8f),
+            Kid("Kid_Hall_LookAround", Activity.LookAround, 34f, -33f, 220f, 2.8f),
             Kid("Kid_Hall_Column", Activity.Fidget, 27.6f, -32.8f, 150f, 2.65f),
             Kid("Kid_Hall_Cough", Activity.Cough, 34.9f, -26.8f, 160f),
             // a pair by the gym side, a ring of three by the dining room side
@@ -306,17 +329,19 @@ public static class SchoolFigureTools
         {
             Kid("Kid_Corridor_WestEnd", Activity.Stand, -12.5f, -20.5f, 90f, 2.8f),
             Kid("Kid_Corridor_101_West", Activity.Fidget, -6.2f, -17.4f, 180f),
-            Kid("Kid_Corridor_101_East", Activity.Think, 5.6f, -17.4f, 200f, 2.7f),
-            Kid("Kid_Corridor_Pair_1", Activity.Greet, 10.4f, -17.6f, -90f),
-            Kid("Kid_Corridor_Pair_2", Activity.Fidget, 9.2f, -17.6f, 90f, 2.65f),
+            Sitter("Kid_Corridor_Bench_101", Activity.Sit, 6f, -16.83f, -1f, 2.7f),
+            Kid("Kid_Corridor_Pair_1", Activity.Greet, 11.2f, -18f, -90f),
+            Kid("Kid_Corridor_Pair_2", Activity.Fidget, 10f, -18f, 90f, 2.65f),
             Kid("Kid_Corridor_Dining_West", Activity.Cough, 1.4f, -23.6f, 20f),
-            Kid("Kid_Corridor_Dining_East", Activity.Shiver, 14.8f, -23.6f, -20f, 2.7f),
+            Sitter("Kid_Corridor_Bench_Canteen", Activity.SitPlay, 14.6f, -24.17f, 1f, 2.7f),
+            Sitter("Kid_Corridor_Bench_West", Activity.Sit, -3.2f, -24.17f, 1f),
             Kid("Kid_Corridor_Reach", Activity.Reach, 18f, -20.6f, 250f, 2.8f),
             Kid("Kid_Corridor_103_West", Activity.RubHands, 25.4f, -17.4f, 180f, 2.65f),
-            Kid("Kid_Corridor_103_East", Activity.Search, 38.6f, -17.4f, 190f),
+            Kid("Kid_Corridor_Timetable", Activity.Think, 39f, -18.6f, 0f),
+            Sitter("Kid_Corridor_Bench_Timetable", Activity.Sit, 40.4f, -16.83f, -1f, 2.65f),
             Kid("Kid_Corridor_104", Activity.Huddle, 49.6f, -17.4f, 170f),
             Kid("Kid_Corridor_Gym_West", Activity.Stand, 53.4f, -23.6f, 10f, 2.7f),
-            Kid("Kid_Corridor_Toilets", Activity.Think, 61.5f, -17.5f, 190f, 2.8f),
+            Kid("Kid_Corridor_Toilets", Activity.Think, 62f, -17.6f, 190f, 2.8f),
             Kid("Kid_Corridor_Middle_East", Activity.Fidget, 66.5f, -20.8f, 270f),
             Kid("Kid_Corridor_South_East", Activity.Shiver, 73f, -23.5f, -20f, 2.65f),
             Kid("Kid_Corridor_EastEnd", Activity.Stand, 78.5f, -20.5f, -90f, 2.8f),

@@ -3,13 +3,16 @@
 // (the one with the steps): you come through the gate straight into the entrance hall.
 //
 // Kid-sized on purpose - 7 m ceilings, an 8 m wide corridor, big rooms - so the player feels small:
-//   south row:  kitchen + dining room (with a serving hatch and counter), entrance hall with columns, gym
+//   south row:  kitchen + dining room (with a serving hatch and counter), entrance hall, gym
 //               (12 m tall) with girls' and boys' changing rooms
-//   middle:     the corridor, with pilasters and a beamed ceiling
+//   middle:     the corridor, with a beamed ceiling
 //   north row:  four classrooms, girls' and boys' toilets (cabins with doors, toilets, sinks)
-// Door and window openings, doors (double doors into the dining room and gym, the kitchen's locked),
-// signs beside the doors, glazing, floors (terrazzo tiles, painted boards, gym strips, small tiles) and
-// the dining room's tables. No other furniture.
+// Door and window openings, doors (double doors into the canteen and gym, the kitchen's locked),
+// signs beside the doors, floors (poured terrazzo, painted boards, gym strips, small tiles), the
+// canteen's tables, and the things that come with the building in a post-Soviet school: white-painted
+// double wooden windows with a vent pane and deep sills, a cast-iron radiator under every window,
+// squat toilets with high cisterns, tiled toilet walls and long trough sinks. SchoolFurnisher then
+// fills the rooms (it runs at the end of every build); SchoolProps makes the props for both.
 //
 // Everything it makes lives under Level_09/Environment and is rebuilt from scratch on every run,
 // so move anything you add by hand out of there (or stop using the builder) before rebuilding.
@@ -68,9 +71,6 @@ public static class SchoolBuilder
     private const string DoorPrefab = "Assets/_Project/Prefabs/SingleDoorFix.prefab";
     private const string CabinDoorPrefab = "Assets/_Project/Prefabs/ToiletCabinDoor.prefab";
     private const string DoorSprite = "Assets/_Project/Sprites/Props/Door_Aparment_2.png";
-    private const string ToiletPrefab = "Assets/Pandazole_Lowpoly_Asset_Bundle/Pandazole Home Interior/Prefabs/Prop_Toilet_02.prefab";
-    private const string SinkPrefab = "Assets/Pandazole_Lowpoly_Asset_Bundle/Pandazole Home Interior/Prefabs/Prop_Sink_01.prefab";
-    private const float ToiletScale = 2.54f, SinkScale = 1.64f, SinkHeight = 1.63f;  // as in the apartment
 
     // signs: a doodled plate with handwritten text above each door, pictograms on the toilet doors
     private const string SignFolder = "Assets/_Project/Sprites/School/";
@@ -78,7 +78,7 @@ public static class SchoolBuilder
     private const float SignWidth = 1.5f, SignHeight = 0.58f, SignY = Floor + 2.75f;
 
     private static Material _exterior, _interior, _roof, _frame, _glass, _counter, _outside, _paint, _trim, _metal;
-    private static Material _tiles, _boards, _gym, _smallTiles;
+    private static Material _terrazzo, _boards, _gym, _smallTiles, _windowPaint;
     private static Component _outdoorSurface, _indoorSurface;
     private static StaticEditorFlags _static;
 
@@ -121,6 +121,7 @@ public static class SchoolBuilder
         }
 
         LoadMaterials();
+        SchoolProps.BeginRun();
         var level = FindOrCreateLevel();
 
         var old = level.transform.Find(EnvironmentName);
@@ -152,6 +153,7 @@ public static class SchoolBuilder
             PlaceDoor(doors, d);
 
         PlaceRoomMarkers(Group(env, "Rooms"));
+        SchoolFurnisher.Furnish(level);
 
         EditorSceneManager.MarkSceneDirty(level.scene);
         Debug.Log("[SchoolBuilder] Level 09 school built under " + LevelName + "/" + EnvironmentName + ".");
@@ -162,20 +164,20 @@ public static class SchoolBuilder
     {
         // a base slab under everything (seen only in the doorways, as the threshold), and each room's own floor on top
         float top = Floor - RoomFloorThickness;
-        AddSurface(Box(parent, "BaseSlab", new Vector3(IX0, Footing, IZ0), new Vector3(IX1, top, IZ1), _tiles), _indoorSurface);
-        AddSurface(Box(parent, "Threshold_Entrance", new Vector3(GateX0, Footing, BZ0), new Vector3(GateX1, top, IZ0), _tiles), _indoorSurface);
+        AddSurface(Box(parent, "BaseSlab", new Vector3(IX0, Footing, IZ0), new Vector3(IX1, top, IZ1), _terrazzo), _indoorSurface);
+        AddSurface(Box(parent, "Threshold_Entrance", new Vector3(GateX0, Footing, BZ0), new Vector3(GateX1, top, IZ0), _terrazzo), _indoorSurface);
 
         void RoomFloor(string name, float x0, float z0, float x1, float z1, Material material) =>
             AddSurface(Box(parent, "Floor_" + name, new Vector3(x0, top, z0), new Vector3(x1, Floor, z1), material), _indoorSurface);
 
         float rowA1 = RowAWall - Int * 0.5f, corr0 = RowAWall + Int * 0.5f, corr1 = RowCWall - Int * 0.5f, rowC0 = RowCWall + Int * 0.5f;
         RoomFloor("Kitchen", IX0, IZ0, -4.25f, rowA1, _smallTiles);
-        RoomFloor("DiningRoom", -3.75f, IZ0, 21.75f, rowA1, _tiles);
-        RoomFloor("EntranceHall", 22.25f, IZ0, 41.75f, rowA1, _tiles);
+        RoomFloor("DiningRoom", -3.75f, IZ0, 21.75f, rowA1, _terrazzo);
+        RoomFloor("EntranceHall", 22.25f, IZ0, 41.75f, rowA1, _terrazzo);
         RoomFloor("Gym", 42.25f, IZ0, 71.75f, rowA1, _gym);
         RoomFloor("ChangingRoom_Girls", 72.25f, IZ0, IX1, -35f, _smallTiles);
         RoomFloor("ChangingRoom_Boys", 72.25f, -34.5f, IX1, rowA1, _smallTiles);
-        RoomFloor("Corridor", IX0, corr0, IX1, corr1, _tiles);
+        RoomFloor("Corridor", IX0, corr0, IX1, corr1, _terrazzo);
         RoomFloor("Classroom_1", IX0, rowC0, 1.75f, IZ1, _boards);
         RoomFloor("Classroom_2", 2.25f, rowC0, 17.75f, IZ1, _boards);
         RoomFloor("Classroom_3", 18.25f, rowC0, 33.75f, IZ1, _boards);
@@ -247,7 +249,7 @@ public static class SchoolBuilder
         // south row | corridor: double doors into the dining room and the gym, the hall wide open, changing room door
         Wall(parent, "Wall_Corridor_South", Axis.X, a0, a1, IX0, 41.75f, Floor, Ceiling, new List<Opening>
         {
-            DoorOpening(Axis.X, RowAWall, 8.5f, a0, a1, "Dining Room", Side.High, isDouble: true),
+            DoorOpening(Axis.X, RowAWall, 8.5f, a0, a1, "Canteen", Side.High, isDouble: true),
             new Opening(24f, 40f, Floor, Floor + 6f),
         }, _interior, Trim.Both);
         Wall(parent, "Wall_Corridor_South_Gym", Axis.X, a0, a1, 41.75f, 72.25f, Floor, Ceiling,
@@ -280,9 +282,10 @@ public static class SchoolBuilder
 
         // dining room | hall | gym: double doors from the hall
         Wall(parent, "Wall_Dining_Hall", Axis.Z, 21.75f, 22.25f, IZ0, a0, Floor, Ceiling,
-            new List<Opening> { DoorOpening(Axis.Z, 22f, -35f, 21.75f, 22.25f, "Dining Room", Side.High, isDouble: true) }, _interior, Trim.Both);
+            new List<Opening> { DoorOpening(Axis.Z, 22f, -35f, 21.75f, 22.25f, "Canteen", Side.High, isDouble: true) }, _interior, Trim.Both);
+        // the gym's sign on the left, clear of the cloakroom in the hall's corner
         Wall(parent, "Wall_Hall_Gym", Axis.Z, 41.75f, 42.25f, IZ0, a0, Floor, Ceiling,
-            new List<Opening> { DoorOpening(Axis.Z, 42f, -35f, 41.75f, 42.25f, "Gym", Side.Low, isDouble: true) }, _interior, Trim.Both);
+            new List<Opening> { DoorOpening(Axis.Z, 42f, -35f, 41.75f, 42.25f, "Gym", Side.Low, isDouble: true, signOnLeft: true) }, _interior, Trim.Both);
 
         // gym | girls' and boys' changing rooms, a door into each from the gym
         Wall(parent, "Wall_Gym_ChangingRooms", Axis.Z, 71.75f, 72.25f, IZ0, a0, Floor, Ceiling, new List<Opening>
@@ -375,18 +378,17 @@ public static class SchoolBuilder
     {
         float rowC1 = RowCWall + Int * 0.5f;
         // cabins against the room's east wall; sinks on the west wall
-        BuildToiletRoom(Group(parent, "Toilet_Girls"), westWall: 50.25f, eastWall: 64.75f, rowC1);
-        BuildToiletRoom(Group(parent, "Toilet_Boys"), westWall: 65.25f, eastWall: IX1, rowC1);
+        BuildToiletRoom(Group(parent, "Toilet_Girls"), westWall: 50.25f, eastWall: 64.75f, rowC1, doorX: 55f);
+        BuildToiletRoom(Group(parent, "Toilet_Boys"), westWall: 65.25f, eastWall: IX1, rowC1, doorX: 70f);
     }
 
-    private static void BuildToiletRoom(Transform parent, float westWall, float eastWall, float southWall)
+    private static void BuildToiletRoom(Transform parent, float westWall, float eastWall, float southWall, float doorX)
     {
         float front = eastWall - CabinDepth;
-        float z1 = IZ1, z0 = IZ1 - CabinWidth * CabinCount;
+        float z1 = IZ1;
 
         var cabinDoorPrefab = CabinDoorPrefabAsset();
-        var toilet = AssetDatabase.LoadAssetAtPath<GameObject>(ToiletPrefab);
-        var sink = AssetDatabase.LoadAssetAtPath<GameObject>(SinkPrefab);
+        var toilet = SchoolProps.Get("SquatToilet");
 
         for (int i = 0; i < CabinCount; i++)
         {
@@ -409,40 +411,41 @@ public static class SchoolBuilder
                 door.transform.SetPositionAndRotation(new Vector3(front, Floor, cz - CabinLeafCenter), Quaternion.Euler(0f, -90f, 0f));
             }
 
-            if (toilet != null)
-            {
-                // facing the cabin door, its back against the wall
-                var t = (GameObject)PrefabUtility.InstantiatePrefab(toilet, cabin);
-                t.transform.localScale = Vector3.one * ToiletScale;
-                t.transform.SetPositionAndRotation(new Vector3(eastWall - 1f, Floor, cz), Quaternion.Euler(0f, 270f, 0f));
-                AgainstWall(t, eastWall, east: true);
-            }
+            // the squat pan in its tiled step, facing the cabin door, the cistern high on the wall behind it
+            PlaceProp(cabin, toilet, new Vector3(eastWall - TileDepth, Floor, cz), -90f);
         }
 
-        if (sink != null)
-        {
-            foreach (float z in new[] { z1 - 4f, z1 - 8f, z1 - 12f })
-            {
-                var s = (GameObject)PrefabUtility.InstantiatePrefab(sink, parent);
-                s.name = $"Sink_{z:0}";
-                s.transform.localScale = Vector3.one * SinkScale;
-                s.transform.SetPositionAndRotation(new Vector3(westWall + 1f, Floor + SinkHeight, z), Quaternion.Euler(0f, 90f, 0f));
-                AgainstWall(s, westWall, east: false);
-            }
-        }
+        // a long trough of taps and a mirror over it on the west wall, in front of the tiles
+        PlaceProp(parent, SchoolProps.Get("TroughSink"), new Vector3(westWall + TileDepth, Floor, z1 - 6.5f), 90f);
+        PlaceProp(parent, SchoolProps.Get("Mirror_5"), new Vector3(westWall + TileDepth, Floor + 2.2f, z1 - 6.5f), 90f);
+
+        TileWalls(parent, westWall, eastWall, southWall, doorX);
     }
 
-    // slides a prop along X until its back touches the wall
-    private static void AgainstWall(GameObject prop, float wallX, bool east)
+    // The walls tiled to above the rail, over the paint, rail and skirting (but not over the door).
+    private const float TileDepth = 0.08f, TilesTop = Floor + 2.15f;
+
+    private static void TileWalls(Transform parent, float westWall, float eastWall, float southWall, float doorX)
     {
-        var renderers = prop.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0)
-            return;
-        Bounds b = renderers[0].bounds;
-        foreach (var r in renderers)
-            b.Encapsulate(r.bounds);
-        float shift = east ? wallX - 0.02f - b.max.x : wallX + 0.02f - b.min.x;
-        prop.transform.position += new Vector3(shift, 0f, 0f);
+        const float t0 = TileDepth - 0.015f, t1 = TileDepth;
+        float north = IZ1;
+        float d0 = doorX - DoorWidth * 0.5f - 0.2f, d1 = doorX + DoorWidth * 0.5f + 0.2f;
+        Box(parent, "Tiles_West", new Vector3(westWall + t0, Floor, southWall), new Vector3(westWall + t1, TilesTop, north), _smallTiles, collider: false);
+        Box(parent, "Tiles_East", new Vector3(eastWall - t1, Floor, southWall), new Vector3(eastWall - t0, TilesTop, north), _smallTiles, collider: false);
+        Box(parent, "Tiles_North", new Vector3(westWall, Floor, north - t1), new Vector3(eastWall, TilesTop, north - t0), _smallTiles, collider: false);
+        Box(parent, "Tiles_South_West", new Vector3(westWall, Floor, southWall + t0), new Vector3(d0, TilesTop, southWall + t1), _smallTiles, collider: false);
+        Box(parent, "Tiles_South_East", new Vector3(d1, Floor, southWall + t0), new Vector3(eastWall, TilesTop, southWall + t1), _smallTiles, collider: false);
+    }
+
+    private static GameObject PlaceProp(Transform parent, GameObject prefab, Vector3 position, float yaw)
+    {
+        if (prefab == null)
+            return null;
+        var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+        go.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
+        foreach (var t in go.GetComponentsInChildren<Transform>(true))
+            GameObjectUtility.SetStaticEditorFlags(t.gameObject, _static);
+        return go;
     }
 
     // The cabin door: a variant of the game's door with a smaller, plain leaf, hinged at its root on the floor.
@@ -572,34 +575,25 @@ public static class SchoolBuilder
     }
 
     // ── Relief ───────────────────────────────────────────────────────────────
-    // Pilasters, ceiling beams and cornices in the corridor; columns and a coffered ceiling in the entrance hall.
+    // The plain concrete ceiling beams of a typical Soviet school - no columns or pilasters, the beams
+    // span from wall to wall: across the corridor every 8 m or so, in a grid over the entrance hall;
+    // a simple cornice round the ceilings, two ribs along the corridor's.
     private static void BuildRelief(Transform parent)
     {
         float corrSouth = RowAWall + Int * 0.5f, corrNorth = RowCWall - Int * 0.5f;
         float beamBottom = Ceiling - 0.7f;
 
-        // corridor: a beam across the ceiling every 8 m or so, landing on a pilaster on each wall (or on the lintel over the hall)
         var corridor = Group(parent, "Corridor");
         foreach (float x in new[] { -9f, 3f, 12f, 20f, 27f, 35f, 43f, 51f, 63f, 75f })
-        {
             Box(corridor, $"Beam_{x:0}", new Vector3(x - 0.4f, beamBottom, corrSouth), new Vector3(x + 0.4f, Ceiling, corrNorth), _interior, collider: false);
-            Pilaster(corridor, x, corrNorth, -1f, beamBottom);
-            if (x < 24f || x > 40f)
-                Pilaster(corridor, x, corrSouth, 1f, beamBottom);
-        }
-        // two ribs running the corridor's length make the ceiling into coffers; a cornice along both walls
         foreach (float z in new[] { -22f, -19f })
             Box(corridor, "Rib", new Vector3(IX0, Ceiling - 0.35f, z - 0.2f), new Vector3(IX1, Ceiling, z + 0.2f), _interior, collider: false);
         Box(corridor, "Cornice_North", new Vector3(IX0, Ceiling - 0.35f, corrNorth - 0.25f), new Vector3(IX1, Ceiling, corrNorth), _interior, collider: false);
         Box(corridor, "Cornice_South", new Vector3(IX0, Ceiling - 0.35f, corrSouth), new Vector3(IX1, Ceiling, corrSouth + 0.25f), _interior, collider: false);
 
-        // entrance hall: four columns either side of the way in, carrying a grid of beams
         var hall = Group(parent, "EntranceHall");
         float hx0 = 22.25f, hx1 = 41.75f, hz0 = IZ0, hz1 = RowAWall - Int * 0.5f;
         float hallBeam = Ceiling - 0.8f;
-        foreach (float x in new[] { 26.5f, 37.5f })
-        foreach (float z in new[] { -39f, -31f })
-            Column(hall, x, z, hallBeam);
         foreach (float z in new[] { -39f, -31f })
             Box(hall, $"Beam_Z{z:0}", new Vector3(hx0, hallBeam, z - 0.45f), new Vector3(hx1, Ceiling, z + 0.45f), _interior, collider: false);
         foreach (float x in new[] { 26.5f, 37.5f })
@@ -610,58 +604,6 @@ public static class SchoolBuilder
         Box(hall, "Cornice_East", new Vector3(hx1 - 0.25f, Ceiling - 0.35f, hz0), new Vector3(hx1, Ceiling, hz1), _interior, collider: false);
     }
 
-    // A half-round column set into a wall at z = face, standing out towards outward (+1 / -1 in z): its
-    // centre sits a little in front of the wall, the back half hidden in it.
-    private static void Pilaster(Transform parent, float x, float face, float outward, float top)
-    {
-        var group = Group(parent, $"Pilaster_{x:0}_{face:0}");
-        float z = face + outward * 0.08f;
-        RoundColumn(group, x, z, top, shaft: 0.4f, flare: 0.13f);
-    }
-
-    private static void Column(Transform parent, float x, float z, float top)
-    {
-        var group = Group(parent, $"Column_{x:0}_{z:0}");
-        RoundColumn(group, x, z, top, shaft: 0.55f, flare: 0.2f);
-    }
-
-    // a round shaft on a stepped round base, under a round capital (rings stepping out to the top)
-    private static void RoundColumn(Transform group, float x, float z, float top, float shaft, float flare)
-    {
-        Vector3 at(float y) => new Vector3(x, y, z);
-        Cylinder(group, "Shaft", at(Floor), shaft, top - Floor, _interior, collider: true);
-        Cylinder(group, "Base", at(Floor), shaft + flare, 0.35f, _paint);
-        Cylinder(group, "Base_Ring", at(Floor + 0.35f), shaft + flare * 0.6f, 0.15f, _paint);
-        Cylinder(group, "Base_Ring_Top", at(Floor + 0.5f), shaft + flare * 0.25f, 0.08f, _paint);
-        Cylinder(group, "Capital_Neck", at(top - 0.62f), shaft + flare * 0.25f, 0.1f, _paint);
-        Cylinder(group, "Capital_Ring", at(top - 0.52f), shaft + flare * 0.6f, 0.17f, _paint);
-        Cylinder(group, "Capital", at(top - 0.35f), shaft + flare, 0.35f, _paint);
-    }
-
-    /// <summary>A round ProBuilder cylinder standing on <paramref name="bottom"/>.</summary>
-    private static GameObject Cylinder(Transform parent, string name, Vector3 bottom, float radius, float height, Material material,
-        bool collider = false)
-    {
-        var pb = ShapeGenerator.GenerateCylinder(PivotLocation.Center, 32, radius, height, 0, smoothing: 1);
-        var go = pb.gameObject;
-        go.name = name;
-        go.transform.SetParent(parent, false);
-        go.transform.position = bottom + Vector3.up * (height * 0.5f);
-        pb.SetMaterial(pb.faces, material);
-        pb.ToMesh();
-        pb.Refresh();
-
-        if (collider)
-        {
-            var capsule = go.AddComponent<CapsuleCollider>();
-            capsule.radius = radius;
-            capsule.height = height;
-        }
-
-        GameObjectUtility.SetStaticEditorFlags(go, _static);
-        return go;
-    }
-
     private static GameObject WallBox(Transform parent, string name, Axis axis, float t0, float t1, float u0, float u1, float y0, float y1,
         Material material, bool collider = true)
     {
@@ -670,31 +612,63 @@ public static class SchoolBuilder
             : Box(parent, name, new Vector3(t0, y0, u0), new Vector3(t1, y1, u1), material, collider);
     }
 
-    // A window frame (dark, like the game's ink lines) with a cross bar, and a glass pane that stops the player.
+    // The Soviet double window: two white-painted wooden frames, one near each face of the thick wall,
+    // each with a centre post, a transom and a fortochka (the little vent pane) in its top corner; a deep
+    // painted sill inside, and the cast-iron radiator under it. The glass stops the player.
     private static void BuildWindow(Transform parent, Axis axis, float plane, float center, float width, float sill, float top)
     {
         var group = Group(parent, $"Window_{(axis == Axis.X ? "X" : "Z")}{center:0.#}_{plane:0.#}");
-        const float bar = 0.16f, depth = 0.24f;
+        float inward = Inward(axis, plane);
         float u0 = center - width * 0.5f, u1 = center + width * 0.5f;
-        float t0 = plane - depth * 0.5f, t1 = plane + depth * 0.5f;
 
-        WallBox(group, "Frame_Left", axis, t0, t1, u0, u0 + bar, sill, top, _frame);
-        WallBox(group, "Frame_Right", axis, t0, t1, u1 - bar, u1, sill, top, _frame);
-        WallBox(group, "Frame_Bottom", axis, t0, t1, u0 + bar, u1 - bar, sill, sill + bar, _frame);
-        WallBox(group, "Frame_Top", axis, t0, t1, u0 + bar, u1 - bar, top - bar, top, _frame);
-        if (width > 2.5f)
-            WallBox(group, "Frame_Middle", axis, t0, t1, center - bar * 0.5f, center + bar * 0.5f, sill + bar, top - bar, _frame);
-        float transom = Mathf.Lerp(sill, top, 0.68f);
-        WallBox(group, "Frame_Transom", axis, t0, t1, u0 + bar, u1 - bar, transom - bar * 0.5f, transom + bar * 0.5f, _frame);
+        Sash(group, "Outer", axis, plane - inward * 0.3f, center, width, sill, top);
+        Sash(group, "Inner", axis, plane + inward * 0.3f, center, width, sill, top);
 
-        var glass = WallBox(group, "Glass", axis, plane - 0.02f, plane + 0.02f, u0 + bar, u1 - bar, sill + bar, top - bar, _glass);
-        GameObjectUtility.SetStaticEditorFlags(glass, _static & ~StaticEditorFlags.ContributeGI);
+        float face = plane + inward * Ext * 0.5f;
+        float s0 = plane + inward * 0.22f, s1 = face + inward * 0.25f;
+        WallBox(group, "Sill", axis, Mathf.Min(s0, s1), Mathf.Max(s0, s1), u0 - 0.08f, u1 + 0.08f, sill, sill + 0.06f, _windowPaint, collider: false);
 
         // see-through glass casts no shadow in URP, so the sun would throw a hard white block of light on
         // the floor under every window; an invisible pane casts the shadow instead
+        const float bar = 0.17f;
         var shade = WallBox(group, "Glass_Shadow", axis, plane - 0.01f, plane + 0.01f, u0 + bar, u1 - bar, sill + bar, top - bar, _frame, collider: false);
         shade.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+
+        // the radiator on the floor under it, against the inside face of the wall
+        var radiator = SchoolProps.Get(width >= 3.5f ? "Radiator_16" : "Radiator_10");
+        float yaw = axis == Axis.X ? (inward > 0f ? 0f : 180f) : (inward > 0f ? 90f : -90f);
+        PlaceProp(group, radiator, axis == Axis.X ? new Vector3(center, Floor, face) : new Vector3(face, Floor, center), yaw);
     }
+
+    private static void Sash(Transform parent, string name, Axis axis, float t, float center, float width, float sill, float top)
+    {
+        const float bar = 0.17f, depth = 0.12f, post = 0.1f;
+        float u0 = center - width * 0.5f, u1 = center + width * 0.5f;
+        float t0 = t - depth * 0.5f, t1 = t + depth * 0.5f;
+        var group = Group(parent, name);
+
+        WallBox(group, "Frame_Left", axis, t0, t1, u0, u0 + bar, sill, top, _windowPaint);
+        WallBox(group, "Frame_Right", axis, t0, t1, u1 - bar, u1, sill, top, _windowPaint);
+        WallBox(group, "Frame_Bottom", axis, t0, t1, u0 + bar, u1 - bar, sill, sill + bar, _windowPaint);
+        WallBox(group, "Frame_Top", axis, t0, t1, u0 + bar, u1 - bar, top - bar, top, _windowPaint);
+        bool wide = width > 2.5f;
+        if (wide)
+            WallBox(group, "Frame_Middle", axis, t0, t1, center - bar * 0.5f, center + bar * 0.5f, sill + bar, top - bar, _windowPaint);
+        float transom = Mathf.Lerp(sill, top, 0.7f);
+        WallBox(group, "Frame_Transom", axis, t0, t1, u0 + bar, u1 - bar, transom - bar * 0.5f, transom + bar * 0.5f, _windowPaint);
+        // the fortochka: a small opening pane at the top of the left leaf, under the transom
+        float ventRight = wide ? (u0 + center) * 0.5f : u0 + width * 0.5f;
+        float ventBottom = Mathf.Lerp(sill, transom, 0.55f);
+        WallBox(group, "Fortochka_Side", axis, t0, t1, ventRight - post * 0.5f, ventRight + post * 0.5f, ventBottom, transom - bar * 0.5f, _windowPaint);
+        WallBox(group, "Fortochka_Bottom", axis, t0, t1, u0 + bar, ventRight, ventBottom - post * 0.5f, ventBottom + post * 0.5f, _windowPaint);
+
+        var glass = WallBox(group, "Glass", axis, t - 0.01f, t + 0.01f, u0 + bar, u1 - bar, sill + bar, top - bar, _glass);
+        GameObjectUtility.SetStaticEditorFlags(glass, _static & ~StaticEditorFlags.ContributeGI);
+    }
+
+    // which way is into the building from an outside wall's plane (+1 / -1 along the wall's thickness axis)
+    private static float Inward(Axis axis, float plane) =>
+        axis == Axis.X ? (plane < (BZ0 + BZ1) * 0.5f ? 1f : -1f) : (plane < (BX0 + BX1) * 0.5f ? 1f : -1f);
 
     // The game's door (or a pair of them) in a doorway cut to its leaves, with a dark frame round it on
     // both sides of the wall, and the room's sign beside it.
@@ -929,7 +903,8 @@ public static class SchoolBuilder
         _metal = SchoolTextures.Get("Metal", 1f, 0.45f);             // table legs, counter tops, the tray rail
         _glass = GlassMaterial();
 
-        _tiles = SchoolTextures.Get("Tiles", 3.2f, 0.35f);
+        _terrazzo = SchoolTextures.Get("Terrazzo", 2.4f, 0.4f);
+        _windowPaint = SchoolTextures.Get("WindowPaint", 1.2f, 0.45f);   // window frames and sills, like the radiators
         _boards = SchoolTextures.Get("Boards", 2.4f, 0.2f);
         _gym = SchoolTextures.Get("Gym", 2.4f, 0.4f);
         _smallTiles = SchoolTextures.Get("SmallTiles", 2.4f, 0.5f);

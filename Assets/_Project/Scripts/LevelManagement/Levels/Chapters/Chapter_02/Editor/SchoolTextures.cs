@@ -1,7 +1,9 @@
-// Procedural textures for the Level 09 school, in the game's grays: the checkered terrazzo
-// tiles of a post-Soviet school corridor, painted classroom floorboards, the gym's narrow strips and
-// small ceramic toilet tiles; the glossy oil paint of the lower walls and their dark trim, whitewashed
-// plaster for the upper walls and ceilings, speckled laminate and worn dark metal for the furniture.
+// Procedural textures for the Level 09 school, in the game's grays: the poured terrazzo of a
+// post-Soviet school's corridors and canteen (and the older checkered tiles), painted classroom
+// floorboards, the gym's narrow strips and small ceramic toilet tiles; the glossy oil paint of the
+// lower walls and their dark trim, whitewashed plaster for the upper walls and ceilings; and for the
+// furniture, speckled laminate, worn dark metal, painted wood, white-painted window frames and
+// radiators, blackboards, wool, porcelain, plant leaves and mirror.
 // Generated once (SchoolBuilder calls this) and kept as PNGs, so they can be painted over or
 // replaced like any other texture.
 
@@ -15,7 +17,7 @@ public static class SchoolTextures
     private const string Folder = "Assets/_Project/Materials/School";
     private const int Size = 1024;
 
-    private static readonly string[] Floors = { "Tiles", "Boards", "Gym", "SmallTiles" };
+    private static readonly string[] Floors = { "Tiles", "Terrazzo", "Boards", "Gym", "SmallTiles" };
 
     // floors are School_Floor_*, everything else just School_*
     private static string AssetName(string name) => System.Array.IndexOf(Floors, name) >= 0 ? $"School_Floor_{name}" : $"School_{name}";
@@ -55,6 +57,17 @@ public static class SchoolTextures
             "Plaster" => Plaster(baseShade: 0.95f, mottle: 0.026f, seed: 51),
             "Laminate" => Laminate(baseShade: 0.86f, seed: 61),
             "Metal" => OilPaint(baseShade: 0.44f, streaks: 0.025f, wear: 0.05f, chips: 0.008f, seed: 71),
+            "Terrazzo" => Terrazzo(),
+            "WoodPaint" => OilPaint(baseShade: 0.5f, streaks: 0.05f, wear: 0.06f, chips: 0.01f, seed: 81),
+            "WindowPaint" => OilPaint(baseShade: 0.88f, streaks: 0.03f, wear: 0.04f, chips: 0.006f, seed: 91),
+            "Chalkboard" => Chalkboard(),
+            "Porcelain" => Plaster(baseShade: 0.93f, mottle: 0.012f, seed: 101),
+            "Fabric" => Fabric(baseShade: 0.34f, seed: 111),
+            "FabricLight" => Fabric(baseShade: 0.7f, seed: 121),
+            "Leather" => Fabric(baseShade: 0.27f, seed: 131),
+            "Leaf" => Plaster(baseShade: 0.3f, mottle: 0.08f, seed: 141),
+            "Foliage" => Plaster(baseShade: 0.58f, mottle: 0.07f, seed: 181),
+            "Mirror" => Plaster(baseShade: 0.66f, mottle: 0.015f, seed: 151),
             _ => SmallTiles(),
         };
 
@@ -95,6 +108,65 @@ public static class SchoolTextures
                 v = 0.33f + (Hash(x, y, 11) - 0.5f) * 0.06f;
             else if (edge < grout + 3)
                 v *= 0.93f;                                                   // worn tile edge
+            px[y * Size + x] = Gray(v);
+        }
+        return px;
+    }
+
+    // The poured mosaic floor of Soviet school corridors and canteens: one even shade, dense with stone
+    // chips of every size, polished smooth and dulled by wear, cut into big squares by dark divider strips.
+    private static Color[] Terrazzo()
+    {
+        const int panel = Size / 2, strip = 4;
+        var px = new Color[Size * Size];
+        for (int y = 0; y < Size; y++)
+        for (int x = 0; x < Size; x++)
+        {
+            float v = 0.68f;
+            v += (Noise(x, y, 256, 161) - 0.5f) * 0.06f;                    // poured unevenly
+            v += (Noise(x, y, 48, 162) - 0.5f) * 0.04f;                     // worn paths, polish
+            // chips: a few big ones, many small ones, dark and light
+            if (Hash(x / 6, y / 6, 163) > 0.86f)
+                v += (Hash(x / 6, y / 6, 164) - 0.5f) * 0.36f;
+            else if (Hash(x / 2, y / 2, 165) > 0.7f)
+                v += (Hash(x / 2, y / 2, 166) - 0.5f) * 0.28f;
+            v += (Hash(x, y, 167) - 0.5f) * 0.04f;
+
+            int lx = x % panel, ly = y % panel;
+            if (Mathf.Min(lx, panel - 1 - lx) < strip / 2 || Mathf.Min(ly, panel - 1 - ly) < strip / 2)
+                v = 0.36f + (Hash(x, y, 168) - 0.5f) * 0.05f;
+            px[y * Size + x] = Gray(v);
+        }
+        return px;
+    }
+
+    // a well-used blackboard: dark, never quite clean - the haze of wiped chalk and old smudges
+    private static Color[] Chalkboard()
+    {
+        var px = new Color[Size * Size];
+        for (int y = 0; y < Size; y++)
+        for (int x = 0; x < Size; x++)
+        {
+            float v = 0.2f;
+            v += Mathf.Max(0f, Noise(x, y / 2, 96, 171) - 0.55f) * 0.18f;  // wiped-out chalk, smeared sideways
+            v += (Noise(x, y, 24, 172) - 0.5f) * 0.03f;
+            v += (Hash(x, y, 173) - 0.5f) * 0.02f;
+            px[y * Size + x] = Gray(v);
+        }
+        return px;
+    }
+
+    // woollen cloth: a fine weave over soft unevenness
+    private static Color[] Fabric(float baseShade, int seed)
+    {
+        var px = new Color[Size * Size];
+        for (int y = 0; y < Size; y++)
+        for (int x = 0; x < Size; x++)
+        {
+            float v = baseShade;
+            v += (Noise(x, y, 128, seed) - 0.5f) * 0.06f;
+            v += (((x / 3 + y / 3) & 1) == 0 ? 0.015f : -0.015f);           // the weave
+            v += (Hash(x, y, seed + 1) - 0.5f) * 0.04f;
             px[y * Size + x] = Gray(v);
         }
         return px;
