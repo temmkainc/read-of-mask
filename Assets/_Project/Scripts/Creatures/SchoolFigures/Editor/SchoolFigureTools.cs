@@ -308,7 +308,7 @@ public static class SchoolFigureTools
             // in the hall seats either side of the runner
             Sitter("Kid_Hall_Seats_1", Activity.Sit, 27.1f, -35.37f, 1f),
             Sitter("Kid_Hall_Seats_2", Activity.SitPlay, 28.7f, -36.23f, -1f, 2.65f),
-            Sitter("Kid_Hall_Seats_3", Activity.Sit, 37.3f, -36.23f, -1f, 2.75f),
+            Sitter("Kid_Hall_Seats_3", Activity.Sit, 36.9f, -36.23f, -1f, 2.75f),
             // waiting on the bench, and the one in the watchman's chair
             SitterX("Kid_Hall_Bench_1", Activity.Sit, 22.58f, -42.6f, 1f),
             SitterX("Kid_Hall_Bench_2", Activity.SitPlay, 22.58f, -40.5f, 1f, 2.65f),
@@ -420,6 +420,9 @@ public static class SchoolFigureTools
             var mask = figure.GetComponentsInChildren<MeshRenderer>(true).First(r => r.name == "Mask");
             mask.sharedMaterial = MaskMaterial(SchoolMaskArt.Faces[face]);
         }
+
+        // the seats they sit in can't be sat in by the player
+        SchoolInteractables.MarkTakenSeats(level.transform);
 
         EditorSceneManager.MarkSceneDirty(level.gameObject.scene);
         Debug.Log($"[SchoolFigureTools] Placed {group.childCount} figures in the school.");

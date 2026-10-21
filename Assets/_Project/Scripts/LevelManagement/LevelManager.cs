@@ -92,8 +92,7 @@ public class LevelManager : IInitializable, IDisposable
 
         _saveService.SetCurrentProgress(_thisSceneName, targetIndex);
 
-        if (CurrentLevel.DestroyPreviousLevelOnEnter)
-            DestroyLevel(previousIndex);
+        DestroyWhatLevelLeavesBehind(targetIndex, previousIndex);
     }
 
     public void GoToNextLevel()
@@ -138,20 +137,57 @@ public class LevelManager : IInitializable, IDisposable
                 continue; // already destroyed by an earlier level's "destroy previous" flag
 
             level.RestoreCompleted();
-
-            if (level.DestroyPreviousLevelOnEnter)
-                DestroyLevel(i - 1);
+            DestroyWhatLevelLeavesBehind(i, i - 1);
         }
+    }
+
+    // What a level that's just become current no longer needs: the level before it, or all of
+    // them, and any other objects it lists (see LevelBase's Level Transition settings).
+    private void DestroyWhatLevelLeavesBehind(int index, int previousIndex)
+    {
+        var level = _levels[index];
+
+        if (level.DestroyAllPreviousLevelsOnEnter)
+        {
+            for (int i = 0; i < index; i++)
+                DestroyLevel(i);
+        }
+        else if (level.DestroyPreviousLevelOnEnter)
+        {
+            DestroyLevel(previousIndex);
+        }
+
+        foreach (var obj in level.ObjectsToDestroyOnEnter)
+            DestroyOutOfSight(obj);
     }
 
     private void DestroyLevel(int index)
     {
-        if (!IsValidIndex(index))
+        if (IsValidIndex(index) && _levels[index] != null)
+            DestroyOutOfSight(_levels[index].gameObject);
+    }
+
+    private static void DestroyOutOfSight(GameObject obj)
+    {
+        if (obj == null)
             return;
 
-        var level = _levels[index];
-        if (level != null)
-            UnityEngine.Object.Destroy(level.gameObject);
+        // The dream gate that ended the level is still drawing the player through (the next
+        // level begins as they step in) - destroy it once they're out, not in front of them.
+        var gate = Array.Find(UnityEngine.Object.FindObjectsByType<DreamGate>(), g => g.IsTransitioning);
+        if (gate == null)
+        {
+            UnityEngine.Object.Destroy(obj);
+            return;
+        }
+
+        void On_GatePassed()
+        {
+            gate.OnPassed -= On_GatePassed;
+            if (obj != null)
+                UnityEngine.Object.Destroy(obj);
+        }
+        gate.OnPassed += On_GatePassed;
     }
 
     private void TurnOffLevelsAfter(int index)

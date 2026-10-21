@@ -16,6 +16,11 @@ using UnityEngine;
 public class Outline : MonoBehaviour {
   private static HashSet<Mesh> registeredMeshes = new HashSet<Mesh>();
 
+  // read-of-mask: Play mode starts without a domain reload here, so the set above would outlive the
+  // session - and skip the scene's meshes next time, which come back without their smooth normals
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+  static void ResetRegisteredMeshes() => registeredMeshes.Clear();
+
   public enum Mode {
     OutlineAll,
     OutlineVisible,
@@ -298,6 +303,12 @@ public class Outline : MonoBehaviour {
   }
 
   void CombineSubmeshes(Mesh mesh, Material[] materials) {
+
+    // read-of-mask: drop trailing submeshes no material draws (ProBuilder can leave an empty one) -
+    // otherwise the outline's materials land on that empty last submesh and draw nothing
+    if (mesh.subMeshCount > materials.Length && materials.Length > 0) {
+      mesh.subMeshCount = materials.Length;
+    }
 
     // Skip meshes with a single submesh
     if (mesh.subMeshCount == 1) {

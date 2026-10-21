@@ -5,8 +5,9 @@
 // Every one is a PNG in Sprites/School/Props, drawn only if it isn't there yet - so paint over any of
 // them, or replace it with your own drawing (any size; it's fitted into its frame keeping its
 // proportions), and the school keeps it through every rebuild. Each placement has a file of its own,
-// named kind@where (e.g. Photo@HonorBoard_03, Sheet_2@SchoolNews_1, Portrait_3@Literature_2), so each
-// photo on the honor board, each sheet on each stand, each portrait in each room can be different.
+// named after where it hangs first (e.g. Class104_Literature_Portrait_2, Corridor_Stand_SchoolNews_1,
+// EntranceHall_HonorBoard_Photo_03), so each one can be different; AllRooms_WallClock is every clock's
+// face. What kind of drawing a file is (for redrawing it) is kept in its import settings' user data.
 // Only Tools → Read of Mask → School Props → Redraw Wall Drawings overwrites them (it asks first).
 
 #if UNITY_EDITOR
@@ -18,23 +19,17 @@ public static class SchoolDrawings
 {
     public const string Folder = "Assets/_Project/Sprites/School/Props";
 
-    public static readonly string[] Names =
-    {
-        "Portrait_1", "Portrait_2", "Portrait_3", "Portrait_4", "Photo",
-        "Sheet_1", "Sheet_2", "Sheet_3", "PeriodicTable", "Map", "Geometry", "Clock", "Flag", "Emblem",
-        "Heart", "Doodle",
-    };
-
     // the copies of one kind of drawing differ a little, like things drawn one by one
     private static int _variant;
 
-    /// <summary>The drawing as a sprite, drawing it first if it isn't there yet. <paramref name="name"/> is
-    /// a kind (one of <see cref="Names"/>), or kind@where for a placement's own copy.</summary>
-    public static Sprite Get(string name)
+    /// <summary>The drawing called <paramref name="name"/> as a sprite, drawing it first as a
+    /// <paramref name="kind"/> (Portrait_1..4, Photo, Sheet_1..3, PeriodicTable, Map, Geometry, Clock,
+    /// Flag, Emblem) if it isn't there yet.</summary>
+    public static Sprite Get(string kind, string name)
     {
         string path = $"{Folder}/{name}.png";
         if (AssetDatabase.LoadAssetAtPath<Texture2D>(path) == null)
-            Draw(name, path);
+            Draw(kind, name, path);
         return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
@@ -44,20 +39,23 @@ public static class SchoolDrawings
         if (!EditorUtility.DisplayDialog("Redraw wall drawings",
                 $"Redraw every drawing in {Folder}? Anything you painted there will be replaced.", "Redraw", "Cancel"))
             return;
-        var names = new HashSet<string>(Names);
+        int count = 0;
         foreach (var file in System.IO.Directory.GetFiles(Folder, "*.png"))
-            names.Add(System.IO.Path.GetFileNameWithoutExtension(file));
-        foreach (var name in names)
-            Draw(name, $"{Folder}/{name}.png");
-        Debug.Log($"[SchoolDrawings] Drew {names.Count} drawings into {Folder}.");
+        {
+            string path = file.Replace('\\', '/');
+            string kind = AssetImporter.GetAtPath(path)?.userData;
+            if (string.IsNullOrEmpty(kind))
+                continue;
+            Draw(kind, System.IO.Path.GetFileNameWithoutExtension(path), path);
+            count++;
+        }
+        Debug.Log($"[SchoolDrawings] Drew {count} drawings into {Folder}.");
     }
 
-    private static void Draw(string name, string path)
+    private static void Draw(string kind, string name, string path)
     {
         System.IO.Directory.CreateDirectory(Folder);
-        int at = name.IndexOf('@');
-        string kind = at >= 0 ? name.Substring(0, at) : name;
-        _variant = at >= 0 ? StableHash(name) : 0;
+        _variant = StableHash(name);
         var canvas = kind switch
         {
             "Portrait_1" => Portrait(0), "Portrait_2" => Portrait(1), "Portrait_3" => Portrait(2), "Portrait_4" => Portrait(3),
@@ -68,13 +66,12 @@ public static class SchoolDrawings
             "Geometry" => Geometry(),
             "Flag" => Flag(),
             "Emblem" => Emblem(),
-            "Heart" => Heart(),
-            "Doodle" => Doodle(),
             _ => Clock(),
         };
         System.IO.File.WriteAllBytes(path, canvas.ToTexture().EncodeToPNG());
         AssetDatabase.ImportAsset(path);
         var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+        importer.userData = kind;
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
         importer.alphaIsTransparency = true;
@@ -305,42 +302,6 @@ public static class SchoolDrawings
             }
         c.Scribble(cx - 80, 50, 160, 14, 4);
         c.Frame(6);
-        return c;
-    }
-
-    // toilet-wall graffiti, on nothing (clear): a heart with an arrow through it
-    private static Canvas Heart()
-    {
-        var c = new Canvas(320, 280, Paper, 101, clear: true);
-        var heart = new List<(float, float)>();
-        for (int i = 0; i <= 40; i++)
-        {
-            float t = i / 40f * Mathf.PI * 2f;
-            float x = 16f * Mathf.Pow(Mathf.Sin(t), 3f);
-            float y = 13f * Mathf.Cos(t) - 5f * Mathf.Cos(2f * t) - 2f * Mathf.Cos(3f * t) - Mathf.Cos(4f * t);
-            heart.Add((160 + x * 6f, 150 + y * 6f));
-        }
-        c.Line(7, heart.ToArray());
-        c.Line(5, (30, 60), (290, 230));
-        c.Line(5, (290, 230), (262, 228)); c.Line(5, (290, 230), (282, 204));
-        c.Line(4, (30, 60), (44, 82)); c.Line(4, (30, 60), (52, 64));
-        return c;
-    }
-
-    // toilet-wall graffiti, on nothing (clear): a stick figure with a big round head, and a sun
-    private static Canvas Doodle()
-    {
-        var c = new Canvas(300, 320, Paper, 111, clear: true);
-        c.Ellipse(110, 230, 40, 40, 6);
-        c.Line(6, (110, 190), (110, 90));
-        c.Line(6, (60, 160), (110, 150), (160, 175));
-        c.Line(6, (70, 20), (110, 90), (150, 20));
-        c.Ellipse(240, 270, 24, 24, 5);
-        for (int i = 0; i < 8; i++)
-        {
-            float a = i * 45f * Mathf.Deg2Rad;
-            c.Line(4, (240 + Mathf.Cos(a) * 32, 270 + Mathf.Sin(a) * 32), (240 + Mathf.Cos(a) * 46, 270 + Mathf.Sin(a) * 46));
-        }
         return c;
     }
 

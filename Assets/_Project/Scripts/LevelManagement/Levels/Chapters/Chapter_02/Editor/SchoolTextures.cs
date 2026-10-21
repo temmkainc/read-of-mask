@@ -5,7 +5,8 @@
 // furniture, speckled laminate, worn dark metal, painted wood, white-painted window frames and
 // radiators, blackboards, wool, porcelain, plant leaves and mirror.
 // Generated once (SchoolBuilder calls this) and kept as PNGs, so they can be painted over or
-// replaced like any other texture.
+// replaced like any other texture; delete one and the next build draws it again. Kept light, near
+// the whites of the game's other places.
 
 #if UNITY_EDITOR
 using System.IO;
@@ -28,7 +29,12 @@ public static class SchoolTextures
         string matPath = $"{Folder}/{AssetName(name)}.mat";
         var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
         if (mat != null)
+        {
+            // its texture deleted, to have it drawn again
+            if (mat.GetTexture("_BaseMap") == null)
+                mat.SetTexture("_BaseMap", Texture(name));
             return mat;
+        }
 
         var texture = Texture(name);
         mat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = AssetName(name) };
@@ -50,24 +56,24 @@ public static class SchoolTextures
         var pixels = name switch
         {
             "Tiles" => TerrazzoTiles(),
-            "Boards" => SimpleBoards(planks: 6, baseShade: 0.58f, seam: 0.34f, variation: 0.06f, seed: 3),
-            "Gym" => SimpleBoards(planks: 10, baseShade: 0.76f, seam: 0.56f, variation: 0.04f, seed: 9),
-            "WallPaint" => OilPaint(baseShade: 0.86f, streaks: 0.035f, wear: 0.03f, chips: 0f, seed: 31),
-            "Trim" => OilPaint(baseShade: 0.33f, streaks: 0.05f, wear: 0.06f, chips: 0.012f, seed: 41),
-            "Plaster" => Plaster(baseShade: 0.95f, mottle: 0.026f, seed: 51),
-            "Laminate" => Laminate(baseShade: 0.86f, seed: 61),
-            "Metal" => OilPaint(baseShade: 0.44f, streaks: 0.025f, wear: 0.05f, chips: 0.008f, seed: 71),
+            "Boards" => SimpleBoards(planks: 6, baseShade: 0.76f, seam: 0.52f, variation: 0.06f, seed: 3),
+            "Gym" => SimpleBoards(planks: 10, baseShade: 0.86f, seam: 0.66f, variation: 0.04f, seed: 9),
+            "WallPaint" => OilPaint(baseShade: 0.94f, streaks: 0.035f, wear: 0.03f, chips: 0f, seed: 31),
+            "Trim" => OilPaint(baseShade: 0.5f, streaks: 0.05f, wear: 0.06f, chips: 0.012f, seed: 41),
+            "Plaster" => Plaster(baseShade: 0.98f, mottle: 0.026f, seed: 51),
+            "Laminate" => Laminate(baseShade: 0.93f, seed: 61),
+            "Metal" => OilPaint(baseShade: 0.6f, streaks: 0.025f, wear: 0.05f, chips: 0.008f, seed: 71),
             "Terrazzo" => Terrazzo(),
-            "WoodPaint" => OilPaint(baseShade: 0.5f, streaks: 0.05f, wear: 0.06f, chips: 0.01f, seed: 81),
-            "WindowPaint" => OilPaint(baseShade: 0.88f, streaks: 0.03f, wear: 0.04f, chips: 0.006f, seed: 91),
+            "WoodPaint" => OilPaint(baseShade: 0.7f, streaks: 0.05f, wear: 0.06f, chips: 0.01f, seed: 81),
+            "WindowPaint" => OilPaint(baseShade: 0.95f, streaks: 0.03f, wear: 0.04f, chips: 0.006f, seed: 91),
             "Chalkboard" => Chalkboard(),
-            "Porcelain" => Plaster(baseShade: 0.93f, mottle: 0.012f, seed: 101),
-            "Fabric" => Fabric(baseShade: 0.34f, seed: 111),
-            "FabricLight" => Fabric(baseShade: 0.7f, seed: 121),
-            "Leather" => Fabric(baseShade: 0.27f, seed: 131),
-            "Leaf" => Plaster(baseShade: 0.3f, mottle: 0.08f, seed: 141),
-            "Foliage" => Plaster(baseShade: 0.58f, mottle: 0.07f, seed: 181),
-            "Mirror" => Plaster(baseShade: 0.66f, mottle: 0.015f, seed: 151),
+            "Porcelain" => Plaster(baseShade: 0.97f, mottle: 0.012f, seed: 101),
+            "Fabric" => Fabric(baseShade: 0.5f, seed: 111),
+            "FabricLight" => Fabric(baseShade: 0.84f, seed: 121),
+            "Leather" => Fabric(baseShade: 0.4f, seed: 131),
+            "Leaf" => Plaster(baseShade: 0.45f, mottle: 0.08f, seed: 141),
+            "Foliage" => Plaster(baseShade: 0.72f, mottle: 0.07f, seed: 181),
+            "Mirror" => Plaster(baseShade: 0.76f, mottle: 0.015f, seed: 151),
             _ => SmallTiles(),
         };
 
@@ -96,7 +102,7 @@ public static class SchoolTextures
         for (int x = 0; x < Size; x++)
         {
             int tx = x / tile, ty = y / tile, lx = x % tile, ly = y % tile;
-            float v = ((tx + ty) & 1) == 0 ? 0.80f : 0.56f;
+            float v = ((tx + ty) & 1) == 0 ? 0.9f : 0.72f;
             v += (Hash(tx, ty, 1) - 0.5f) * 0.05f;
             v += (Noise(x, y, 96, 2) - 0.5f) * 0.07f;                       // wear
             if (Hash(x / 3, y / 3, 7) > 0.9f)                                 // terrazzo chips
@@ -122,7 +128,7 @@ public static class SchoolTextures
         for (int y = 0; y < Size; y++)
         for (int x = 0; x < Size; x++)
         {
-            float v = 0.68f;
+            float v = 0.84f;
             v += (Noise(x, y, 256, 161) - 0.5f) * 0.06f;                    // poured unevenly
             v += (Noise(x, y, 48, 162) - 0.5f) * 0.04f;                     // worn paths, polish
             // chips: a few big ones, many small ones, dark and light
@@ -254,10 +260,10 @@ public static class SchoolTextures
         for (int x = 0; x < Size; x++)
         {
             int tx = x / tile, ty = y / tile, lx = x % tile, ly = y % tile;
-            float v = 0.9f + (Hash(tx, ty, 21) - 0.5f) * 0.04f + (Noise(x, y, 128, 22) - 0.5f) * 0.04f;
+            float v = 0.95f + (Hash(tx, ty, 21) - 0.5f) * 0.04f + (Noise(x, y, 128, 22) - 0.5f) * 0.04f;
             int edge = Mathf.Min(Mathf.Min(lx, tile - 1 - lx), Mathf.Min(ly, tile - 1 - ly));
             if (edge < grout)
-                v = 0.58f + (Hash(x, y, 23) - 0.5f) * 0.05f;
+                v = 0.74f + (Hash(x, y, 23) - 0.5f) * 0.05f;
             px[y * Size + x] = Gray(v);
         }
         return px;

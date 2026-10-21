@@ -95,12 +95,17 @@ public class DreamGate : MonoBehaviour
     private float _motesRate;
 
     public bool IsTwoWay => _twoWay;
+    /// <summary>True while the player is being drawn through, from stepping in until OnPassed.</summary>
+    public bool IsTransitioning => _transitioning;
     public bool IsFrontOpen => IsLevelOpen && !(_used && !_twoWay);
     public bool IsBackOpen => IsLevelOpen && _twoWay;
-    private bool IsLevelOpen => _openDuring == null || _openDuring.IsRunning;
+    // once Open During's level is destroyed (see LevelBase's destroy-previous flag) it's over for good
+    private bool IsLevelOpen => !_hasOpenDuring || (_openDuring != null && _openDuring.IsRunning);
+    private bool _hasOpenDuring;
 
     private void Awake()
     {
+        _hasOpenDuring = _openDuring != null;
         _entry = GetComponent<BoxCollider>();
         _entry.isTrigger = true;
         if (_motes != null)

@@ -1,5 +1,52 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &362029748313594182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7239473222284799682}
+  - component: {fileID: 4255690740024536864}
+  m_Layer: 0
+  m_Name: LookPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7239473222284799682
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362029748313594182}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3744941219952785984}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4255690740024536864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362029748313594182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80ba5446a37594bada12e8d8ae628c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionLookPoint
+  _maxVerticalAngle: 30
+  _maxHorizontalAngle: 30
+  _gamepadMultiplier: 150
 --- !u!1 &2397168380408061065
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,6 +59,8 @@ GameObject:
   - component: {fileID: 8982088434836845534}
   - component: {fileID: 8040134715750678451}
   - component: {fileID: 2609972077722905180}
+  - component: {fileID: 6183848971846353782}
+  - component: {fileID: 8628226998204023614}
   m_Layer: 0
   m_Name: GymBench
   m_TagString: Untagged
@@ -31,7 +80,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3744941219952785984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8982088434836845534
@@ -114,3 +164,109 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.8, y: 0.48, z: 0.38}
   m_Center: {x: 0, y: 0.24, z: 0}
+--- !u!114 &6183848971846353782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2397168380408061065}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 4
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineWidth: 7
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+  sharedBakes: []
+--- !u!114 &8628226998204023614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2397168380408061065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e44ec4e5906505439eaf92c68e27070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BenchInteractable
+  <CameraSnapPoint>k__BackingField: {fileID: 4255690740024536864}
+  _hintLabel: Sit
+  _hintXOffset: 0
+  _hintYOffset: 1.18
+  _hintZOffset: 0
+  _place: {fileID: 3744941219952785984}
+  _places:
+  - {x: -2.1, y: 1.63, z: 0}
+  - {x: -1.8499999, y: 1.63, z: 0}
+  - {x: -1.5999999, y: 1.63, z: 0}
+  - {x: -1.3499999, y: 1.63, z: 0}
+  - {x: -1.0999999, y: 1.63, z: 0}
+  - {x: -0.8499999, y: 1.63, z: 0}
+  - {x: -0.5999999, y: 1.63, z: 0}
+  - {x: -0.3499999, y: 1.63, z: 0}
+  - {x: -0.099999905, y: 1.63, z: 0}
+  - {x: 0.1500001, y: 1.63, z: 0}
+  - {x: 0.4000001, y: 1.63, z: 0}
+  - {x: 0.6500001, y: 1.63, z: 0}
+  - {x: 0.9000001, y: 1.63, z: 0}
+  - {x: 1.1500001, y: 1.63, z: 0}
+  - {x: 1.4000001, y: 1.63, z: 0}
+  - {x: 1.6500001, y: 1.63, z: 0}
+  - {x: 1.9000001, y: 1.63, z: 0}
+  _yaws:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  _taken: 
+--- !u!1 &8882202527994191868
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3744941219952785984}
+  m_Layer: 0
+  m_Name: SeatPlace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3744941219952785984
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8882202527994191868}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7239473222284799682}
+  m_Father: {fileID: 6224894349176471051}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

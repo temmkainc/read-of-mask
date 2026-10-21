@@ -29,6 +29,14 @@ public class LevelBase : MonoBehaviour
         "Use this for heavy levels you never need to show/revisit again.")]
     [SerializeField] private bool _destroyPreviousLevelOnEnter;
 
+    [Tooltip("Like Destroy Previous Level On Enter, but destroys EVERY earlier level - for a level " +
+        "that must not see anything played before it (e.g. through its windows).")]
+    [SerializeField] private bool _destroyAllPreviousLevelsOnEnter;
+
+    [Tooltip("Other objects destroyed as soon as this level becomes current (both during normal play and when restoring " +
+        "this level from a save) - e.g. scenery outside the levels that only earlier levels shared.")]
+    [SerializeField] private GameObject[] _objectsToDestroyOnEnter;
+
     [Header("Player Spawn")]
     [Tooltip("Where the player is placed when the game LOADS into this level - a fresh start or resuming a save. Not used for normal level-to-level progression in the same session.")]
     [SerializeField] private Transform _spawnPoint;
@@ -43,6 +51,8 @@ public class LevelBase : MonoBehaviour
     private int _conditionsMet;
 
     public bool DestroyPreviousLevelOnEnter => _destroyPreviousLevelOnEnter;
+    public bool DestroyAllPreviousLevelsOnEnter => _destroyAllPreviousLevelsOnEnter;
+    public IReadOnlyList<GameObject> ObjectsToDestroyOnEnter => _objectsToDestroyOnEnter ?? Array.Empty<GameObject>();
 
     /// <summary>True from Begin() until this level completes - i.e. while it's the level being played.</summary>
     public bool IsRunning { get; private set; }

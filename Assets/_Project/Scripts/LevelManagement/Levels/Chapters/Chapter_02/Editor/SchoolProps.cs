@@ -15,6 +15,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -114,7 +115,14 @@ public static class SchoolProps
             case "Radiator_16": Radiator(kit, 16); break;
             case "Lamp_Tube": LampTube(kit); collider = false; break;
             case "Lamp_Plate": LampPlate(kit); collider = false; break;
-            case "DeskPair": Desk(kit); Chair(kit, new Vector3(-0.48f, 0f, -0.78f), Quaternion.identity); Chair(kit, new Vector3(0.48f, 0f, -0.78f), Quaternion.identity); break;
+            case "DeskPair":
+                Desk(kit);
+                foreach (float x in new[] { -0.48f, 0.48f })
+                {
+                    var at = new Vector3(x, 0f, -0.78f);
+                    Chair(SeatChair(kit, x < 0f ? "Chair_Left" : "Chair_Right", at, 0.72f), at, Quaternion.identity);
+                }
+                break;
             case "DeskPair_Upturned":
                 // after the last lesson: both chairs upside down on the desk, backs hanging over its edge
                 Desk(kit);
@@ -133,8 +141,8 @@ public static class SchoolProps
             case "BoardDark_7x1.1": Board(kit, 7f, 1.1f, _chalk); break;
             case "BoardDark_10x1.4": Board(kit, 10f, 1.4f, _chalk); break;
             case "PictureFrame": PictureFrame(kit, 0.9f, 1.15f); break;
-            case "Bench": Bench(kit); break;
-            case "GymBench": GymBench(kit); break;
+            case "Bench": Bench(kit); decorate = go => Seats(go, 0.8f, SchoolInteractables.AlongBench(1.7f, 0.35f, 0f)); break;
+            case "GymBench": GymBench(kit); decorate = go => Seats(go, 0.48f, SchoolInteractables.AlongBench(2.1f, 0f, 0f)); break;
             case "WallBars_8": WallBars(kit, 8); break;
             case "Backboard": Backboard(kit); collider = false; break;
             case "Mat": Mat(kit, Vector3.zero, 0f); break;
@@ -165,7 +173,6 @@ public static class SchoolProps
             case "TroughSink": TroughSink(kit); break;
             case "Mirror_5": Mirror(kit, 5f, 1f); collider = false; break;
             case "SquatToilet": SquatToilet(kit); break;
-            case "ToiletScreen": ToiletScreen(kit); break;
             case "Bin": Bin(kit); collider = false; break;
             case "FloorDrain": FloorDrain(kit); collider = false; break;
             case "PipePair": PipePair(kit); collider = false; break;
@@ -174,7 +181,7 @@ public static class SchoolProps
             case "BucketMop": BucketMop(kit); collider = false; break;
             case "WallClock":
                 Disc(kit, Vector3.zero, Vector3.forward, 0.45f, 0.08f, _trim);
-                decorate = go => AddDrawing(go, "Clock", new Vector3(0f, 0f, 0.085f), new Vector2(0.82f, 0.82f));
+                decorate = go => AddDrawing(go, "Clock", "AllRooms_WallClock", new Vector3(0f, 0f, 0.085f), new Vector2(0.82f, 0.82f));
                 collider = false;
                 break;
             case "FireShield": FireShield(kit); collider = false; break;
@@ -183,7 +190,7 @@ public static class SchoolProps
             case "Bust": Bust(kit); break;
             case "TrophyCabinet": TrophyCabinet(kit); break;
             case "Runner": Runner(kit, 3.6f, 12.2f); collider = false; break;
-            case "SeatRows": SeatRows(kit); break;
+            case "SeatRows": SeatRows(kit); collider = false; break;   // the seats have their own; one round the frame would cover them
             case "Planter": Planter(kit); break;
             case "Mirror_Tall": Mirror(kit, 1.6f, 3.2f); collider = false; break;
             case "DrinkingFountain": DrinkingFountain(kit); break;
@@ -289,7 +296,8 @@ public static class SchoolProps
         kit.Box(new Vector3(-0.75f, 1.25f, -0.25f), new Vector3(-0.15f, 1.3f, 0.4f), _fabric);          // the register
         kit.Box(new Vector3(0.3f, 1.25f, -0.15f), new Vector3(0.78f, 1.38f, 0.25f), _fabricLight);     // exercise books
         kit.Box(new Vector3(0.34f, 1.38f, -0.12f), new Vector3(0.74f, 1.41f, 0.22f), _fabric);
-        WoodenChair(kit, new Vector3(-0.3f, 0f, -0.95f), 0.78f);
+        var chair = new Vector3(-0.3f, 0f, -0.95f);
+        WoodenChair(SeatChair(kit, "Chair", chair, 0.78f), chair, 0.78f);
     }
 
     private static void WoodenChair(Kit kit, Vector3 position, float seat)
@@ -350,10 +358,22 @@ public static class SchoolProps
         kit.Box(new Vector3(-w, 0f, 0.02f), new Vector3(w, 0.12f, d), _wood);
         kit.Box(new Vector3(-w + 0.04f, 0f, 0f), new Vector3(w - 0.04f, h - 0.04f, 0.03f), _wood);
         kit.Box(new Vector3(-w + 0.04f, 1.36f, 0f), new Vector3(w - 0.04f, 1.4f, d - 0.02f), _wood);
-        kit.Box(new Vector3(-w + 0.04f, 0.12f, d - 0.04f), new Vector3(-0.01f, 1.36f, d), _wood);
-        kit.Box(new Vector3(0.01f, 0.12f, d - 0.04f), new Vector3(w - 0.04f, 1.36f, d), _wood);
-        kit.Box(new Vector3(-0.12f, 0.8f, d), new Vector3(-0.06f, 0.95f, d + 0.03f), _metal);
-        kit.Box(new Vector3(0.06f, 0.8f, d), new Vector3(0.12f, 0.95f, d + 0.03f), _metal);
+
+        // the doors, hinged at the sides: wooden ones below, glazed ones above (only to 90 degrees -
+        // the bookcases stand side by side)
+        var lowerLeft = kit.Door("Door_LowerLeft", new Vector3(-w + 0.04f, 0.12f, d), -90f, 0.62f);
+        lowerLeft.Box(new Vector3(-w + 0.04f, 0.12f, d - 0.04f), new Vector3(-0.01f, 1.36f, d), _wood);
+        lowerLeft.Box(new Vector3(-0.12f, 0.8f, d), new Vector3(-0.06f, 0.95f, d + 0.03f), _metal);
+        var lowerRight = kit.Door("Door_LowerRight", new Vector3(w - 0.04f, 0.12f, d), 90f, 0.62f);
+        lowerRight.Box(new Vector3(0.01f, 0.12f, d - 0.04f), new Vector3(w - 0.04f, 1.36f, d), _wood);
+        lowerRight.Box(new Vector3(0.06f, 0.8f, d), new Vector3(0.12f, 0.95f, d + 0.03f), _metal);
+        foreach (float side in new[] { -1f, 1f })
+        {
+            var glazed = kit.Door(side < 0f ? "Door_UpperLeft" : "Door_UpperRight", new Vector3(side * (w - 0.04f), 1.4f, d), side * 90f, 0.94f);
+            float outer = side * (w - 0.04f);
+            glazed.Box(new Vector3(Mathf.Min(outer, 0f), 1.4f, d - 0.03f), new Vector3(Mathf.Max(outer, 0f), h - 0.12f, d - 0.015f), _glass);
+            glazed.Box(new Vector3(Mathf.Min(side * 0.02f, 0f), 1.4f, d - 0.04f), new Vector3(Mathf.Max(side * 0.02f, 0f), h - 0.12f, d), _wood);
+        }
 
         var random = new System.Random(seed);
         var spines = new[] { _fabric, _fabricLight, _trim, _wood, _leather };
@@ -374,8 +394,6 @@ public static class SchoolProps
                 x += bw + 0.005f;
             }
         }
-        kit.Box(new Vector3(-w + 0.04f, 1.4f, d - 0.03f), new Vector3(w - 0.04f, h - 0.04f, d - 0.015f), _glass);
-        kit.Box(new Vector3(-0.02f, 1.4f, d - 0.04f), new Vector3(0.02f, h - 0.04f, d), _wood);
         kit.Box(new Vector3(-w + 0.04f, h - 0.12f, d - 0.04f), new Vector3(w - 0.04f, h - 0.04f, d), _wood);
     }
 
@@ -629,7 +647,8 @@ public static class SchoolProps
         kit.Box(new Vector3(-0.3f, 1.25f, -0.35f), new Vector3(0.22f, 1.28f, 0.05f), _fabric);
         kit.Box(new Vector3(-0.29f, 1.28f, -0.34f), new Vector3(0.21f, 1.285f, 0.04f), _fabricLight);
         kit.Cylinder(new Vector3(0.1f, 1.25f, 0.28f), new Vector3(0.1f, 1.38f, 0.28f), 0.045f, _glass, 10);
-        WoodenChair(kit, new Vector3(0f, 0f, -0.85f), 0.8f);
+        var chair = new Vector3(0f, 0f, -0.85f);
+        WoodenChair(SeatChair(kit, "Chair", chair, 0.8f), chair, 0.8f);
     }
 
     // A pot plant for a windowsill: one of the Gogo plants in a white Gogo vase (or a spiky aloe).
@@ -814,13 +833,6 @@ public static class SchoolProps
         kit.Cylinder(new Vector3(0.3f, 2.28f, 0.32f), new Vector3(0.3f, 2.4f, 0.32f), 0.025f, _porcelain, 8);
     }
 
-    // a tiled screen wall inside the toilet's door, so the room can't be seen from the corridor (long along x)
-    private static void ToiletScreen(Kit kit)
-    {
-        kit.Box(new Vector3(-2.2f, 0f, -0.075f), new Vector3(2.2f, 3f, 0.075f), _smallTiles);
-        kit.Box(new Vector3(-2.24f, 3f, -0.1f), new Vector3(2.24f, 3.06f, 0.1f), _paint);
-    }
-
     // a dented metal pedal bin
     private static void Bin(Kit kit)
     {
@@ -981,8 +993,14 @@ public static class SchoolProps
                 }
             }
         }
-        kit.Box(new Vector3(-w + 0.05f, 0.7f, d - 0.03f), new Vector3(w - 0.05f, h - 0.05f, d - 0.015f), _glass);
-        kit.Box(new Vector3(-0.02f, 0.7f, d - 0.04f), new Vector3(0.02f, h - 0.05f, d), _wood);
+        // two glazed doors, hinged at the sides
+        foreach (float side in new[] { -1f, 1f })
+        {
+            float outer = side * (w - 0.05f);
+            var glazed = kit.Door(side < 0f ? "Door_Left" : "Door_Right", new Vector3(outer, 0.7f, d), side * 90f, 1.22f);
+            glazed.Box(new Vector3(Mathf.Min(outer, 0f), 0.7f, d - 0.03f), new Vector3(Mathf.Max(outer, 0f), h - 0.05f, d - 0.015f), _glass);
+            glazed.Box(new Vector3(Mathf.Min(side * 0.02f, 0f), 0.7f, d - 0.04f), new Vector3(Mathf.Max(side * 0.02f, 0f), h - 0.05f, d), _wood);
+        }
     }
 
     // A sports cup, turned on a lathe: a stepped foot, a knotted stem, a deep bowl with two curled
@@ -1033,6 +1051,7 @@ public static class SchoolProps
 
     // Two rows of joined hall seats, back to back on one frame (long along x): four plywood seats facing
     // +z, four facing -z, armrests between. The seats are at the benches' height, so kids can sit there.
+
     private static void SeatRows(Kit kit)
     {
         const float pitch = 0.8f, seat = 0.8f;
@@ -1046,12 +1065,15 @@ public static class SchoolProps
         {
             for (int i = 0; i < 4; i++)
             {
+                // each seat a part of its own, to sit in (and light up) one by one
                 float x = -1.2f + i * pitch;
                 float z0 = side * 0.16f, z1 = side * 0.7f;
-                kit.Box(new Vector3(x - 0.36f, seat - 0.06f, Mathf.Min(z0, z1)), new Vector3(x + 0.36f, seat, Mathf.Max(z0, z1)), _wood);
-                kit.Push(new Vector3(x, seat, side * 0.12f), Quaternion.Euler(side * -8f, 0f, 0f));
-                kit.Box(new Vector3(-0.35f, 0.12f, -0.025f), new Vector3(0.35f, 0.66f, 0.025f), _wood);
-                kit.Pop();
+                float yaw = side > 0f ? 0f : 180f;
+                var place = kit.Part($"Seat_{(side > 0f ? "North" : "South")}_{i + 1}", new Vector3(x, 0f, side * 0.43f), go => Seats(go, seat, (0f, 0f, yaw)));
+                place.Box(new Vector3(x - 0.36f, seat - 0.06f, Mathf.Min(z0, z1)), new Vector3(x + 0.36f, seat, Mathf.Max(z0, z1)), _wood);
+                place.Push(new Vector3(x, seat, side * 0.12f), Quaternion.Euler(side * -8f, 0f, 0f));
+                place.Box(new Vector3(-0.35f, 0.12f, -0.025f), new Vector3(0.35f, 0.66f, 0.025f), _wood);
+                place.Pop();
             }
             for (int i = 0; i <= 4; i++)
             {
@@ -1157,7 +1179,8 @@ public static class SchoolProps
 
     private static readonly Dictionary<Material, Material> GrayCopies = new();
 
-    // a desaturated copy of a material (and of its texture), made once into Materials/School
+    // a desaturated copy of a material (and of its texture), made once into Materials/School - and a
+    // little lighter, so the bought-in models sit with the school's pale paint
     private static Material Gray(Material original)
     {
         if (original == null)
@@ -1167,13 +1190,17 @@ public static class SchoolProps
         string name = "Gray_" + original.name.Replace(" ", "");
         string path = $"{MaterialFolder}/{name}.mat";
         var gray = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (gray != null && gray.HasProperty("_BaseMap") && gray.GetTexture("_BaseMap") == null
+            && original.HasProperty("_BaseMap") && original.GetTexture("_BaseMap") is Texture2D source)
+            gray.SetTexture("_BaseMap", GrayTexture(source));   // its texture deleted, to have it made again
         if (gray == null)
         {
             gray = new Material(original) { name = name };
             if (gray.HasProperty("_BaseColor"))
             {
                 var c = gray.GetColor("_BaseColor");
-                gray.SetColor("_BaseColor", new Color(c.grayscale, c.grayscale, c.grayscale, c.a));
+                float l = c.grayscale + (1f - c.grayscale) * 0.3f;
+                gray.SetColor("_BaseColor", new Color(l, l, l, c.a));
             }
             if (gray.HasProperty("_BaseMap") && gray.GetTexture("_BaseMap") is Texture2D texture)
                 gray.SetTexture("_BaseMap", GrayTexture(texture));
@@ -1200,7 +1227,8 @@ public static class SchoolProps
         var pixels = copy.GetPixels32();
         for (int i = 0; i < pixels.Length; i++)
         {
-            byte l = (byte)Mathf.Clamp(pixels[i].r * 0.3f + pixels[i].g * 0.59f + pixels[i].b * 0.11f, 0f, 255f);
+            float luminance = pixels[i].r * 0.3f + pixels[i].g * 0.59f + pixels[i].b * 0.11f;
+            byte l = (byte)Mathf.Clamp(luminance + (255f - luminance) * 0.3f, 0f, 255f);
             pixels[i] = new Color32(l, l, l, pixels[i].a);
         }
         copy.SetPixels32(pixels);
@@ -1213,9 +1241,9 @@ public static class SchoolProps
 
     // ── Saving ───────────────────────────────────────────────────────────────
 
-    private static void AddDrawing(GameObject go, string drawing, Vector3 position, Vector2 size)
+    private static void AddDrawing(GameObject go, string kind, string drawing, Vector3 position, Vector2 size)
     {
-        var sprite = SchoolDrawings.Get(drawing);
+        var sprite = SchoolDrawings.Get(kind, drawing);
         if (sprite == null)
             return;
         var child = new GameObject("Drawing");
@@ -1233,6 +1261,54 @@ public static class SchoolProps
     {
         System.IO.Directory.CreateDirectory(PrefabFolder);
         System.IO.Directory.CreateDirectory(MeshFolder);
+        var mesh = SaveMesh(name, kit);
+
+        var go = new GameObject(name);
+        go.AddComponent<MeshFilter>().sharedMesh = mesh;
+        var renderer = go.AddComponent<MeshRenderer>();
+        renderer.sharedMaterials = kit.Materials;
+        renderer.shadowCastingMode = shadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
+
+        // the parts; doors are in front, and the body's collider stops just behind them, so looking
+        // at a door finds the door
+        float front = float.MaxValue;
+        foreach (var (partName, pivot, make, door, partKit) in kit.Parts)
+        {
+            var partMesh = SaveMesh($"{name}_{partName}", partKit);
+            var part = new GameObject(partName);
+            part.transform.SetParent(go.transform, false);
+            part.transform.localPosition = pivot;
+            part.AddComponent<MeshFilter>().sharedMesh = partMesh;
+            var partRenderer = part.AddComponent<MeshRenderer>();
+            partRenderer.sharedMaterials = partKit.Materials;
+            // the parts are drawn on their own (not batched - they move or light up): too small to be worth a shadow
+            partRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            var partBox = part.AddComponent<BoxCollider>();
+            partBox.center = partMesh.bounds.center;
+            partBox.size = partMesh.bounds.size;
+            make(part);
+            if (door)
+                front = Mathf.Min(front, pivot.z + partMesh.bounds.min.z);
+        }
+
+        if (collider)
+        {
+            var bounds = mesh.bounds;
+            if (front < bounds.max.z)
+                bounds.SetMinMax(bounds.min, new Vector3(bounds.max.x, bounds.max.y, front - 0.002f));
+            var box = go.AddComponent<BoxCollider>();
+            box.center = bounds.center;
+            box.size = bounds.size;
+        }
+        decorate?.Invoke(go);
+
+        var prefab = PrefabUtility.SaveAsPrefabAsset(go, $"{PrefabFolder}/{name}.prefab");
+        UnityEngine.Object.DestroyImmediate(go);
+        return prefab;
+    }
+
+    private static Mesh SaveMesh(string name, Kit kit)
+    {
         string meshPath = $"{MeshFolder}/{name}.asset";
         var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
         if (mesh == null)
@@ -1246,24 +1322,17 @@ public static class SchoolProps
             kit.WriteTo(mesh);
             EditorUtility.SetDirty(mesh);
         }
-
-        var go = new GameObject(name);
-        go.AddComponent<MeshFilter>().sharedMesh = mesh;
-        var renderer = go.AddComponent<MeshRenderer>();
-        renderer.sharedMaterials = kit.Materials;
-        renderer.shadowCastingMode = shadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
-        if (collider)
-        {
-            var box = go.AddComponent<BoxCollider>();
-            box.center = mesh.bounds.center;
-            box.size = mesh.bounds.size;
-        }
-        decorate?.Invoke(go);
-
-        var prefab = PrefabUtility.SaveAsPrefabAsset(go, $"{PrefabFolder}/{name}.prefab");
-        UnityEngine.Object.DestroyImmediate(go);
-        return prefab;
+        return mesh;
     }
+
+    // Somewhere to sit: the seat's height and the places along it (a sitter's eyes are EyeAboveSeat
+    // over the seat), each looking along +z turned by its yaw.
+    private static void Seats(GameObject go, float seat, params (float x, float z, float yaw)[] places)
+        => SchoolInteractables.MakeSeat(go, places.Select(p => (new Vector3(p.x, seat + SchoolInteractables.EyeAboveSeat, p.z), p.yaw)).ToArray(), seat + 0.7f);
+
+    // a chair to sit on, a part of its own so only it lights up, not the desk it's at
+    private static Kit SeatChair(Kit kit, string name, Vector3 position, float seat)
+        => kit.Part(name, position, go => Seats(go, seat, (0f, 0f, 0f)));
 
     // ── Kit: a mesh built out of boxes, tapered cylinders and spheres, a submesh per material ──
 
@@ -1277,6 +1346,22 @@ public static class SchoolProps
         private Matrix4x4 _matrix = Matrix4x4.identity;
 
         public Material[] Materials => _materials.ToArray();
+
+        /// <summary>Parts used on their own - cabinet doors, chairs: each a kit of its own, saved as a
+        /// child pivoted on its point and made interactable by <c>make</c>. Doors are at the front.</summary>
+        public readonly List<(string name, Vector3 pivot, Action<GameObject> make, bool door, Kit kit)> Parts = new();
+
+        /// <summary>A part: build it in the prop's own coordinates, like the rest.</summary>
+        public Kit Part(string name, Vector3 pivot, Action<GameObject> make, bool door = false)
+        {
+            var part = new Kit { _matrix = Matrix4x4.Translate(-pivot) };
+            Parts.Add((name, pivot, make, door, part));
+            return part;
+        }
+
+        /// <summary>A cabinet door on its hinge, opening <paramref name="openAngle"/> degrees round Y.</summary>
+        public Kit Door(string name, Vector3 hinge, float openAngle, float hintHeight)
+            => Part(name, hinge, go => SchoolInteractables.MakeCabinetDoor(go, openAngle, hintHeight), door: true);
 
         public void Push(Vector3 position, Quaternion rotation)
         {

@@ -60,6 +60,21 @@ public class DeactivateTriggerLine : MonoBehaviour
         _lastPlayerPosition = playerPos;
     }
 
+    /// <summary>
+    /// Skips straight to the end - no door animation, what this line destroys goes now - for
+    /// when the game loads into the level with the player already past this line and the door
+    /// behind them already shut (e.g. Level07's spawn point outside the apartment).
+    /// </summary>
+    public void DestroyNow()
+    {
+        _triggered = true;
+        foreach (var obj in _objectsToDestroy)
+        {
+            if (obj != null)
+                Destroy(obj);
+        }
+    }
+
     private void Trigger()
     {
         _triggered = true;

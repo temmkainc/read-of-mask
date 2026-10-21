@@ -20,6 +20,7 @@
 
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditorInternal;
@@ -53,6 +54,8 @@ public static class SchoolBuilder
 
     // the doorway in the Level 08 yard's north wall
     private const float GateX0 = 29.5f, GateX1 = 34.5f, GateTop = 4.49f;
+    // the school's side of it, narrowed by hand to fit the double door hung in it
+    private const float EntranceX0 = 29.926f, EntranceX1 = 33.979f;
 
     // openings
     private const float DoorWidth = 2.2f, DoorHeight = 3.85f;         // the door prefab's leaf is 2.18 x 3.845
@@ -77,7 +80,7 @@ public static class SchoolBuilder
     private const string SignFont = "Assets/TextMesh Pro/Resources/Fonts & Materials/Inkfree SDF.asset";
     private const float SignWidth = 1.5f, SignHeight = 0.58f, SignY = Floor + 2.75f;
 
-    private static Material _exterior, _interior, _roof, _frame, _glass, _counter, _outside, _paint, _trim, _metal;
+    private static Material _exterior, _interior, _roof, _frame, _glass, _counter, _paint, _trim, _metal;
     private static Material _terrazzo, _boards, _gym, _smallTiles, _windowPaint;
     private static Component _outdoorSurface, _indoorSurface;
     private static StaticEditorFlags _static;
@@ -143,7 +146,6 @@ public static class SchoolBuilder
         BuildServingLine(Group(env, "DiningRoom_ServingLine"));
         BuildDiningTables(Group(env, "DiningRoom_Tables"));
         BuildToilets(Group(env, "Toilets"));
-        BuildOutsideGround(Group(env, "OutsideGround"));
 
         var glazing = Group(env, "Windows");
         foreach (var w in Windows)
@@ -154,9 +156,44 @@ public static class SchoolBuilder
 
         PlaceRoomMarkers(Group(env, "Rooms"));
         SchoolFurnisher.Furnish(level);
+        MarkOccluders(level.transform);
 
         EditorSceneManager.MarkSceneDirty(level.scene);
-        Debug.Log("[SchoolBuilder] Level 09 school built under " + LevelName + "/" + EnvironmentName + ".");
+        Debug.Log("[SchoolBuilder] Level 09 school built under " + LevelName + "/" + EnvironmentName + ". " +
+                  "Bake occlusion culling again (Tools/Read of Mask/Bake Occlusion Culling (Chapter 02)).");
+    }
+
+    // ── Occlusion culling ────────────────────────────────────────────────────
+    // Only the building's opaque shell - walls, floors, roof - hides what's behind it; glass, text and
+    // the furniture never do (they're still hidden behind walls themselves). Interactable things
+    // aren't static at all, so they're culled as they move.
+    private static void MarkOccluders(Transform level)
+    {
+        var env = level.Find(EnvironmentName);
+        foreach (var r in level.GetComponentsInChildren<MeshRenderer>(true))
+        {
+            var flags = GameObjectUtility.GetStaticEditorFlags(r.gameObject);
+            if ((flags & StaticEditorFlags.OccludeeStatic) == 0)
+                continue;
+            bool opaque = r.sharedMaterials.All(m => m != null && m.renderQueue <= (int)UnityEngine.Rendering.RenderQueue.GeometryLast);
+            bool shell = env != null && r.transform.IsChildOf(env) && opaque && r.GetComponent<TMPro.TMP_Text>() == null;
+            GameObjectUtility.SetStaticEditorFlags(r.gameObject, shell ? flags | StaticEditorFlags.OccluderStatic : flags & ~StaticEditorFlags.OccluderStatic);
+        }
+    }
+
+    /// <summary>Bakes Chapter 02's occlusion culling (all its levels), sized for the school's walls.
+    /// Run it again after rebuilding the school.</summary>
+    [MenuItem("Tools/Read of Mask/Bake Occlusion Culling (Chapter 02)")]
+    public static void BakeOcclusion()
+    {
+        var level = GameObject.Find(LevelName);
+        if (level != null)
+            MarkOccluders(level.transform);
+        StaticOcclusionCulling.smallestOccluder = 1.5f;   // a stretch of wall between two windows
+        StaticOcclusionCulling.smallestHole = 0.25f;
+        StaticOcclusionCulling.backfaceThreshold = 100f;
+        StaticOcclusionCulling.GenerateInBackground();
+        Debug.Log("[SchoolBuilder] Baking occlusion culling for the open scene...");
     }
 
     // ── Floors ───────────────────────────────────────────────────────────────
@@ -194,7 +231,7 @@ public static class SchoolBuilder
         // south facade: the entrance from the Level 08 yard; kitchen and dining room windows, high gym windows
         var southWest = new List<Opening>
         {
-            new Opening(GateX0, GateX1, Footing, GateTop),
+            new Opening(EntranceX0, EntranceX1, Footing, GateTop),
             Window(Axis.X, southPlane, -9f),
         };
         foreach (float x in new[] { 1f, 7f, 13f, 19f })
@@ -298,7 +335,8 @@ public static class SchoolBuilder
         // the gym is taller: its walls carry on above the rest of the roof, as outside walls
         Box(parent, "Wall_Gym_West_Upper", new Vector3(41.75f, Ceiling, IZ0), new Vector3(42.25f, GymParapet, a0), _exterior);
         Box(parent, "Wall_Gym_East_Upper", new Vector3(71.75f, Ceiling, IZ0), new Vector3(72.25f, GymParapet, a0), _exterior);
-        Box(parent, "Wall_Gym_North_Upper", new Vector3(41.75f, Ceiling, a0), new Vector3(72.25f, GymParapet, a1), _exterior);
+        // (the north one is seen from inside the gym, so it's the school's plaster - set by hand)
+        Box(parent, "Wall_Gym_North_Upper", new Vector3(41.75f, Ceiling, a0), new Vector3(72.25f, GymParapet, a1), _interior);
     }
 
     private static Opening DoorOpening(Axis axis, float plane, float center, float t0, float t1,
@@ -366,7 +404,12 @@ public static class SchoolBuilder
                 float bz0 = side < 0 ? z0 - benchGap - benchDepth : z1 + benchGap;
                 float bz1 = bz0 + benchDepth;
                 var bench = Group(table, side < 0 ? "Bench_South" : "Bench_North");
-                Box(bench, "Seat", new Vector3(x0 + 0.1f, benchTop - 0.08f, bz0), new Vector3(x1 - 0.1f, benchTop, bz1), _counter);
+                var seat = Box(bench, "Seat", new Vector3(x0 + 0.1f, benchTop - 0.08f, bz0), new Vector3(x1 - 0.1f, benchTop, bz1), _counter);
+                // to sit on (Look Closer) anywhere along it the kids leave room, facing the table
+                GameObjectUtility.SetStaticEditorFlags(seat, 0);
+                var places = SchoolInteractables.AlongBench(2.2f, 0f, side < 0 ? 0f : 180f)
+                    .Select(p => (new Vector3(p.x, 0.04f + SchoolInteractables.EyeAboveSeat, p.z), p.yaw)).ToArray();
+                SchoolInteractables.MakeSeat(seat, places, 0.75f);
                 foreach (float lx in new[] { x0 + 0.4f, x1 - 0.5f })
                     Box(bench, "Leg", new Vector3(lx, Floor, bz0 + 0.1f), new Vector3(lx + 0.1f, benchTop - 0.08f, bz1 - 0.1f), _metal);
             }
@@ -472,18 +515,6 @@ public static class SchoolBuilder
         var prefab = PrefabUtility.SaveAsPrefabAsset(instance, CabinDoorPrefab);
         Object.DestroyImmediate(instance);
         return prefab;
-    }
-
-    // ── Outside ──────────────────────────────────────────────────────────────
-    // Ground round the building, so the windows don't look out into nothing. You can't get out there.
-    private static void BuildOutsideGround(Transform parent)
-    {
-        const float y0 = -1.5f, y1 = -0.5f;
-        Box(parent, "Ground_North", new Vector3(-60f, y0, BZ1), new Vector3(126f, y1, 60f), _outside, collider: false);
-        Box(parent, "Ground_West", new Vector3(-60f, y0, -110f), new Vector3(BX0, y1, BZ1), _outside, collider: false);
-        Box(parent, "Ground_SouthWest", new Vector3(BX0, y0, -110f), new Vector3(-2.5f, y1, BZ0), _outside, collider: false);
-        Box(parent, "Ground_East", new Vector3(BX1, y0, -110f), new Vector3(126f, y1, BZ1), _outside, collider: false);
-        Box(parent, "Ground_SouthEast", new Vector3(43.6f, y0, -110f), new Vector3(BX1, y1, BZ0), _outside, collider: false);
     }
 
     // Empty markers in the middle of each room, to find your way round the hierarchy while furnishing.
@@ -847,6 +878,10 @@ public static class SchoolBuilder
         pb.SetMaterial(pb.faces, material);
         pb.ToMesh();
         pb.Refresh();
+        // ProBuilder leaves an empty second submesh behind, and the outline (on seats) would draw on that
+        var mesh = go.GetComponent<MeshFilter>().sharedMesh;
+        if (mesh.subMeshCount > 1)
+            mesh.subMeshCount = 1;
 
         if (collider)
         {
@@ -893,7 +928,6 @@ public static class SchoolBuilder
     {
         Material Mat(string path) => AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/" + path + ".mat");
         _exterior = Mat("clean-pale-concrete-stucco-pattern 1");   // the yard walls
-        _outside = Mat("clean-pale-concrete-stucco-pattern 2");    // the yard floor
         _interior = SchoolTextures.Get("Plaster", 3f, 0.05f);      // whitewashed plaster walls
         _roof = _interior;                                           // and ceilings
         _counter = SchoolTextures.Get("Laminate", 1.5f, 0.3f);     // counters, table tops, benches

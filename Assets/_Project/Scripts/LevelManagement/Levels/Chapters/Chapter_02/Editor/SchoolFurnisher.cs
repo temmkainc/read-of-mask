@@ -90,6 +90,9 @@ public static class SchoolFurnisher
         ChangingRooms(Group("ChangingRooms"));
         Toilets(Group("Toilets"));
 
+        // nobody sits where a kid already does (the canteen benches are the builder's, so it covers those too)
+        SchoolInteractables.MarkTakenSeats(level.transform);
+
         EditorSceneManager.MarkSceneDirty(level.scene);
         Debug.Log($"[SchoolFurnisher] Furnished the school under {LevelName}/{GroupName}.");
     }
@@ -143,7 +146,7 @@ public static class SchoolFurnisher
             {
                 var table = Put(group, "Board_5.2x3", new Vector3(x1, Floor + 3.85f, cz), -90f);
                 if (table != null)
-                    Drawing(table.transform, SchoolDrawings.Get("PeriodicTable"), new Vector3(0f, 1.5f, 0.07f), new Vector2(4.95f, 2.85f));
+                    Drawing(table.transform, SchoolDrawings.Get("PeriodicTable", $"{Place(group)}_PeriodicTable"), new Vector3(0f, 1.5f, 0.07f), new Vector2(4.95f, 2.85f));
             }
             else
             {
@@ -152,7 +155,7 @@ public static class SchoolFurnisher
                 {
                     var frame = Put(group, "PictureFrame", new Vector3(x1, Floor + 4.55f, cz + along[i]), -90f);
                     if (frame != null)
-                        Drawing(frame.transform, SchoolDrawings.Get($"Portrait_{1 + (i + room.Number[2]) % 4}@{room.Subject}_{i + 1}"),
+                        Drawing(frame.transform, SchoolDrawings.Get($"Portrait_{1 + (i + room.Number[2]) % 4}", $"{Place(group)}_Portrait_{i + 1}"),
                             new Vector3(0f, 0.575f, 0.055f), new Vector2(0.78f, 1f));
                 }
             }
@@ -171,7 +174,7 @@ public static class SchoolFurnisher
             {
                 var map = Put(group, "Board_5.2x3", new Vector3(x0 + 8.6f, Floor + 2.3f, RowC), 0f);
                 if (map != null)
-                    Drawing(map.transform, SchoolDrawings.Get("Map"), new Vector3(0f, 1.5f, 0.07f), new Vector2(4.95f, 2.85f));
+                    Drawing(map.transform, SchoolDrawings.Get("Map", $"{Place(group)}_Map"), new Vector3(0f, 1.5f, 0.07f), new Vector2(4.95f, 2.85f));
                 Put(group, "Globe", new Vector3(x1 - 1.4f, Floor + 0.22f + 1.25f, -0.6f), 0f);
             }
             else
@@ -242,9 +245,10 @@ public static class SchoolFurnisher
             Stand(parent, new Vector3(x, Floor + 2.5f, CorridorSouth), 0f, header, sheets);
         }
 
-        var tubs = new[] { (-13.3f, -24f), (-13.3f, -17f), (79.3f, -24f), (79.3f, -17f), (23.3f, -23.9f), (40.7f, -23.9f) };
+        // (x, z, yaw); the east palm was moved by hand, out of the corner
+        var tubs = new[] { (-13.3f, -24f, 307.7f), (-13.3f, -17f, 307.7f), (79.3f, -24f, 298.3f), (78.63f, -18.24f, 298.3f), (23.3f, -23.9f, 2.3f), (40.7f, -23.9f, 181.7f) };
         for (int i = 0; i < tubs.Length; i++)
-            Put(parent, i % 2 == 0 ? "Plant_Tub" : "Plant_Palm", new Vector3(tubs[i].Item1, Floor, tubs[i].Item2), tubs[i].Item1 * 31f);
+            Put(parent, i % 2 == 0 ? "Plant_Tub" : "Plant_Palm", new Vector3(tubs[i].Item1, Floor, tubs[i].Item2), tubs[i].Item3);
 
         // plants on wire stands along the walls, a drinking fountain by the canteen
         foreach (float x in new[] { -9f, 3.2f, 27f, 51f, 75f })
@@ -282,7 +286,7 @@ public static class SchoolFurnisher
             Label(honor.transform, "Honor Board", new Vector3(0f, 2.3f, 0.07f), 3.5f, 0.42f, Ink, 3f);
             for (int row = 0; row < 2; row++)
             for (int i = 0; i < 5; i++)
-                Drawing(honor.transform, SchoolDrawings.Get($"Photo@HonorBoard_{row * 5 + i + 1:00}"), new Vector3(-1.9f + i * 0.95f, 1.45f - row * 0.95f, 0.07f), new Vector2(0.62f, 0.78f));
+                Drawing(honor.transform, SchoolDrawings.Get("Photo", $"{Place(parent)}_HonorBoard_Photo_{row * 5 + i + 1:00}"), new Vector3(-1.9f + i * 0.95f, 1.45f - row * 0.95f, 0.07f), new Vector2(0.62f, 0.78f));
         }
         Stand(parent, new Vector3(41.75f, Floor + 2.5f, -27.9f), -90f, "Rules for Pupils", new[] { "Sheet_3", "Sheet_1" });
 
@@ -299,9 +303,9 @@ public static class SchoolFurnisher
         Put(parent, "SeatRows", new Vector3(27.5f, Floor, -35.8f), 0f);
         Put(parent, "SeatRows", new Vector3(36.5f, Floor, -35.8f), 0f);
 
-        // by the way in: the school's cups behind glass, a long mirror by the cloakroom, the state symbols over the bench
+        // by the way in: the school's cups behind glass, the state symbols over the bench (the long
+        // mirror by the cloakroom was taken out by hand)
         Put(parent, "TrophyCabinet", new Vector3(26.1f, Floor, IZ0), 0f);
-        Put(parent, "Mirror_Tall", new Vector3(36.3f, Floor + 0.5f, IZ0), 0f);
         Stand(parent, new Vector3(22.25f, Floor + 2.5f, -41.5f), 90f, "State Symbols", new[] { "Flag", "Emblem", "Sheet_3" });
 
         Put(parent, "WallClock", new Vector3(32f, Floor + 6.3f, RowA), 180f);
@@ -406,26 +410,22 @@ public static class SchoolFurnisher
 
     private static void Toilets(Transform parent)
     {
-        ToiletRoom(Group(parent, "Girls"), west: 50.25f, east: 64.75f, door: 55f, boys: false,
-            new[] { (1, "Masha + Dima"), (3, "Whoever reads this\nis a fool") }, "Olya was here", "Heart");
-        ToiletRoom(Group(parent, "Boys"), west: 65.25f, east: IX1, door: 70f, boys: true,
-            new[] { (0, "TSOI IS ALIVE"), (2, "Vova was here") }, "Petrov is a fool", "Doodle");
+        ToiletRoom(Group(parent, "Girls"), west: 50.25f, east: 64.75f, door: 55f, boys: false);
+        ToiletRoom(Group(parent, "Boys"), west: 65.25f, east: IX1, door: 70f, boys: true);
     }
 
     // One of the toilets (SchoolBuilder's: cabins along the east wall, a trough of taps on the west wall,
-    // tiled to above the rail): a screen inside the door, a second trough of taps with a mirror,
-    // towels, pipes along the walls, bins in the cabins, a drain, lamps, a mop - and graffiti.
-    private static void ToiletRoom(Transform parent, float west, float east, float door, bool boys,
-        (int cabin, string text)[] cabinGraffiti, string screenGraffiti, string screenDoodle)
+    // tiled to above the rail): a second trough of taps with a mirror, towels, pipes along the walls,
+    // bins in the cabins, a drain, lamps, a mop. (The screen inside the door, the "Keep it clean!"
+    // sign and the graffiti were taken out by hand.)
+    private static void ToiletRoom(Transform parent, float west, float east, float door, bool boys)
     {
         const float tiles = 0.08f, south = RowC, cabinWidth = 3.2f;
         float front = east - 4.2f;
-        string room = boys ? "Boys" : "Girls";
 
         Put(parent, "Lamp_Plate", new Vector3(door, Ceiling, -9f), 0f);
         Put(parent, "Lamp_Plate", new Vector3(door, Ceiling, -1f), 0f);
 
-        var screen = Put(parent, "ToiletScreen", new Vector3(door, Floor, -13.6f), 0f);
         Put(parent, "TroughSink", new Vector3(west + tiles, Floor, -12.3f), 90f);
         Put(parent, "Mirror_5", new Vector3(west + tiles, Floor + 2.2f, -12.3f), 90f);
         if (boys)
@@ -433,7 +433,6 @@ public static class SchoolFurnisher
         else
             Put(parent, "BucketMop", new Vector3(west + 0.95f, Floor, south + 0.5f), 0f);
         Put(parent, "TowelHooks", new Vector3(west + tiles, Floor + 2.3f, -7.55f), 90f);
-        Sign(parent, "Keep it clean!", new Vector3(west + tiles + 0.02f, Floor + 3.75f, -3.28f), 90f);
         Put(parent, "FloorDrain", new Vector3((west + front) * 0.5f, Floor, -6f), 0f);
 
         // pipes along the south wall either side of the door, a riser in the corner
@@ -452,28 +451,6 @@ public static class SchoolFurnisher
             if ((i + (boys ? 1 : 0)) % 2 == 0)
                 Put(parent, "Bin", new Vector3(east - 0.55f, Floor, cz + 1.22f), 0f);
         }
-
-        // graffiti: on the cabins' headers over their doors, and on both faces of the screen
-        foreach (var (cabin, text) in cabinGraffiti)
-        {
-            float cz = IZ1 - cabin * cabinWidth - cabinWidth * 0.5f;
-            Scrawl(parent, text, new Vector3(front - 0.05f, Floor + 4.05f, cz), -90f, cabin % 2 == 0 ? -4f : 3f, 1.8f, 0.7f);
-        }
-        if (screen != null)
-        {
-            Scrawl(parent, screenGraffiti, new Vector3(door + 0.6f, Floor + 2.2f, -13.6f - 0.085f), 180f, -5f, 2.2f, 0.5f);
-            var doodle = Group(parent, "Graffiti_" + screenDoodle);
-            doodle.SetPositionAndRotation(new Vector3(door - 1.1f, Floor + 1.9f, -13.6f + 0.085f), Quaternion.Euler(0f, 0f, 6f));
-            Drawing(doodle, SchoolDrawings.Get($"{screenDoodle}@{room}Toilet"), Vector3.zero, new Vector2(1.1f, 1.1f));
-        }
-    }
-
-    // handwriting scrawled on a wall in marker, a little crooked
-    private static void Scrawl(Transform parent, string text, Vector3 position, float yaw, float tilt, float width, float height)
-    {
-        var scrawl = Group(parent, "Graffiti");
-        scrawl.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, tilt));
-        Label(scrawl, text, Vector3.zero, width, height, new Color(0.16f, 0.16f, 0.16f), 3f);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
@@ -496,28 +473,33 @@ public static class SchoolFurnisher
             return null;
         var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
         go.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, yaw, 0f));
+        // seats and cabinet doors stay non-static, so doors can swing and outlines show
         foreach (var t in go.GetComponentsInChildren<Transform>(true))
-            GameObjectUtility.SetStaticEditorFlags(t.gameObject, _static);
+            GameObjectUtility.SetStaticEditorFlags(t.gameObject, SchoolInteractables.IsInteractable(t.gameObject) ? 0 : _static);
         return go;
     }
 
     // A felt stand (4 x 2) with a heading and two or three sheets pinned on it. Each sheet is a drawing
-    // of its own, named after the room and the heading (e.g. Sheet_2@Corridor_SchoolNews_1), to paint.
+    // of its own, named after the room and the heading (e.g. Corridor_Stand_SchoolNews_1), to paint.
     private static void Stand(Transform parent, Vector3 position, float yaw, string header, string[] sheets)
     {
         var stand = Put(parent, "Board_4x2", position, yaw);
         if (stand == null)
             return;
         Label(stand.transform, header, new Vector3(0f, 1.72f, 0.07f), 3.4f, 0.36f, Ink, 3f);
-        string where = Slug(parent.name) + "_" + Slug(header);
+        string where = Place(parent) + "_Stand_" + Slug(header);
         float spacing = 3.6f / sheets.Length;
         for (int i = 0; i < sheets.Length; i++)
         {
             float x = -1.8f + spacing * (i + 0.5f);
             bool photo = sheets[i] == "Photo";
-            Drawing(stand.transform, SchoolDrawings.Get($"{sheets[i]}@{where}_{i + 1}"), new Vector3(x, 0.8f, 0.07f), photo ? new Vector2(0.8f, 1f) : new Vector2(1.05f, 1.4f));
+            Drawing(stand.transform, SchoolDrawings.Get(sheets[i], $"{where}_{i + 1}"), new Vector3(x, 0.8f, 0.07f), photo ? new Vector2(0.8f, 1f) : new Vector2(1.05f, 1.4f));
         }
     }
+
+    // where a drawing hangs, to start its file name with: a room's group name, with the classrooms
+    // shortened (Classroom_101_Mathematics -> Class101_Mathematics)
+    private static string Place(Transform group) => group.name.Replace("Classroom_", "Class");
 
     // letters and digits only, for drawing file names
     private static string Slug(string text)
