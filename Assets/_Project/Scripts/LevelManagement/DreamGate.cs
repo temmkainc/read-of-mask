@@ -107,6 +107,11 @@ public class DreamGate : MonoBehaviour
     {
         _hasOpenDuring = _openDuring != null;
         _entry = GetComponent<BoxCollider>();
+
+        // the light surfaces are flat and sit right in the wall's doorway, where occlusion culling
+        // can take them for hidden behind the wall - a gate must never vanish, and it's a few quads
+        foreach (var part in GetComponentsInChildren<Renderer>(true))
+            part.allowOcclusionWhenDynamic = false;
         _entry.isTrigger = true;
         if (_motes != null)
             _motesRate = _motes.emission.rateOverTimeMultiplier;
