@@ -170,9 +170,17 @@ public static class SchoolBuilder
     private static void MarkOccluders(Transform level)
     {
         var env = level.Find(EnvironmentName);
+        var windows = env != null ? env.Find("Windows") : null;
         foreach (var r in level.GetComponentsInChildren<MeshRenderer>(true))
         {
             var flags = GameObjectUtility.GetStaticEditorFlags(r.gameObject);
+            // the windows' frames and sashes sit inside the walls' thickness, where the bake can't
+            // tell them from the wall and hides them; they're small and batched, so always draw them
+            if (windows != null && r.transform.IsChildOf(windows))
+            {
+                GameObjectUtility.SetStaticEditorFlags(r.gameObject, flags & ~(StaticEditorFlags.OccluderStatic | StaticEditorFlags.OccludeeStatic));
+                continue;
+            }
             if ((flags & StaticEditorFlags.OccludeeStatic) == 0)
                 continue;
             bool opaque = r.sharedMaterials.All(m => m != null && m.renderQueue <= (int)UnityEngine.Rendering.RenderQueue.GeometryLast);
@@ -189,8 +197,8 @@ public static class SchoolBuilder
         var level = GameObject.Find(LevelName);
         if (level != null)
             MarkOccluders(level.transform);
-        StaticOcclusionCulling.smallestOccluder = 1.5f;   // a stretch of wall between two windows
-        StaticOcclusionCulling.smallestHole = 0.25f;
+        StaticOcclusionCulling.smallestOccluder = 0.5f;   // fine enough that the window bars set in the walls' thickness survive
+        StaticOcclusionCulling.smallestHole = 0.1f;
         StaticOcclusionCulling.backfaceThreshold = 100f;
         StaticOcclusionCulling.GenerateInBackground();
         Debug.Log("[SchoolBuilder] Baking occlusion culling for the open scene...");
